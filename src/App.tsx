@@ -6,6 +6,7 @@ import Labs from '@/pages/Labs'
 import Learn from '@/pages/Learn'
 import PQC from '@/pages/PQC'
 import RSAPage from '@/pages/RSA'
+import Hash from '@/pages/Hash'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/learn" element={<Learn />} />
           <Route path="/pqc" element={<PQC />} />
           <Route path="/rsa" element={<RSAPage />} />
+          <Route path="/hash" element={<Hash />} />
         </Routes>
       </main>
       <Footer />
