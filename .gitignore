@@ -13,12 +13,12 @@ dist-ssr
 *.local
 .vite
 
+# Documentation (work in progress)
+docs/
+
 # Python scripts and environment
 *.py
 venv/
-
-# Documentation (work in progress)
-docs/
 
 # Editor directories and files
 .vscode/*
