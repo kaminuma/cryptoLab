@@ -6,6 +6,7 @@ const links = [
   { to: '/learn', label: 'Learn' },
   { to: '/rsa', label: 'RSA' },
   { to: '/pqc', label: 'PQC' },
+  { to: '/tools', label: 'Tools' },
 ]
 
 export default function NavBar() {
