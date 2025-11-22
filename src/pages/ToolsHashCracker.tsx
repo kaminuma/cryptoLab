@@ -195,7 +195,12 @@ export default function ToolsPage() {
             }}
           />
           <p style={{ color: '#64748b', fontSize: '13px', marginTop: '4px' }}>
-            例: e4c6bced9edff99746401bd077afa92860f83de3 (解答: "fleqg")
+            例: e4c6bced9edff99746401bd077afa92860f83de3 (解答: "Shal")<br />
+            <span style={{ fontSize: '11px' }}>
+              出典: <a href="https://ctf.cpaw.site/index.php" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb' }}>
+                CPAW CTF Q12
+              </a>
+            </span>
           </p>
         </div>
 
