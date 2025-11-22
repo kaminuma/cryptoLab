@@ -1,16 +1,16 @@
 /**
- * One-Time Pad (OTP) cipher implementation
+ * One-Time Pad (OTP) 暗号の実装
  *
- * The One-Time Pad is the only theoretically unbreakable cipher when used correctly:
- * 1. The key must be truly random
- * 2. The key must be at least as long as the message
- * 3. The key must never be reused
- * 4. The key must be kept completely secret
+ * ワンタイムパッドは、正しく使用すれば理論的に解読不可能な唯一の暗号方式です:
+ * 1. 鍵は完全にランダムでなければならない
+ * 2. 鍵はメッセージと同じ長さ以上でなければならない
+ * 3. 鍵は再利用してはならない
+ * 4. 鍵は完全に秘密に保たれなければならない
  *
- * This implementation uses XOR operation on alphabetic characters only.
- * For demonstration purposes, we use modular arithmetic similar to Vigenère:
- * Encryption: C[i] = (P[i] + K[i]) mod 26
- * Decryption: P[i] = (C[i] - K[i] + 26) mod 26
+ * この実装は教育目的であり、アルファベット文字に対して加算・減算による剰余演算（modular arithmetic）を用いています:
+ * 暗号化: C[i] = (P[i] + K[i]) mod 26
+ * 復号化: P[i] = (C[i] - K[i] + 26) mod 26
+ * ※実際のOTPはビット単位でXOR演算を行いますが、本実装は分かりやすさを重視しています。
  */
 
 const ALPHABET_SIZE = 26
