@@ -1,17 +1,21 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 const highlights = [
   {
+    icon: '🏛️',
     title: 'Classical → PQC',
-    description: 'シーザー暗号から ECDH、PQC までを 1 つのサイトで順番に学べるよう整理しました。',
+    description: 'シーザー暗号から ECDH、そして最新の PQC まで。暗号技術の進化を時系列で体系的に学べます。',
   },
   {
+    icon: '🔒',
     title: 'WebCrypto 実行基盤',
-    description: '暗号処理はすべてブラウザの SubtleCrypto API 上で実行。テキストはローカルで完結します。',
+    description: '暗号処理はすべてブラウザの SubtleCrypto API 上で実行。データは外部に送信されず、ローカルで完結します。',
   },
   {
-    title: '公開を意識した教材',
-    description: 'NIST PQC の最新情報や量子実験ログへの導線を用意し、調査結果をそのまま共有できます。',
+    icon: '🚀',
+    title: 'アウトプット重視の設計',
+    description: 'NIST PQC の最新情報や量子実験ログへの導線を用意。学んだ知識をすぐに活用・共有できます。',
   },
 ]
 
@@ -22,6 +26,10 @@ const steps = [
 ]
 
 export default function Home() {
+  useEffect(() => {
+    document.title = 'CryptoLab - 暗号技術のハンズオン学習'
+  }, [])
+
   return (
     <div className="home">
       <section className="hero">
@@ -29,7 +37,7 @@ export default function Home() {
         <h1>暗号を学んで、実践し、楽しもう。</h1>
         <p>
           CryptoLab は、学習・実装・可視化を一続きで進められるハンズオンサイトです。
-          WebCrypto で動く 3 つのラボと PQC ロードマップを 1 つの UI にまとめています。
+          WebCrypto で動く 3 つのラボと PQC ロードマップを、洗練された 1 つの UI にまとめました。
         </p>
         <div className="hero-actions">
           <Link to="/labs" className="primary large">
@@ -44,6 +52,7 @@ export default function Home() {
       <section className="card-grid">
         {highlights.map((item) => (
           <article key={item.title} className="card highlight">
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>{item.icon}</div>
             <h3>{item.title}</h3>
             <p>{item.description}</p>
           </article>

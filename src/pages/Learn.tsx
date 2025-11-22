@@ -464,197 +464,224 @@ function AlgorithmsContent() {
 function SecurityContent() {
   return (
     <>
+      {/* 1. 暗号における乱数の安全性 */}
       <section className="card">
-        <h2>安全な鍵管理</h2>
+        <h2>1. 暗号における乱数の安全性</h2>
 
-        <h3>鍵生成の原則</h3>
+        <h3>❌ Math.random() は絶対に使用しない</h3>
+        <p>
+          パスワード生成、ソルト生成、セッショントークン、暗号鍵など、
+          <strong>セキュリティに関わる乱数生成には<code>Math.random()</code>を絶対に使用してはいけません</strong>。
+        </p>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '12px',
+          borderRadius: '4px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+          fontSize: '14px'
+        }}>
+          <strong>注:</strong> UIのアニメーションやゲームの演出など、
+          セキュリティに関係のない用途であれば<code>Math.random()</code>を使用しても問題ありません。
+        </div>
+
+        <h4>使用してはいけない理由</h4>
         <ul>
-          <li><strong>真の乱数を使用:</strong> 暗号学的に安全な乱数生成器（CSPRNG）を使用
-            <ul>
-              <li>JavaScript: <code>crypto.getRandomValues()</code></li>
-              <li>Python: <code>secrets</code> モジュール</li>
-              <li>❌ <code>Math.random()</code> は絶対に使用しない</li>
-            </ul>
-          </li>
-          <li><strong>十分な鍵長:</strong>
-            <ul>
-              <li>AES: 128bit以上（推奨256bit）</li>
-              <li>RSA: 2048bit以上（推奨3072bit）</li>
-              <li>ECDH: 256bit以上</li>
-            </ul>
-          </li>
+          <li><strong>予測可能性:</strong> 決定論的アルゴリズム（PRNG）であり、内部状態から次の値を予測可能</li>
+          <li><strong>シード値の脆弱性:</strong> 実装によっては時刻などをシードにするため推測容易</li>
+          <li><strong>暗号学的強度がない:</strong> CSPRNGではないため、統計的偏りや前方安全性に欠ける</li>
         </ul>
 
-        <h3>鍵の保存</h3>
+        <h4>実際の攻撃事例</h4>
         <ul>
-          <li><strong>ハードウェアセキュリティモジュール（HSM）:</strong> 金融機関、認証局で使用</li>
-          <li><strong>TPM（Trusted Platform Module）:</strong> PCのセキュアチップ、BitLocker等で使用</li>
-          <li><strong>Secure Enclave:</strong> iOS、macOSの専用セキュリティプロセッサ</li>
+          <li><strong>Android Bitcoin Wallet (2013):</strong> <code>SecureRandom</code>の実装不備により秘密鍵が漏洩</li>
+          <li><strong>Debian OpenSSL (2008):</strong> エントロピー不足により鍵生成が予測可能に</li>
+        </ul>
+
+        <h3>✅ CSPRNG (Cryptographically Secure PRNG) の使用</h3>
+        <p>必ず以下の暗号学的に安全な乱数生成器を使用してください：</p>
+
+        <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+          <div>
+            <strong>ブラウザ (Web Crypto API)</strong>
+            <pre style={{ background: '#f8fafc', padding: '8px', fontSize: '12px', overflowX: 'auto' }}>{`const val = new Uint32Array(1);
+crypto.getRandomValues(val);`}</pre>
+          </div>
+          <div>
+            <strong>Node.js</strong>
+            <pre style={{ background: '#f8fafc', padding: '8px', fontSize: '12px', overflowX: 'auto' }}>{`const crypto = require('crypto');
+crypto.randomBytes(16);`}</pre>
+          </div>
+          <div>
+            <strong>Python</strong>
+            <pre style={{ background: '#f8fafc', padding: '8px', fontSize: '12px', overflowX: 'auto' }}>{`import secrets
+secrets.token_bytes(16)`}</pre>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. 鍵管理の実務 */}
+      <section className="card">
+        <h2>2. 鍵管理の実務</h2>
+
+        <h3>鍵生成</h3>
+        <p>
+          必ずCSPRNGを使用し、十分な鍵長を確保します。
+        </p>
+        <ul>
+          <li><strong>AES:</strong> 256bit推奨（最低128bit）</li>
+          <li><strong>RSA:</strong> 3072bit推奨（最低2048bit）</li>
+          <li><strong>ECC:</strong> 256bit以上</li>
+        </ul>
+
+        <h3>鍵の保管</h3>
+        <p>鍵をアプリケーションコードやリポジトリにハードコードしてはいけません。</p>
+        <ul>
+          <li><strong>HSM / TPM / Secure Enclave:</strong> ハードウェアレベルで鍵を保護</li>
           <li><strong>Web環境:</strong>
             <ul>
-              <li>IndexedDB暗号化保存（Web Crypto API）</li>
-              <li>非抽出可能鍵（extractable: false）</li>
-              <li>❌ LocalStorage、Cookie には暗号鍵を保存しない</li>
+              <li>IndexedDBにWeb Crypto APIの<code>extractable: false</code>（抽出不可）設定で保存</li>
+              <li>❌ LocalStorageやCookieへの保存はXSSで漏洩する危険性が高い</li>
             </ul>
           </li>
         </ul>
 
-        <h3>鍵の寿命管理</h3>
+        <h3>鍵のライフサイクル</h3>
         <ul>
-          <li><strong>定期的なローテーション:</strong> 1年〜2年ごとに鍵を更新</li>
-          <li><strong>Perfect Forward Secrecy (PFS):</strong> セッションごとに一時鍵を生成（TLS 1.3）</li>
-          <li><strong>鍵の失効:</strong> 漏洩時の証明書失効リスト（CRL）、OCSP</li>
+          <li><strong>ローテーション:</strong> 定期的（1〜2年）に鍵を更新する</li>
+          <li><strong>PFS (Perfect Forward Secrecy):</strong> セッションごとに一時鍵を使用し、長期鍵の漏洩影響を最小化（TLS 1.3等）</li>
         </ul>
       </section>
 
+      {/* 3. ブロック暗号における落とし穴 */}
       <section className="card">
-        <h2>よくある脆弱性と対策</h2>
+        <h2>3. ブロック暗号における落とし穴</h2>
 
-        <h3>❌ ECBモードの使用</h3>
-        <p><strong>問題:</strong> 同じ平文ブロックが同じ暗号文になり、パターンが可視化される</p>
-        <p><strong>有名な例:</strong> ECBペンギン（暗号化しても画像の輪郭が見える）</p>
-        <p><strong>対策:</strong> CBC、CTR、GCMモードを使用</p>
-
-        <h3>❌ IVの再利用</h3>
-        <p><strong>問題:</strong> CBCモードで同じIVを使用すると、最初のブロックからXOR差分で平文が漏洩</p>
-        <p><strong>CTRモード:</strong> 同じナンスを再利用すると鍵ストリームが露出し、XORで平文が復元可能</p>
-        <p><strong>対策:</strong></p>
-        <ul>
-          <li>毎回ランダムな IV/ナンス を生成（crypto.getRandomValues）</li>
-          <li>ナンス = カウンタ方式も可（単調増加保証）</li>
-          <li>GCMモードでは96bit推奨（12bytes）</li>
-        </ul>
-
-        <h3>❌ パディングオラクル攻撃</h3>
-        <p><strong>問題:</strong> CBCモードでパディングエラーの有無が分かると、復号化可能</p>
-        <p><strong>2002年:</strong> Serge Vaudenayが発表</p>
-        <p><strong>実例:</strong> ASP.NET、JavaのXML暗号化で脆弱性</p>
-        <p><strong>対策:</strong></p>
-        <ul>
-          <li>認証付き暗号（GCM、ChaCha20-Poly1305）を使用</li>
-          <li>Encrypt-then-MAC（暗号化後にHMAC）</li>
-          <li>タイミング攻撃対策（エラーメッセージを統一）</li>
-        </ul>
-
-        <h3>❌ 認証なし暗号化</h3>
-        <p><strong>問題:</strong> 暗号文の改ざんを検知できない</p>
-        <p><strong>Malleability攻撃:</strong> 暗号文を操作して復号結果を制御</p>
-        <p><strong>対策:</strong> AEAD暗号（AES-GCM、ChaCha20-Poly1305）を使用</p>
-
-        <h3>❌ 短いパスワードから直接鍵を生成</h3>
-        <p><strong>問題:</strong> ブルートフォース攻撃、辞書攻撃に脆弱</p>
-        <p><strong>対策:</strong></p>
-        <ul>
-          <li><strong>ソルト:</strong> ユーザーごとにランダムな値を追加（レインボーテーブル対策）</li>
-          <li><strong>ストレッチング:</strong> 計算量を増やす
-            <ul>
-              <li>PBKDF2: HMAC-SHA256を10,000回以上反復</li>
-              <li>bcrypt: メモリハード関数、コストパラメータ調整可</li>
-              <li>Argon2: 2015年Password Hashing Competition優勝、メモリとCPU両方をハード化</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>❌ タイミング攻撃</h3>
-        <p><strong>問題:</strong> 処理時間の差から秘密情報が漏洩</p>
-        <p><strong>実例:</strong></p>
-        <ul>
-          <li>RSA復号化の計算時間から秘密指数dを推定</li>
-          <li>HMAC検証の早期リターンでメッセージ復元</li>
-        </ul>
-        <p><strong>対策:</strong></p>
-        <ul>
-          <li>定数時間比較（crypto.timingSafeEqual）</li>
-          <li>ブラインド化（RSA）</li>
-          <li>ハードウェア実装（AES-NI）</li>
-        </ul>
-
-        <h3>❌ 証明書検証の省略</h3>
-        <p><strong>問題:</strong> MITM（中間者攻撃）が可能に</p>
-        <p><strong>対策:</strong></p>
-        <ul>
-          <li>TLS証明書チェーンの完全検証</li>
-          <li>証明書ピンニング（モバイルアプリ）</li>
-          <li>HSTS（HTTP Strict Transport Security）</li>
-        </ul>
-      </section>
-
-      <section className="card">
-        <h2>ブルートフォース攻撃と対策</h2>
-
-        <h3>攻撃の種類</h3>
-        <ul>
-          <li><strong>総当たり攻撃:</strong> すべての組み合わせを試行</li>
-          <li><strong>辞書攻撃:</strong> よくあるパスワードリストを使用</li>
-          <li><strong>レインボーテーブル:</strong> 事前計算済みハッシュテーブル</li>
-          <li><strong>ハイブリッド攻撃:</strong> 辞書 + 数字・記号の組み合わせ</li>
-        </ul>
-
-        <h3>計算量の見積もり</h3>
+        <h3>❌ ECBモード (Electronic CodeBook)</h3>
         <p>
-          小文字のみ6文字のパスワード: 26⁶ = 約3億通り<br />
-          最新GPU（RTX 4090）で SHA-1: 約100億回/秒<br />
-          → <strong>0.03秒で解読</strong>
-        </p>
-        <p>
-          英数字記号8文字: (26+26+10+32)⁸ ≈ 6×10¹⁴通り<br />
-          → 約17時間
+          同じ平文が同じ暗号文になるため、データのパターンが漏洩します。
+          <strong>いかなる場合も使用禁止です。</strong>
         </p>
 
-        <h3>防御策</h3>
-        <ul>
-          <li><strong>十分な長さ:</strong> 12文字以上推奨</li>
-          <li><strong>複雑性:</strong> 大小英字、数字、記号を混在</li>
-          <li><strong>ソルト:</strong> ユーザーごとに異なるランダム値</li>
-          <li><strong>遅いハッシュ関数:</strong>
-            <ul>
-              <li>Argon2id（メモリハード、OWASP推奨）</li>
-              <li>bcrypt（コストファクター10〜12）</li>
-              <li>PBKDF2-HMAC-SHA256（反復回数600,000回以上、NIST推奨）</li>
-            </ul>
-          </li>
-          <li><strong>レート制限:</strong> ログイン試行回数制限、CAPTCHA</li>
-          <li><strong>二要素認証（2FA）:</strong> パスワード漏洩時の最終防御</li>
-        </ul>
-
-        <h3>本サイトのHash Crackerツールについて</h3>
+        <h3>❌ IV (初期化ベクトル) の再利用</h3>
         <p>
-          本サイトの<a href="/tools/hash-cracker">Hash Cracker</a>は、
-          SHA-1のような<strong>高速ハッシュ関数</strong>がパスワード保存に不適切であることを
-          実演するための教育ツールです。
+          CBCモードでIVを使い回すと、最初のブロックの等価性が漏洩します。
+          CTRモードやGCMモードでナンスを使い回すと、<strong>鍵ストリームが完全に露出し、平文が復元されます</strong>。
         </p>
+
+        <h3>✅ GCMのNonce管理</h3>
         <p>
-          実際のパスワード保存には、必ず<strong>Argon2、bcrypt、PBKDF2</strong>のような
-          鍵導出関数（KDF）を使用してください。
+          AES-GCMでは96bit（12バイト）のナンスを使用します。
+          カウンター方式などで一意性を厳密に保証する必要があります。
         </p>
       </section>
 
+      {/* 4. 認証なし暗号の危険性 */}
       <section className="card">
-        <h2>TLSとWeb PKI</h2>
+        <h2>4. 認証なし暗号の危険性</h2>
 
-        <h3>TLS 1.3の改善点（2018年標準化）</h3>
+        <h3>Malleability (展性)</h3>
+        <p>
+          CBCモードなどは、暗号文のビットを反転させると、復号後の平文の対応するビットも反転するという性質（展性）を持ちます。
+          攻撃者は暗号文を改ざんすることで、復号結果を意図的に操作できる可能性があります。
+        </p>
+
+        <h3>✅ AEAD (Authenticated Encryption with Associated Data)</h3>
+        <p>
+          暗号化と同時に「認証（改ざん検知）」を行う方式を使用してください。
+        </p>
         <ul>
-          <li><strong>ハンドシェイクの高速化:</strong> 1-RTT（往復1回）、0-RTTも可能</li>
-          <li><strong>脆弱な暗号の削除:</strong> RSA鍵交換、CBC、RC4、SHA-1、MD5を廃止</li>
-          <li><strong>Perfect Forward Secrecy必須:</strong> ECDHE、DHEのみサポート</li>
-          <li><strong>暗号化範囲の拡大:</strong> ハンドシェイクメッセージも暗号化</li>
+          <li><strong>AES-GCM</strong></li>
+          <li><strong>ChaCha20-Poly1305</strong></li>
+        </ul>
+      </section>
+
+      {/* 5. 復号オラクル攻撃 */}
+      <section className="card">
+        <h2>5. 復号オラクル攻撃</h2>
+
+        <h3>Padding Oracle攻撃</h3>
+        <p>
+          CBCモードにおいて、パディングが正しいかどうかのエラーメッセージ（オラクル）を利用して、
+          暗号文を解読する攻撃です。
+        </p>
+        <p>
+          <strong>対策:</strong> AEADを使用するか、Encrypt-then-MAC（暗号化してからMACを付与・検証）構成を採用する。
+        </p>
+      </section>
+
+      {/* 6. タイミング攻撃・サイドチャネル */}
+      <section className="card">
+        <h2>6. タイミング攻撃・サイドチャネル</h2>
+
+        <h3>タイミング攻撃</h3>
+        <p>
+          処理時間のわずかな差（ナノ秒単位）を計測することで、秘密情報を推測する攻撃です。
+        </p>
+        <ul>
+          <li><strong>文字列比較:</strong> 通常の比較（<code>==</code>, <code>strcmp</code>）は不一致の時点で処理を終えるため、一致している長さが推測可能。</li>
+          <li><strong>対策:</strong> 常に一定時間で比較を行う<code>timingSafeEqual</code>関数を使用する。</li>
         </ul>
 
-        <h3>証明書チェーン検証</h3>
-        <ol>
-          <li><strong>ルートCA:</strong> OS/ブラウザに埋め込まれた信頼の起点</li>
-          <li><strong>中間CA:</strong> ルートCAが署名</li>
-          <li><strong>サーバー証明書:</strong> 中間CAが署名</li>
-        </ol>
+        <h3>その他の対策</h3>
+        <ul>
+          <li><strong>RSAブラインド化:</strong> 入力にランダムな値を掛けてから計算し、最後に除去することで計算時間をランダム化。</li>
+          <li><strong>AES-NI:</strong> CPUの専用命令セットを使用し、定数時間での処理を保証。</li>
+        </ul>
+      </section>
+
+      {/* 7. パスワード保護のセキュリティ */}
+      <section className="card">
+        <h2>7. パスワード保護のセキュリティ</h2>
+
+        <h3>ブルートフォース・辞書攻撃への対策</h3>
         <p>
-          各証明書の署名を上位CAの公開鍵で検証し、チェーン全体の正当性を確認。
+          単純なハッシュ関数（SHA-256など）は高速すぎるため、パスワード保存には不向きです。
         </p>
+
+        <h3>✅ KDF (Key Derivation Function) の使用</h3>
+        <p>
+          計算コスト（CPU/メモリ）を高く設定できる専用の関数を使用します。
+        </p>
+        <ul>
+          <li><strong>Argon2:</strong> 最も推奨される最新アルゴリズム（メモリハード）</li>
+          <li><strong>bcrypt:</strong> 広く使われている強力なアルゴリズム</li>
+          <li><strong>PBKDF2:</strong> NIST推奨だが、GPU耐性は低め（反復回数を十分大きくする）</li>
+        </ul>
+        <p>
+          必ず<strong>ソルト（Salt）</strong>を付与してレインボーテーブル攻撃を防ぎ、
+          <strong>ストレッチング</strong>（計算の繰り返し）で総当たり攻撃を遅らせます。
+        </p>
+      </section>
+
+      {/* 8. TLS / PKI の実践 */}
+      <section className="card">
+        <h2>8. TLS / PKI の実践</h2>
+
+        <h3>TLS 1.3</h3>
+        <p>
+          最新のTLS 1.3を使用し、古い暗号スイート（RSA鍵交換、CBCモード、SHA-1等）を無効化します。
+        </p>
+
+        <h3>証明書検証の重要性</h3>
+        <div style={{
+          background: '#fef2f2',
+          padding: '12px',
+          borderRadius: '4px',
+          borderLeft: '4px solid #dc2626',
+          marginBottom: '16px',
+          fontSize: '14px'
+        }}>
+          <strong>警告:</strong> 中間者攻撃（MITM）は、クライアント側で<strong>証明書の検証を省略または不適切に実装したとき</strong>に成立します。
+          「オレオレ証明書」を安易に許可したり、検証コードを無効化してはいけません。
+        </div>
 
         <h3>証明書の種類</h3>
         <ul>
-          <li><strong>DV（Domain Validation）:</strong> ドメイン所有権のみ確認、Let's Encrypt</li>
-          <li><strong>OV（Organization Validation）:</strong> 組織の実在性確認</li>
-          <li><strong>EV（Extended Validation）:</strong> 厳格な審査、アドレスバーに組織名表示（ブラウザにより廃止傾向）</li>
+          <li><strong>DV (Domain Validation):</strong> ドメイン管理権限のみ確認</li>
+          <li><strong>OV (Organization Validation):</strong> 組織の実在性を確認</li>
+          <li><strong>EV (Extended Validation):</strong> 最も厳格な審査</li>
         </ul>
       </section>
 
