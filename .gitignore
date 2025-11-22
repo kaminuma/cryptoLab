@@ -16,7 +16,8 @@ dist-ssr
 # Documentation (work in progress)
 docs/
 
-# Python virtual environment
+# Python scripts and environment
+*.py
 venv/
 
 # Editor directories and files
