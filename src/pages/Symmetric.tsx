@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { aesGcmDecrypt, aesGcmEncrypt } from '@/lib/crypto/webcrypto'
 import { base64ToBytes, bytesToBase64, bytesToUtf8, utf8ToBytes } from '@/utils/encoding'
 
@@ -31,6 +31,10 @@ const validatePassphrase = (value: string) => {
 
 export default function SymmetricPage() {
   const [plaintext, setPlaintext] = useState(defaultText)
+
+  useEffect(() => {
+    document.title = '共通鍵暗号 - CryptoLab'
+  }, [])
   const [passphrase, setPassphrase] = useState('cryptolab-demo')
   const [ivBase64, setIvBase64] = useState('')
   const [cipherBase64, setCipherBase64] = useState('')

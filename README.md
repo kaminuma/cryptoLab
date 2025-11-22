@@ -1,5 +1,7 @@
 # CryptoLab (React版)
 
+**公開URL:** https://cryptolab-8xw.pages.dev/
+
 古典暗号から WebCrypto／PQC への流れをローカルで「触って理解する」ための最小実験アプリ。React + Vite + TypeScript で構築し、サイト公開を見据えたホーム／ラボ／解説ページを備えています。
 
 ## 最短セットアップ（5ステップ）

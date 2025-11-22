@@ -15,6 +15,10 @@ export default function Hash() {
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set(['input', 'final']));
 
   useEffect(() => {
+    document.title = 'ハッシュ関数 - CryptoLab';
+  }, []);
+
+  useEffect(() => {
     // 自作SHA-256を実行
     const sha256Result = sha256WithSteps(input);
     setResult(sha256Result);

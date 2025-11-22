@@ -23,6 +23,10 @@ const validateText = (text: string) => {
 
 export default function ClassicalPage() {
   const [selectedId, setSelectedId] = useState(classicalCiphers[0].id)
+
+  useEffect(() => {
+    document.title = '古典暗号 - CryptoLab'
+  }, [])
   const selectedCipher = classicalCiphers.find((cipher) => cipher.id === selectedId) ?? classicalCiphers[0]
   const interactiveType = selectedCipher.interactive ?? null
 
@@ -192,8 +196,8 @@ export default function ClassicalPage() {
         <>
           <section className="card">
             <div className="card-header">
-          <h2>入力とパラメータ</h2>
-          <p>選択した暗号のルールに合わせてパラメータを設定します。</p>
+              <h2>入力とパラメータ</h2>
+              <p>選択した暗号のルールに合わせてパラメータを設定します。</p>
             </div>
 
             {interactiveType === 'caesar' && (

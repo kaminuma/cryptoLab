@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   generateSimpleRSAKey,
   rsaEncrypt,
@@ -33,6 +33,10 @@ export default function RSAPage() {
   const [largeN, setLargeN] = useState<bigint | null>(null)
   const [largeD, setLargeD] = useState<bigint | null>(null)
   const [eValue] = useState(65537n)
+
+  useEffect(() => {
+    document.title = 'RSA - CryptoLab'
+  }, [])
 
   // 小さい数での鍵生成
   const generateKeys = () => {
@@ -1011,7 +1015,7 @@ export default function RSAPage() {
               fontSize: '13px',
               lineHeight: '1.6'
             }}>
-{`export function modPow(base: bigint, exp: bigint, modulus: bigint): bigint {
+              {`export function modPow(base: bigint, exp: bigint, modulus: bigint): bigint {
   if (modulus === 1n) return 0n
 
   let result = 1n
@@ -1063,7 +1067,7 @@ export default function RSAPage() {
               fontSize: '13px',
               lineHeight: '1.6'
             }}>
-{`function modInverse(a: bigint, m: bigint): bigint {
+              {`function modInverse(a: bigint, m: bigint): bigint {
   const m0 = m
   let x0 = 0n
   let x1 = 1n
@@ -1122,7 +1126,7 @@ export default function RSAPage() {
               fontSize: '13px',
               lineHeight: '1.6'
             }}>
-{`export function generateSimpleRSAKey(
+              {`export function generateSimpleRSAKey(
   p: bigint,
   q: bigint,
   e: bigint = 65537n
@@ -1185,7 +1189,7 @@ export default function RSAPage() {
               fontSize: '13px',
               lineHeight: '1.6'
             }}>
-{`// RSA暗号化: c = m^e mod n
+              {`// RSA暗号化: c = m^e mod n
 export function rsaEncrypt(
   message: bigint,
   publicKey: { e: bigint, n: bigint }

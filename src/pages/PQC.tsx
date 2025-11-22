@@ -28,7 +28,12 @@ const roadmap = [
   },
 ]
 
+import { useEffect } from 'react'
+
 export default function PQC() {
+  useEffect(() => {
+    document.title = '量子耐性暗号 - CryptoLab'
+  }, [])
   return (
     <div className="pqc page">
       <section className="page-header">

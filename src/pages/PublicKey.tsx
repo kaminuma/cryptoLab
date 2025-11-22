@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ecdhDeriveSecret } from '@/lib/crypto/ecdh'
 import { aesGcmDecrypt, aesGcmEncrypt, hkdf } from '@/lib/crypto/webcrypto'
 import { base64ToBytes, bytesToBase64, bytesToUtf8, utf8ToBytes } from '@/utils/encoding'
@@ -37,6 +37,10 @@ const compareBytes = (a: Uint8Array, b: Uint8Array) => {
 
 export default function PublicKeyPage() {
   const [message, setMessage] = useState(defaultMessage)
+
+  useEffect(() => {
+    document.title = '公開鍵暗号 - CryptoLab'
+  }, [])
   const [saltBase64, setSaltBase64] = useState(randomSalt)
   const [infoString, setInfoString] = useState('CryptoLab demo key')
   const [alicePub, setAlicePub] = useState('')

@@ -6,8 +6,8 @@ const links = [
   { to: '/learn', label: 'Learn' },
   { to: '/labs', label: 'Lab' },
   { to: '/hash', label: 'Hash' },
-  { to: '/rsa', label: 'RSA' },
   { to: '/aes', label: 'AES' },
+  { to: '/rsa', label: 'RSA' },
   { to: '/pqc', label: 'PQC' },
 ]
 
@@ -81,7 +81,7 @@ export default function NavBar() {
             onClick={closeMenu}
             style={{ border: '1px solid var(--color-border)', borderRadius: '999px' }}
           >
-            GitHub ↗
+            Quantum RSA Lab ↗
           </a>
         </nav>
       </div>

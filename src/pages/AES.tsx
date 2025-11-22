@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   encrypt,
   decrypt,
@@ -24,6 +24,10 @@ export default function AESPage() {
   const [ecbResult, setEcbResult] = useState<string>('')
   const [cbcResult, setCbcResult] = useState<string>('')
   const [ctrResult, setCtrResult] = useState<string>('')
+
+  useEffect(() => {
+    document.title = 'AES - CryptoLab'
+  }, [])
 
   const handleGenerateKey = () => {
     const newKey = generateRandomKey(keySize)
@@ -419,44 +423,6 @@ export default function AESPage() {
               </div>
             )}
           </div>
-        </div>
-      </section>
-
-      {/* 実装コード */}
-      <section className="mb-12 bg-gray-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">💻 実装コード</h2>
-        <p className="mb-4">
-          このページで使用しているAESの実装は、
-          <a
-            href="https://github.com/anthropics/cryptoLab"
-            className="text-blue-600 hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            src/lib/aes/index.ts
-          </a>
-          にあります。
-        </p>
-
-        <div className="bg-white p-4 rounded border">
-          <h3 className="font-bold mb-2">主な実装内容：</h3>
-          <ul className="list-disc list-inside space-y-1 text-sm">
-            <li>S-Box / 逆S-Box による SubBytes 変換</li>
-            <li>ShiftRows / 逆ShiftRows 変換</li>
-            <li>ガロア体 GF(2⁸) での MixColumns 変換</li>
-            <li>鍵拡張アルゴリズム（AES-128/192/256対応）</li>
-            <li>ECB / CBC / CTR モードの実装</li>
-            <li>PKCS#7 パディング</li>
-          </ul>
-        </div>
-
-        <div className="mt-4 bg-yellow-100 border-l-4 border-yellow-500 p-4">
-          <p className="font-semibold">⚠️ 注意：</p>
-          <p className="text-sm">
-            この実装は<strong>教育目的</strong>です。
-            本番環境では Web Crypto API（<code className="bg-white px-1">crypto.subtle</code>）など、
-            検証済みの暗号ライブラリを使用してください。
-          </p>
         </div>
       </section>
 
