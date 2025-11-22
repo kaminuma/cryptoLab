@@ -439,6 +439,7 @@ export default function ClassicalPage() {
             </section>
           </>
         )}
+
       </div>
 
       <section className="card caution">

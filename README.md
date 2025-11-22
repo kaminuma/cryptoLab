@@ -65,3 +65,21 @@ src/
 2. RSA デモの生成時間短縮（Web Worker 化）と安全性ガイドの拡充。
 3. ナビ／ヒーローの英語版テキスト、OGP 画像、SEO メタ追加。
 4. デプロイ（Vercel/Netlify）用 CI 設定とパフォーマンス最適化（ECharts 遅延ロード等）。
+
+## Analytics & Fork Policy
+
+### Google Analytics
+
+**フォークする場合:**
+- `index.html` 内の GA タグを削除するか、ご自身の測定IDに書き換えてください
+- このIDのまま使用すると、元プロジェクトのアナリティクスにデータが送信されます
+
+### Fork について
+このプロジェクトをフォークする際は、以下をお願いします：
+- 可能であれば事前にご一報ください（任意ですが歓迎します）
+- 上記 GA IDの変更をお忘れなく
+
+**連絡先:** kaminuma.dev@gmail.com
+
+## ライセンス
+MIT License
