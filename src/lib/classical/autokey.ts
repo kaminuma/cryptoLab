@@ -53,7 +53,6 @@ export function autokeyEncrypt(plaintext: string, keyword: string): string {
 
   let result = ''
   let keyIndex = 0
-  let plaintextIndex = 0
 
   // Build the key stream: keyword + plaintext letters
   const keyStream: number[] = []
@@ -72,7 +71,7 @@ export function autokeyEncrypt(plaintext: string, keyword: string): string {
     }
 
     // Get key value from stream
-    const kIndex = keyStream[keyIndex % keyStream.length]
+    const kIndex = keyStream[keyIndex]
 
     // Encrypt: (P + K) mod 26
     const cIndex = (pIndex + kIndex) % ALPHABET_SIZE
@@ -122,7 +121,7 @@ export function autokeyDecrypt(ciphertext: string, keyword: string): string {
     }
 
     // Get key value from stream
-    const kIndex = keyStream[keyIndex % keyStream.length]
+    const kIndex = keyStream[keyIndex]
 
     // Decrypt: (C - K + 26) mod 26
     const pIndex = (cIndex - kIndex + ALPHABET_SIZE) % ALPHABET_SIZE
