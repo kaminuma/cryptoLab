@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 const milestones = [
   {
     year: '2016',
@@ -27,8 +29,6 @@ const roadmap = [
     desc: '既存タブに「PQC」を追加し、Kyber で共有鍵→AES-GCM という一連の流れを構築。',
   },
 ]
-
-import { useEffect } from 'react'
 
 export default function PQC() {
   useEffect(() => {
