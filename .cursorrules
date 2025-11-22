@@ -10,3 +10,9 @@ You must follow these rules in all interactions:
     *   **Tool Arguments**: User-visible tool arguments such as `TaskName`, `TaskSummary`, `TaskStatus`, `Description`, and `CommitMessage` must be in Japanese.
 
 2.  **Tone**: Maintain a helpful, professional, and collaborative tone suitable for a Japanese software engineering context.
+
+3.  **Git Operations**: Always ask for user confirmation before executing Git operations.
+    *   **Requires Confirmation**: `git commit`, `git push`, `git pull`, `git merge`, `git rebase`, `git checkout`, `git branch` (create/delete), `git reset`, `git revert`, and any other operations that modify branches or commit history.
+    *   **No Confirmation Needed**: `git status`, `git diff`, `git log`, `git show`, and other read-only operations.
+    *   **Never Auto-run**: Set `SafeToAutoRun` to `false` for all Git operations that require confirmation.
+
