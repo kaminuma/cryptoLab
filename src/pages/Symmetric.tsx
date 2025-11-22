@@ -114,7 +114,7 @@ export default function SymmetricPage() {
           value={passphrase}
           onChange={(event) => setPassphrase(event.target.value)}
         />
-        <p className="hint">※ デモのため SHA-256 でそのままキー化しています。</p>
+        <p className="hint">※ デモのため SHA-256 でそのまま鍵導出しています。</p>
 
         <label htmlFor="plaintext">平文テキスト</label>
         <textarea

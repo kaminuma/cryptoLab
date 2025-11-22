@@ -10,11 +10,11 @@ const description = {
   summary:
     '楕円曲線 Diffie-Hellman (ECDH) で共有秘密を作り、HKDF で AES-GCM 用の対称キーへ導き、短文を暗号化するデモです。',
   details:
-    'P-256 曲線で Alice/Bob の鍵ペアを生成し、互いの公開鍵から同じ共有秘密 Z を求めます。その Z と塩・info を HKDF に通すことで 256bit キーを得ます。これを使って AES-GCM でメッセージを暗号化します。秘密一致フラグや Base64 表示で状態が確認できます。',
+    'P-256 曲線で Alice/Bob の鍵ペアを生成し、互いの公開鍵から同じ共有秘密 Z を求めます。その Z とソルト・info を HKDF に通すことで 256bit キーを得ます。これを使って AES-GCM でメッセージを暗号化します。秘密一致フラグや Base64 表示で状態が確認できます。',
   points: [
-    '塩 (salt) は共有秘密から独立したランダム値。毎回変えるのが理想。',
+    'ソルト (salt) は共有秘密から独立したランダム値。毎回変えるのが理想。',
     'info は用途ラベル。文字列を自由に設定可能。',
-    'HKDF で得たキーが揃えば、どちらの側でも同じ AES-GCM 結果が得られる。',
+    'HKDF で鍵導出すれば、どちらの側でも同じ AES-GCM 結果が得られる。',
   ],
 }
 
@@ -92,7 +92,7 @@ export default function PublicKeyPage() {
       setSharedB(bytesToBase64(zb))
       setDerivedKey(derived)
       setDecryptedText('')
-      setStatus('鍵共有に成功。Derived Key を使って暗号化できます。')
+      setStatus('鍵共有に成功。導出された鍵を使って暗号化できます。')
     } catch (error) {
       setStatus(error instanceof Error ? error.message : '鍵共有に失敗しました。', 'error')
       setSharedMatch('unknown')
@@ -155,11 +155,11 @@ export default function PublicKeyPage() {
 
       <section className="card">
         <div className="card-header">
-          <h2>共通キーの生成</h2>
-          <p>塩 (salt) と info を決め、EC 鍵共有→HKDF を実行します。</p>
+          <h2>共有鍵の生成</h2>
+          <p>ソルト (salt) と info を決め、EC 鍵共有→HKDF で鍵導出を実行します。</p>
         </div>
 
-        <label htmlFor="salt">塩 (Base64)</label>
+        <label htmlFor="salt">ソルト (Base64)</label>
         <div className="row-with-button">
           <input
             id="salt"
@@ -174,7 +174,7 @@ export default function PublicKeyPage() {
             onClick={() => setSaltBase64(randomSalt())}
             disabled={isProcessing}
           >
-            塩を再生成
+            ソルトを再生成
           </button>
         </div>
 
@@ -278,7 +278,7 @@ export default function PublicKeyPage() {
       <section className="card caution">
         <h2>注意</h2>
         <ul>
-          <li>ECDH から得た共有秘密は必ず HKDF などでキー化し、直接 AES に使わないのが原則です。</li>
+          <li>ECDH から得た共有秘密は必ず HKDF などで鍵導出し、直接 AES に使わないのが原則です。</li>
           <li>公開鍵は証明書や署名で真正性を確認する必要があります。本デモでは省略しています。</li>
           <li>ここでの暗号化は短文向け。大きなファイルやストリームを扱う場合は追加の鍵管理やチャンク処理が必要です。</li>
         </ul>
