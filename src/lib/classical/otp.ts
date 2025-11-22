@@ -58,11 +58,23 @@ function countAlphabeticChars(text: string): number {
  */
 export function generateOTPKey(length: number): string {
   const key: string[] = []
-  const randomBytes = crypto.getRandomValues(new Uint8Array(length))
+  // バッファを多めに確保。256/234 ~= 1.09 なので2倍あれば十分安全
+  const bufferSize = length * 2 + 64
+  let randomBytes = crypto.getRandomValues(new Uint8Array(bufferSize))
+  let byteIndex = 0
 
-  for (let i = 0; i < length; i++) {
-    const randomIndex = randomBytes[i] % ALPHABET_SIZE
-    key.push(indexToChar(randomIndex))
+  while (key.length < length) {
+    if (byteIndex >= randomBytes.length) {
+      // バッファが足りない場合は再生成
+      randomBytes = crypto.getRandomValues(new Uint8Array(bufferSize))
+      byteIndex = 0
+    }
+
+    const randomValue = randomBytes[byteIndex++]
+    // 26 * 9 = 234 未満の値のみ受け入れる（バイアスを排除）
+    if (randomValue < 234) {
+      key.push(indexToChar(randomValue % ALPHABET_SIZE))
+    }
   }
 
   return key.join('')
