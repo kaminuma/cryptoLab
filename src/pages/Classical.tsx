@@ -4,6 +4,8 @@ import { classicalCiphers } from '@/data/classical'
 import { caesarEncrypt, caesarDecrypt } from '@/lib/classical/caesar'
 import { vigenereEncrypt, vigenereDecrypt } from '@/lib/classical/vigenere'
 import { atbashTransform } from '@/lib/classical/atbash'
+import { autokeyEncrypt, autokeyDecrypt } from '@/lib/classical/autokey'
+import { otpEncrypt, otpDecrypt, generateOTPKey } from '@/lib/classical/otp'
 
 type Direction = 'encrypt' | 'decrypt'
 
@@ -34,14 +36,20 @@ export default function ClassicalPage() {
   const [resultText, setResultText] = useState('')
   const [shift, setShift] = useState(3)
   const [keyword, setKeyword] = useState('CRYPTO')
+  const [otpKey, setOtpKey] = useState('')
   const [showChart, setShowChart] = useState(false)
   const [feedback, setFeedback] = useState('')
   const [feedbackType, setFeedbackType] = useState<'info' | 'error'>('info')
 
-  const keywordValid = useMemo(
-    () => (interactiveType === 'vigenere' ? /[a-z]/i.test(keyword) : true),
-    [keyword, interactiveType],
-  )
+  const keywordValid = useMemo(() => {
+    if (interactiveType === 'vigenere' || interactiveType === 'autokey') {
+      return /[a-z]/i.test(keyword)
+    }
+    if (interactiveType === 'otp') {
+      return /[a-z]/i.test(otpKey)
+    }
+    return true
+  }, [keyword, otpKey, interactiveType])
 
   const chartRef = useRef<HTMLDivElement | null>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
@@ -58,12 +66,11 @@ export default function ClassicalPage() {
   }, [resultText])
 
   useEffect(() => {
-    if (!interactiveType) {
-      setResultText('')
-      setShowChart(false)
-    }
+    // 暗号切り替え時に状態をリセット
+    setResultText('')
+    setShowChart(false)
     setFeedback('')
-  }, [interactiveType, selectedId])
+  }, [selectedId])
 
   useEffect(() => {
     if (!showChart || !chartRef.current) {
@@ -114,6 +121,18 @@ export default function ClassicalPage() {
           ? vigenereEncrypt(safeText, keyword)
           : vigenereDecrypt(safeText, keyword)
       }
+      case 'autokey': {
+        if (!keywordValid) throw new Error('英字のキーワードを入力してください。')
+        return direction === 'encrypt'
+          ? autokeyEncrypt(safeText, keyword)
+          : autokeyDecrypt(safeText, keyword)
+      }
+      case 'otp': {
+        if (!keywordValid) throw new Error('英字の鍵を入力してください。')
+        return direction === 'encrypt'
+          ? otpEncrypt(safeText, otpKey)
+          : otpDecrypt(safeText, otpKey)
+      }
       case 'atbash':
         return atbashTransform(safeText)
       default:
@@ -148,156 +167,276 @@ export default function ClassicalPage() {
 
       <section className="card">
         <div className="card-header">
-          <h2>古典暗号カタログ</h2>
-          <p>気になる暗号を選ぶと、下に詳細とデモ（対応している場合）が表示されます。</p>
+          <h2>ハンズオン付き古典暗号</h2>
+          <p>実際に暗号化・復号を試せる暗号です。選択すると下にデモが表示されます。</p>
         </div>
         <div className="catalog-grid">
-          {classicalCiphers.map((cipher) => (
-            <button
-              key={cipher.id}
-              type="button"
-              className={`catalog-card${cipher.id === selectedCipher.id ? ' active' : ''}`}
-              onClick={() => setSelectedId(cipher.id)}
-            >
-              <div className="catalog-card-header">
-                <span className="catalog-name">{cipher.name}</span>
-                {cipher.interactive && <span className="catalog-badge">Demo</span>}
-              </div>
-              <p className="catalog-type">{cipher.type}</p>
-              <p className="catalog-era">{cipher.era}</p>
-            </button>
-          ))}
+          {classicalCiphers
+            .filter((cipher) => cipher.interactive)
+            .map((cipher) => (
+              <button
+                key={cipher.id}
+                type="button"
+                className={`catalog-card${cipher.id === selectedCipher.id ? ' active' : ''}`}
+                onClick={() => setSelectedId(cipher.id)}
+              >
+                <div className="catalog-card-header">
+                  <span className="catalog-name">{cipher.name}</span>
+                </div>
+                <p className="catalog-type">{cipher.type}</p>
+                <p className="catalog-era">{cipher.era}</p>
+              </button>
+            ))}
         </div>
       </section>
 
       <section className="card">
         <div className="card-header">
-          <h2>{selectedCipher.name}</h2>
-          <p>{selectedCipher.era} / {selectedCipher.type}</p>
+          <h2>古典暗号カタログ</h2>
+          <p>解説のみの暗号です。歴史的背景と暗号方式を学べます。</p>
         </div>
-        <p className="details">{selectedCipher.description}</p>
-        <ul>
-          {selectedCipher.highlights.map((point) => (
-            <li key={point}>{point}</li>
-          ))}
-        </ul>
-        {selectedCipher.references && (
-          <div className="reference-links">
-            {selectedCipher.references.map((ref) => (
-              <a key={ref.url} href={ref.url} target="_blank" rel="noreferrer">
-                {ref.label}
-              </a>
+        <div className="catalog-grid">
+          {classicalCiphers
+            .filter((cipher) => !cipher.interactive)
+            .map((cipher) => (
+              <button
+                key={cipher.id}
+                type="button"
+                className={`catalog-card${cipher.id === selectedCipher.id ? ' active' : ''}`}
+                onClick={() => setSelectedId(cipher.id)}
+              >
+                <div className="catalog-card-header">
+                  <span className="catalog-name">{cipher.name}</span>
+                </div>
+                <p className="catalog-type">{cipher.type}</p>
+                <p className="catalog-era">{cipher.era}</p>
+              </button>
             ))}
-          </div>
-        )}
+        </div>
       </section>
 
-      {interactiveType && (
-        <>
-          <section className="card">
-            <div className="card-header">
-              <h2>入力とパラメータ</h2>
-              <p>選択した暗号のルールに合わせてパラメータを設定します。</p>
-            </div>
+      <div
+        style={{
+          textAlign: 'center',
+          margin: '2rem 0 1rem',
+          color: 'var(--color-primary)',
+          fontWeight: 'bold',
+          fontSize: '0.9rem',
+        }}
+      >
+        選択中の暗号
+      </div>
 
-            {interactiveType === 'caesar' && (
-              <div className="control-group">
-                <label htmlFor="shift">シフト量 (−25〜25)</label>
-                <div className="shift-controls">
-                  <input
-                    id="shift"
-                    type="range"
-                    min="-25"
-                    max="25"
-                    step="1"
-                    value={shift}
-                    onChange={(event) => setShift(Number(event.target.value))}
-                  />
-                  <input
-                    className="number-input"
-                    type="number"
-                    min="-25"
-                    max="25"
-                    step="1"
-                    value={shift}
-                    onChange={(event) => setShift(Number(event.target.value))}
-                  />
+      <div
+        className="selected-cipher-container"
+        style={{
+          background: 'rgba(79, 70, 229, 0.05)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'var(--spacing-lg)',
+          border: '1px solid var(--color-primary)',
+        }}
+      >
+        <div
+          className="selected-header"
+          style={{
+            textAlign: 'center',
+            marginBottom: 'var(--spacing-lg)',
+          }}
+        >
+          <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{selectedCipher.name}</h2>
+          <p style={{ color: 'var(--color-text-muted)' }}>
+            {selectedCipher.era} / {selectedCipher.type}
+          </p>
+        </div>
+
+        <section className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
+          <div className="card-header">
+            <h3>概要と仕組み</h3>
+          </div>
+          <p className="details">{selectedCipher.description}</p>
+
+          <h4>暗号化の仕組み</h4>
+          <p className="details">{selectedCipher.algorithm}</p>
+
+          <h4>特徴</h4>
+          <ul>
+            {selectedCipher.highlights.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+          {selectedCipher.references && (
+            <div className="reference-links">
+              {selectedCipher.references.map((ref) => (
+                <a key={ref.url} href={ref.url} target="_blank" rel="noreferrer">
+                  {ref.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {interactiveType && (
+          <>
+            <section className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
+              <div className="card-header">
+                <h3>🧪 実験: 入力とパラメータ</h3>
+                <p>選択した暗号のルールに合わせてパラメータを設定します。</p>
+              </div>
+
+              {interactiveType === 'caesar' && (
+                <div className="control-group">
+                  <label htmlFor="shift">シフト量 (−25〜25)</label>
+                  <div className="shift-controls">
+                    <input
+                      id="shift"
+                      type="range"
+                      min="-25"
+                      max="25"
+                      step="1"
+                      value={shift}
+                      onChange={(event) => setShift(Number(event.target.value))}
+                    />
+                    <input
+                      className="number-input"
+                      type="number"
+                      min="-25"
+                      max="25"
+                      step="1"
+                      value={shift}
+                      onChange={(event) => setShift(Number(event.target.value))}
+                    />
+                  </div>
                 </div>
+              )}
+
+              {interactiveType === 'vigenere' && (
+                <div className="control-group">
+                  <label htmlFor="keyword">キーワード（英字のみ）</label>
+                  <input
+                    id="keyword"
+                    className="text-input"
+                    type="text"
+                    placeholder="CRYPTO"
+                    value={keyword}
+                    onChange={(event) => setKeyword(event.target.value)}
+                  />
+                  <p className={`hint${keywordValid ? '' : ' error'}`}>
+                    {keywordValid ? '英字のみ利用できます。' : '英字のキーワードを入力してください。'}
+                  </p>
+                </div>
+              )}
+
+              {interactiveType === 'autokey' && (
+                <div className="control-group">
+                  <label htmlFor="keyword">初期キーワード（英字のみ）</label>
+                  <input
+                    id="keyword"
+                    className="text-input"
+                    type="text"
+                    placeholder="SECRET"
+                    value={keyword}
+                    onChange={(event) => setKeyword(event.target.value)}
+                  />
+                  <p className={`hint${keywordValid ? '' : ' error'}`}>
+                    {keywordValid
+                      ? 'キーワードの後に平文自体を連結して鍵ストリームを作ります。'
+                      : '英字のキーワードを入力してください。'}
+                  </p>
+                </div>
+              )}
+
+              {interactiveType === 'otp' && (
+                <div className="control-group">
+                  <label htmlFor="otp-key">ワンタイムキー（英字のみ）</label>
+                  <div className="row-with-button">
+                    <input
+                      id="otp-key"
+                      className="text-input"
+                      type="text"
+                      placeholder="RANDOMKEY"
+                      value={otpKey}
+                      onChange={(event) => setOtpKey(event.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="ghost small"
+                      onClick={() => {
+                        const alphaCount = inputText.replace(/[^a-z]/gi, '').length
+                        const generatedKey = generateOTPKey(Math.max(alphaCount, 20))
+                        setOtpKey(generatedKey)
+                        setFeedback(`${generatedKey.length} 文字のランダムキーを生成しました。`)
+                        setFeedbackType('info')
+                      }}
+                    >
+                      ランダム生成
+                    </button>
+                  </div>
+                  <p className={`hint${keywordValid ? '' : ' error'}`}>
+                    {keywordValid
+                      ? '鍵は平文の英字数以上の長さが必要です。真にランダムで一度きり使用が原則。'
+                      : '英字の鍵を入力してください。'}
+                  </p>
+                </div>
+              )}
+
+              {interactiveType === 'atbash' && (
+                <div className="control-group">
+                  <label>Atbash はキー不要</label>
+                  <p className="hint">A↔Z, B↔Y のようにアルファベットを逆順に置き換えます。</p>
+                </div>
+              )}
+            </section>
+
+            <section className="card">
+              <div className="card-header">
+                <h3>テキストと結果</h3>
+                <p>暗号化／復号を行い、必要であれば文字頻度グラフも確認しましょう。</p>
               </div>
-            )}
 
-            {interactiveType === 'vigenere' && (
-              <div className="control-group">
-                <label htmlFor="keyword">キーワード（英字のみ）</label>
-                <input
-                  id="keyword"
-                  className="text-input"
-                  type="text"
-                  placeholder="CRYPTO"
-                  value={keyword}
-                  onChange={(event) => setKeyword(event.target.value)}
-                />
-                <p className={`hint${keywordValid ? '' : ' error'}`}>
-                  {keywordValid ? '英字のみ利用できます。' : '英字のキーワードを入力してください。'}
-                </p>
+              <label htmlFor="input-text">入力テキスト</label>
+              <textarea
+                id="input-text"
+                rows={4}
+                placeholder="ここに平文または暗号文を入力"
+                value={inputText}
+                onChange={(event) => setInputText(event.target.value)}
+              />
+
+              <div className="actions">
+                <button className="primary" type="button" onClick={() => handleAction('encrypt')}>
+                  暗号化
+                </button>
+                <button className="secondary" type="button" onClick={() => handleAction('decrypt')}>
+                  復号
+                </button>
+                {interactiveType !== 'otp' && (
+                  <button className="ghost" type="button" onClick={() => setShowChart((prev) => !prev)}>
+                    {showChart ? '頻度グラフを閉じる' : '頻度表示'}
+                  </button>
+                )}
               </div>
-            )}
 
-            {interactiveType === 'atbash' && (
-              <div className="control-group">
-                <label>Atbash はキー不要</label>
-                <p className="hint">A↔Z, B↔Y のようにアルファベットを逆順に置き換えます。</p>
-              </div>
-            )}
-          </section>
+              {feedback && <p className={`feedback ${feedbackType}`}>{feedback}</p>}
 
-          <section className="card">
-            <div className="card-header">
-              <h2>テキストと結果</h2>
-              <p>暗号化／復号を行い、必要であれば文字頻度グラフも確認しましょう。</p>
-            </div>
+              <label htmlFor="result-text">結果テキスト</label>
+              <textarea
+                id="result-text"
+                rows={4}
+                placeholder="ここに結果が表示されます"
+                value={resultText}
+                readOnly
+              />
 
-            <label htmlFor="input-text">入力テキスト</label>
-            <textarea
-              id="input-text"
-              rows={4}
-              placeholder="ここに平文または暗号文を入力"
-              value={inputText}
-              onChange={(event) => setInputText(event.target.value)}
-            />
-
-            <div className="actions">
-              <button className="primary" type="button" onClick={() => handleAction('encrypt')}>
-                暗号化
-              </button>
-              <button className="secondary" type="button" onClick={() => handleAction('decrypt')}>
-                復号
-              </button>
-              <button className="ghost" type="button" onClick={() => setShowChart((prev) => !prev)}>
-                {showChart ? '頻度グラフを閉じる' : '頻度表示'}
-              </button>
-            </div>
-
-            {feedback && <p className={`feedback ${feedbackType}`}>{feedback}</p>}
-
-            <label htmlFor="result-text">結果テキスト</label>
-            <textarea
-              id="result-text"
-              rows={4}
-              placeholder="ここに結果が表示されます"
-              value={resultText}
-              readOnly
-            />
-
-            {showChart && (
-              <div className="chart-container">
-                <p className="chart-title">文字頻度（A〜Z）</p>
-                <div ref={chartRef} className="chart" />
-              </div>
-            )}
-          </section>
-        </>
-      )}
+              {showChart && (
+                <div className="chart-container">
+                  <p className="chart-title">文字頻度（A〜Z）</p>
+                  <div ref={chartRef} className="chart" />
+                </div>
+              )}
+            </section>
+          </>
+        )}
+      </div>
 
       <section className="card caution">
         <h2>注意</h2>
