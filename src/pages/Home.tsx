@@ -34,7 +34,7 @@ export default function Home() {
     <div className="home">
       <section className="hero">
         <p className="eyebrow">Hands-on Cryptography</p>
-        <h1>暗号を学んで、実践し、楽しもう。</h1>
+        <h1>暗号を学んで・実践し・楽しむ</h1>
         <p>
           CryptoLab は、学習・実装・可視化を一続きで進められるハンズオンサイトです。
           WebCrypto で動く 3 つのラボと PQC ロードマップを、1 つの UI にまとめました。

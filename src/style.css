@@ -304,6 +304,7 @@ body {
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(8px);
   transition: transform 0.2s, box-shadow 0.2s;
+  margin-bottom: var(--spacing-md);
 }
 
 .card:hover {
@@ -518,4 +519,21 @@ textarea:focus {
 .roadmap li {
   margin-bottom: var(--spacing-sm);
   color: var(--color-text-main);
+}
+
+/* Chart Container */
+.chart-container {
+  margin-top: var(--spacing-lg);
+}
+
+.chart-title {
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-bottom: var(--spacing-sm);
+}
+
+.chart {
+  width: 100%;
+  height: 300px;
+  min-height: 300px;
 }
