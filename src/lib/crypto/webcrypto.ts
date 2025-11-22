@@ -3,21 +3,29 @@ const toBufferSource = (bytes?: Uint8Array) => (bytes ? (bytes as unknown as Buf
 export async function aesGcmEncrypt(keyRaw: Uint8Array, data: Uint8Array, aad?: Uint8Array) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await crypto.subtle.importKey('raw', toBufferSource(keyRaw)!, 'AES-GCM', false, ['encrypt']);
-  const buf = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv: toBufferSource(iv)!, additionalData: toBufferSource(aad), tagLength: 128 },
-    key,
-    toBufferSource(data)!,
-  );
+  const params: AesGcmParams = {
+    name: 'AES-GCM',
+    iv: toBufferSource(iv)!,
+    tagLength: 128
+  };
+  if (aad) {
+    params.additionalData = toBufferSource(aad);
+  }
+  const buf = await crypto.subtle.encrypt(params, key, toBufferSource(data)!);
   return { iv, ct: new Uint8Array(buf) };
 }
 
 export async function aesGcmDecrypt(keyRaw: Uint8Array, iv: Uint8Array, ct: Uint8Array, aad?: Uint8Array) {
   const key = await crypto.subtle.importKey('raw', toBufferSource(keyRaw)!, 'AES-GCM', false, ['decrypt']);
-  const pt = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: toBufferSource(iv)!, additionalData: toBufferSource(aad), tagLength: 128 },
-    key,
-    toBufferSource(ct)!,
-  );
+  const params: AesGcmParams = {
+    name: 'AES-GCM',
+    iv: toBufferSource(iv)!,
+    tagLength: 128
+  };
+  if (aad) {
+    params.additionalData = toBufferSource(aad);
+  }
+  const pt = await crypto.subtle.decrypt(params, key, toBufferSource(ct)!);
   return new Uint8Array(pt);
 }
 
