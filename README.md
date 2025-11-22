@@ -69,8 +69,6 @@ src/
 ## Analytics & Fork Policy
 
 ### Google Analytics
-このプロジェクトは Google Analytics (GA4) を使用してアクセス解析を行っています。  
-測定ID: `G-3Q5PQ24SGG`
 
 **フォークする場合:**
 - `index.html` 内の GA タグを削除するか、ご自身の測定IDに書き換えてください
