@@ -24,34 +24,17 @@ export default function Learn() {
       </section>
 
       {/* タブナビゲーション */}
-      <div style={{
-        display: 'flex',
-        gap: '8px',
-        marginBottom: '32px',
-        borderBottom: '2px solid #e2e8f0',
-        flexWrap: 'wrap'
-      }}>
+      <nav className="tab-bar">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            style={{
-              padding: '12px 24px',
-              fontSize: '16px',
-              fontWeight: activeTab === tab.id ? 'bold' : 'normal',
-              background: 'none',
-              border: 'none',
-              borderBottom: activeTab === tab.id ? '3px solid #2563eb' : '3px solid transparent',
-              color: activeTab === tab.id ? '#2563eb' : '#64748b',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              marginBottom: '-2px'
-            }}
+            className={`tab${activeTab === tab.id ? ' active' : ''}`}
           >
-            {tab.label}
+            <span className="tab-label">{tab.label}</span>
           </button>
         ))}
-      </div>
+      </nav>
 
       {/* タブコンテンツ */}
       {activeTab === 'fundamentals' && <FundamentalsContent />}

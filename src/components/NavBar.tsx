@@ -18,70 +18,73 @@ const toolsLinks = [
 
 export default function NavBar() {
   const [showToolsDropdown, setShowToolsDropdown] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+  const closeMenu = () => setIsMenuOpen(false)
 
   return (
     <header className="navbar">
-      <div className="nav-brand">
-        <span className="logo-dot" />
-        <span className="brand-title">CryptoLab</span>
-      </div>
-      <nav>
-        {links.map((link) => (
-          <NavLink key={link.to} to={link.to} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            {link.label}
-          </NavLink>
-        ))}
+      <div className="navbar-container">
+        <NavLink to="/" className="nav-brand" onClick={closeMenu}>
+          <span className="logo-dot" />
+          <span className="brand-title">CryptoLab</span>
+        </NavLink>
 
-        {/* Tools Dropdown */}
-        <div
-          style={{ position: 'relative', display: 'inline-block' }}
-          onMouseEnter={() => setShowToolsDropdown(true)}
-          onMouseLeave={() => setShowToolsDropdown(false)}
+        <button
+          className="menu-toggle"
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
         >
-          <span className="nav-link" style={{ cursor: 'pointer' }}>
-            Tools ▾
-          </span>
-          {showToolsDropdown && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              background: '#fff',
-              border: '1px solid #e2e8f0',
-              borderRadius: '4px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              minWidth: '150px',
-              zIndex: 1000
-            }}>
+          {isMenuOpen ? '✕' : '☰'}
+        </button>
+
+        <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+              onClick={closeMenu}
+            >
+              {link.label}
+            </NavLink>
+          ))}
+
+          {/* Tools Dropdown */}
+          <div className="nav-dropdown">
+            <span className="nav-link nav-dropdown-trigger">
+              Tools <span style={{ fontSize: '0.8em' }}>▼</span>
+            </span>
+            <div className="nav-dropdown-menu">
               {toolsLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
-                  className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-                  style={{
-                    display: 'block',
-                    padding: '8px 16px',
-                    color: '#0f172a',
-                    textDecoration: 'none',
-                    fontSize: '14px'
+                  className={({ isActive }) => `nav-dropdown-item${isActive ? ' active' : ''}`}
+                  onClick={() => {
+                    closeMenu()
+                    setShowToolsDropdown(false)
                   }}
                 >
                   {link.label}
                 </NavLink>
               ))}
             </div>
-          )}
-        </div>
+          </div>
 
-        <a
-          className="nav-link external"
-          href="https://github.com/kaminuma/quantum-rsa-lab"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Quantum RSA Lab
-        </a>
-      </nav>
+          <a
+            className="nav-link"
+            href="https://github.com/kaminuma/quantum-rsa-lab"
+            target="_blank"
+            rel="noreferrer"
+            onClick={closeMenu}
+            style={{ border: '1px solid var(--color-border)', borderRadius: '999px' }}
+          >
+            GitHub ↗
+          </a>
+        </nav>
+      </div>
     </header>
   )
 }

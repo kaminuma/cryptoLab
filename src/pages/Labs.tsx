@@ -20,7 +20,7 @@ export default function Labs() {
 
   return (
     <div>
-      <section className="page-header lab-hero">
+      <section className="page-header">
         <p className="eyebrow">Hands-on Labs</p>
         <h1>古典・共通鍵・公開鍵を切り替えながら学ぶ。</h1>
         <p className="lede">タブを移動するだけでシーザー／AES-GCM／ECDH のフローを比較でき、実装メモと注意点も同じ画面で確認できます。</p>
