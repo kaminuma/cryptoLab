@@ -348,7 +348,10 @@ export default function ClassicalPage() {
               {interactiveType === 'otp' && (
                 <div className="control-group">
                   <label htmlFor="otp-key">ワンタイムキー（英字のみ）</label>
-                  <div className="row-with-button">
+                  <div
+                    className="row-with-button"
+                    style={{ display: 'flex', gap: 'var(--spacing-sm)' }}
+                  >
                     <input
                       id="otp-key"
                       className="text-input"
