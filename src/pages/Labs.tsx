@@ -1,4 +1,4 @@
-import { type ComponentType, useMemo, useState } from 'react'
+import { type ComponentType, useEffect, useMemo, useState } from 'react'
 import ClassicalPage from '@/pages/Classical'
 import SymmetricPage from '@/pages/Symmetric'
 import PublicKeyPage from '@/pages/PublicKey'
@@ -13,6 +13,10 @@ const tabs: Array<{ id: TabId; label: string; description: string; component: Co
 
 export default function Labs() {
   const [activeTab, setActiveTab] = useState<TabId>('classical')
+
+  useEffect(() => {
+    document.title = 'ラボ - CryptoLab'
+  }, [])
   const ActiveComponent = useMemo(
     () => tabs.find((tab) => tab.id === activeTab)?.component ?? ClassicalPage,
     [activeTab],

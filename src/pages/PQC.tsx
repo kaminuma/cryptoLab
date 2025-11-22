@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 const milestones = [
   {
     year: '2016',
@@ -29,6 +31,9 @@ const roadmap = [
 ]
 
 export default function PQC() {
+  useEffect(() => {
+    document.title = '量子耐性暗号 - CryptoLab'
+  }, [])
   return (
     <div className="pqc page">
       <section className="page-header">

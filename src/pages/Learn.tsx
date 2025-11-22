@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 type TabId = 'fundamentals' | 'algorithms' | 'security' | 'pqc'
 
@@ -11,6 +11,10 @@ const tabs = [
 
 export default function Learn() {
   const [activeTab, setActiveTab] = useState<TabId>('fundamentals')
+
+  useEffect(() => {
+    document.title = '学習 - CryptoLab'
+  }, [])
 
   return (
     <div className="learn page">
