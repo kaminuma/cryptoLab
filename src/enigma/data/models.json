@@ -1,0 +1,103 @@
+{
+    "Enigma-I": {
+        "rotorCount": 3,
+        "availableRotors": [
+            "I",
+            "II",
+            "III",
+            "IV",
+            "V"
+        ],
+        "availableReflectors": [
+            "A",
+            "B",
+            "C"
+        ],
+        "hasPlugboard": true,
+        "steppingMode": "STANDARD"
+    },
+    "M3": {
+        "rotorCount": 3,
+        "availableRotors": [
+            "I",
+            "II",
+            "III",
+            "IV",
+            "V",
+            "VI",
+            "VII",
+            "VIII"
+        ],
+        "availableReflectors": [
+            "A",
+            "B",
+            "C"
+        ],
+        "hasPlugboard": true,
+        "steppingMode": "NAVY"
+    },
+    "M4": {
+        "rotorCount": 4,
+        "availableRotors": [
+            "I",
+            "II",
+            "III",
+            "IV",
+            "V",
+            "VI",
+            "VII",
+            "VIII",
+            "Beta",
+            "Gamma"
+        ],
+        "availableReflectors": [
+            "B-THIN",
+            "C-THIN"
+        ],
+        "hasPlugboard": true,
+        "steppingMode": "NAVY"
+    },
+    "Commercial-D": {
+        "rotorCount": 3,
+        "availableRotors": [
+            "Commercial-I",
+            "Commercial-II",
+            "Commercial-III"
+        ],
+        "availableReflectors": [
+            "Commercial"
+        ],
+        "hasPlugboard": false,
+        "steppingMode": "FIXED"
+    },
+    "G": {
+        "rotorCount": 3,
+        "availableRotors": [
+            "I",
+            "II",
+            "III"
+        ],
+        "availableReflectors": [
+            "A",
+            "B",
+            "C"
+        ],
+        "hasPlugboard": false,
+        "steppingMode": "TIRPITZ"
+    },
+    "T": {
+        "rotorCount": 3,
+        "availableRotors": [
+            "I",
+            "II",
+            "III"
+        ],
+        "availableReflectors": [
+            "A",
+            "B",
+            "C"
+        ],
+        "hasPlugboard": false,
+        "steppingMode": "CUSTOM"
+    }
+}
