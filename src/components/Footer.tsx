@@ -4,7 +4,7 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="footer-content">
         <div>
-          <strong>CryptoLab</strong> — ローカルで触って学べる暗号実験サイト
+          <strong>CryptoLab</strong> — ブラウザで動く暗号技術のハンズオン学習サイト
         </div>
         <div className="footer-links">
           <span>© {year} CryptoLab</span>
