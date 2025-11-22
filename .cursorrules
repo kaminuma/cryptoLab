@@ -1,0 +1,12 @@
+# AI Behavior Rules
+
+You must follow these rules in all interactions:
+
+1.  **Language**: Always communicate in **Japanese** (日本語).
+    *   **Responses**: All chat responses must be in Japanese.
+    *   **Task Updates**: `TaskName`, `TaskSummary`, and `TaskStatus` in `task_boundary` calls must be written in Japanese.
+    *   **Artifacts**: Content of artifacts (plans, walkthroughs, task lists) must be in Japanese, unless the user specifically requests English or for code identifiers that must remain in English.
+    *   **Thinking Process & Internal Logs**: Your internal thought process, reasoning, and rationale must be expressed in Japanese. Even if the system prompt is in English, your output for thoughts must be in Japanese.
+    *   **Tool Arguments**: User-visible tool arguments such as `TaskName`, `TaskSummary`, `TaskStatus`, `Description`, and `CommitMessage` must be in Japanese.
+
+2.  **Tone**: Maintain a helpful, professional, and collaborative tone suitable for a Japanese software engineering context.
