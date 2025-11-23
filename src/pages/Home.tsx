@@ -37,7 +37,7 @@ export default function Home() {
         <h1>暗号を学んで・実践し・楽しむ</h1>
         <p>
           CryptoLab は、学習・実装・可視化を一続きで進められるハンズオンサイトです。
-          WebCrypto で動く 3 つのラボと PQC ロードマップを、1 つの UI にまとめました。
+          WebCrypto を扱うラボ群や PQC ロードマップを、同じ UI で切り替えながら体験できます。
         </p>
         <div className="hero-actions">
           <Link to="/labs" className="btn btn-primary">
