@@ -92,10 +92,7 @@ export function stepTirpitz(rotors: RotorState[]): RotorState[] {
     const stepLeft = midNotch && rightNotch; // Standard odometer carry?
     // Wait, standard odometer: 09 -> 10. The 1 moves when 9->0.
     // So Mid steps when Right passes notch.
-    // Left steps when Mid passes notch.
-    // But does Left step only when Mid *moves*? Yes.
-    // So Left steps if Mid is stepping AND Mid is at notch.
-
+    // LeftはMidがノッチ位置にあり、かつMidがステップする場合のみステップする。
     const newRightPos = rotate(right.position);
     const newMidPos = stepMid ? rotate(mid.position) : mid.position;
     const newLeftPos = (stepMid && midNotch) ? rotate(left.position) : left.position;
