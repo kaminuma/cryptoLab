@@ -76,8 +76,11 @@ function FundamentalsContent() {
           <li><strong>盗聴防止:</strong> 通信内容を第三者に読まれない</li>
           <li><strong>改ざん防止:</strong> データが途中で書き換えられていないことを保証</li>
           <li><strong>なりすまし防止:</strong> 通信相手が本物であることを確認</li>
-          <li><strong>否認防止:</strong> 送信者が「送っていない」と嘘をつけないようにする</li>
+          <li><strong>否認防止:</strong> デジタル署名により送信者が「送っていない」と言い逃れできないようにする</li>
         </ul>
+        <p style={{ fontSize: '14px', color: '#475569' }}>
+          ※ 暗号化は「読めなくする」役割で、否認防止はデジタル署名技術の役割です。暗号化と署名はセットで語られますが、担う機能は別です。
+        </p>
 
         <h3>暗号化の基本要素</h3>
         <p>
@@ -155,7 +158,7 @@ function FundamentalsContent() {
         </p>
         <ul>
           <li><strong>長所:</strong> 暗号化・復号化が高速（ハードウェア実装可能）</li>
-          <li><strong>長所:</strong> 鍵長が短くても高い安全性（AES-128は量子時代でも64ビット安全性）</li>
+          <li><strong>長所:</strong> 鍵長が短くても高い安全性（AES-128はGroverの平方根探索により量子時代でも64ビット安全性）</li>
           <li><strong>短所:</strong> n人が通信するには n(n-1)/2 個の鍵が必要</li>
           <li><strong>短所:</strong> 鍵を安全に共有する仕組みが別途必要</li>
         </ul>
@@ -172,19 +175,19 @@ function FundamentalsContent() {
           <li><strong>短所:</strong> 暗号化・復号化が遅い（共通鍵の1000〜10000倍）</li>
           <li><strong>短所:</strong> 量子コンピュータによる脅威（Shorのアルゴリズム）</li>
         </ul>
-        <p><strong>代表例:</strong> RSA、ECDH、ECDSA、Ed25519</p>
+        <p><strong>代表例:</strong> RSA（暗号化・署名）、ECDH（鍵交換）、ECDSA・Ed25519（署名）</p>
 
         {/* 理解度チェック */}
         <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
-              Q: なぜ現実のシステムでは公開鍵暗号だけでなく共通鍵暗号も使うのでしょうか？
+              Q: 公開鍵暗号の最大の利点は何でしょうか？
             </summary>
             <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
-              A: <strong>公開鍵暗号は遅すぎる</strong>からです。<br />
-              公開鍵暗号は共通鍵暗号の1000〜10000倍遅いため、大量データ（動画、ファイルなど）の暗号化には不向きです。
-              そのため、公開鍵暗号で安全に鍵を共有し、共通鍵暗号で高速にデータを暗号化する「ハイブリッド方式」が使われます。
+              A: <strong>鍵配送問題の解決</strong>です。<br />
+              公開鍵は誰でも知ってよいため、事前に秘密の鍵を共有する必要がありません。
+              公開鍵で暗号化したデータは、対応する秘密鍵でしか復号できないため、安全に通信できます。
             </p>
           </details>
         </div>
@@ -244,7 +247,7 @@ function FundamentalsContent() {
           <li>受信者は自分の秘密鍵でのみ復号化できる</li>
         </ol>
         <p>
-          これにより、事前の鍵共有なしで安全な通信が可能になりました。
+          これにより、事前の鍵共有なしで安全な通信が可能になりました。Diffie-Hellmanは暗号文そのものを作れない鍵交換プロトコルですが、その発想が公開鍵方式（RSAなど）の基盤となりました。
         </p>
 
         {/* 理解度チェック */}
@@ -300,7 +303,7 @@ function FundamentalsContent() {
           実際のシステム（TLS、PGP等）では共通鍵暗号と公開鍵暗号を組み合わせます：
         </p>
         <ol>
-          <li><strong>ハンドシェイク:</strong> 公開鍵暗号（RSA, ECDH）で共通鍵（セッション鍵）を安全に共有</li>
+          <li><strong>ハンドシェイク:</strong> 公開鍵暗号（RSA, ECDH。TLS 1.3ならP-256やx25519など）で共通鍵（セッション鍵）を安全に共有</li>
           <li><strong>データ転送:</strong> 共通鍵暗号（AES-GCM）で大量データを高速に暗号化</li>
         </ol>
         <p>これにより「鍵配送の安全性」と「暗号化の高速性」を両立します。</p>
@@ -308,7 +311,7 @@ function FundamentalsContent() {
         <h3>TLS 1.3のハンドシェイク例</h3>
         <ol>
           <li>クライアントがサーバーの証明書（公開鍵を含む）を取得</li>
-          <li>ECDH鍵交換でセッション鍵を共有（公開鍵暗号）</li>
+          <li>ECDH鍵交換（P-256やx25519などの楕円曲線）でセッション鍵を共有（公開鍵暗号）</li>
           <li>以降の通信はAES-256-GCMで暗号化（共通鍵暗号）</li>
           <li>セッション終了後、セッション鍵は破棄（Perfect Forward Secrecy）</li>
         </ol>
@@ -394,7 +397,7 @@ function FundamentalsContent() {
         <ul>
           <li><strong>MD5 (128bit):</strong> 2004年衝突発見、現在は完全に危殆化</li>
           <li><strong>SHA-1 (160bit):</strong> 2017年Google/CWIが実用的衝突攻撃、TLS証明書では2016年に非推奨</li>
-          <li><strong>SHA-2 (SHA-256, SHA-512):</strong> 現在も安全、NIST標準</li>
+          <li><strong>SHA-2 (SHA-256, SHA-512):</strong> 現在も安全、NIST標準（量子攻撃下でもGroverにより128bit相当の安全性を保持）</li>
           <li><strong>SHA-3 (Keccak):</strong> 2015年標準化、SHA-2とは異なる設計（スポンジ構造）</li>
         </ul>
 
@@ -473,7 +476,7 @@ function FundamentalsContent() {
           カウンタ値を暗号化してストリーム暗号のように動作。並列処理可能で高速。
           ナンス（Nonce）＋カウンタで各ブロックを暗号化。
         </p>
-        <p><strong>注意:</strong> ナンスを再利用すると鍵ストリームが露出</p>
+        <p><strong>注意:</strong> ナンスを再利用すると鍵ストリームが露出し、CTR単体では改ざん検知ができない（認証付きのGCMなどと組み合わせる）</p>
 
         <h4>🌟 GCM (Galois/Counter Mode) - 推奨</h4>
         <p>
@@ -1006,7 +1009,7 @@ secrets.token_bytes(16)`}</pre>
 
         <h3>タイミング攻撃</h3>
         <p>
-          処理時間のわずかな差（ナノ秒単位）を計測することで、秘密情報を推測する攻撃です。
+          サイドチャネル攻撃の一種で、処理時間のわずかな差（ナノ秒単位）を計測することで秘密情報を推測する攻撃です。
         </p>
         <ul>
           <li><strong>文字列比較:</strong> 通常の比較（<code>==</code>, <code>strcmp</code>）は不一致の時点で処理を終えるため、一致している長さが推測可能。</li>

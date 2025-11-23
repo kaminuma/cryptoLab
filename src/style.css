@@ -325,6 +325,40 @@ body {
   }
 }
 
+.info-panel {
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.info-panel h3 {
+  margin-top: 0;
+  color: var(--color-text-main);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-sm);
+}
+
+.hint.success {
+  color: #16a34a;
+}
+
+.hint.warning {
+  color: #b45309;
+}
+
 @media (min-width: 1024px) {
   .card-grid {
     grid-template-columns: repeat(3, 1fr);
