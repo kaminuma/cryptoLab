@@ -29,7 +29,6 @@ export function stepStandard(rotors: RotorState[]): RotorState[] {
     const midNotch = isNotchAt(mid.id, mid.position);
 
     // Right rotor always steps
-    let stepRight = true;
     let stepMid = false;
     let stepLeft = false;
 
