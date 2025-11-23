@@ -1,5 +1,4 @@
 import React from 'react';
-import rotorsData from '../data/rotors.json';
 import modelsData from '../data/models.json';
 import './enigma.css';
 
