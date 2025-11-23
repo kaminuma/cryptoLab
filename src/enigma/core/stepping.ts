@@ -87,7 +87,7 @@ export function stepTirpitz(rotors: RotorState[]): RotorState[] {
     const rightNotch = isNotchAt(right.id, right.position);
     const midNotch = isNotchAt(mid.id, mid.position);
 
-    const stepRight = true;
+
     const stepMid = rightNotch;
     const stepLeft = midNotch && rightNotch; // Standard odometer carry?
     // Wait, standard odometer: 09 -> 10. The 1 moves when 9->0.
