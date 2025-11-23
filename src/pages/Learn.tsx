@@ -1107,156 +1107,177 @@ secrets.token_bytes(16)`}</pre>
 }
 
 // ポスト量子暗号タブ
+
 function PQCContent() {
   return (
     <>
       <section className="card">
-        <h2>量子コンピュータの脅威</h2>
-
-        <h3>量子コンピュータとは</h3>
+        <h2>量子コンピューター基礎</h2>
         <p>
-          量子ビット（qubit）を利用し、重ね合わせとエンタングルメントにより
-          古典コンピュータでは不可能な並列計算を実現。
+          暗号の量子脅威を理解するには、まず古典計算と量子計算の違いを押さえるのが近道です。
+          bitとqubitのギャップ、重ね合わせや干渉といった直感を掴んでおくと、ShorやGroverの威力が腑に落ちます。
         </p>
-
-        <h3>Shorのアルゴリズム（1994年）</h3>
+        <h3>bit vs qubit</h3>
+        <ul>
+          <li><strong>bit:</strong> 0か1のどちらか一方のみをとる。n個で2ⁿ通りを順番に計算する。</li>
+          <li><strong>qubit:</strong> |0⟩と|1⟩の重ね合わせをとれる。n個で2ⁿ通りを同時に扱い、後段の干渉で必要なパターンだけを強調する。</li>
+        </ul>
+        <h3>重ね合わせと干渉</h3>
         <p>
-          Peter Shorが発表した量子アルゴリズム。<strong>素因数分解と離散対数問題を多項式時間で解く</strong>。
+          量子状態は波として足し引きされます。アルゴリズムは「正解の振幅を増幅」「誤りを打ち消す」ように構築され、
+          Groverの振幅増幅やShorの周期発見がその代表例です。
         </p>
-        <ul>
-          <li><strong>影響を受ける暗号:</strong>
-            <ul>
-              <li>RSA（素因数分解）</li>
-              <li>ECDH、ECDSA（楕円曲線離散対数）</li>
-              <li>Diffie-Hellman（離散対数）</li>
-            </ul>
-          </li>
-          <li><strong>計算量:</strong> O((log N)³) - Nビット整数の因数分解</li>
-          <li><strong>必要な量子ビット数:</strong> 2048bit RSA解読に約4098 qubit（エラー訂正込み）</li>
-        </ul>
-
-        <h3>Groverのアルゴリズム（1996年）</h3>
+        <h3>量子もつれ（エンタングルメント）</h3>
         <p>
-          データベース検索を√N倍高速化。共通鍵暗号の鍵探索に適用可能。
+          複数qubitの状態が独立でなくなる量子特有の相関。Shorのフーリエ変換や量子エラー訂正の核となります。
         </p>
+        <h3>量子計算が得意な問題</h3>
         <ul>
-          <li><strong>影響:</strong>
-            <ul>
-              <li>AES-128 → 実質64bit安全性（2⁶⁴回の量子ゲート操作）</li>
-              <li>AES-256 → 実質128bit安全性（依然として安全）</li>
-            </ul>
-          </li>
-          <li><strong>対策:</strong> 鍵長を2倍にすることで従来と同等の安全性を維持</li>
+          <li>周期発見・素因数分解・離散対数（→ RSA/ECCが崩壊）</li>
+          <li>構造を持つ探索（→ Groverで√Nスピードアップ）</li>
+          <li>量子シミュレーション（化学・物性）など</li>
         </ul>
-
-        <h3>現在の量子コンピュータの状況</h3>
-        <ul>
-          <li><strong>IBM Quantum:</strong> 433 qubit（2022年、Osprey）、1121 qubit（2023年、Condor）</li>
-          <li><strong>Google:</strong> 72 qubit（2018年、Bristlecone）、Sycamoreで量子超越性実証</li>
-          <li><strong>問題点:</strong>
-            <ul>
-              <li>エラー率が高い（デコヒーレンス）</li>
-              <li>エラー訂正に論理qubitあたり1000物理qubit必要</li>
-              <li>RSA-2048解読には数百万qubit規模が必要（2030年代？）</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>Harvest Now, Decrypt Later攻撃</h3>
         <p>
-          現在暗号化された通信を記録しておき、将来量子コンピュータで解読する攻撃。
-          <strong>長期保存データは今すぐPQC移行が必要</strong>。
+          この基礎を押さえると、「なぜShorでRSAが破れるのか」「なぜGroverで鍵検索が半減するのか」
+          ひいては「なぜPQCが必要なのか」という流れが理解しやすくなります。
         </p>
       </section>
 
       <section className="card">
-        <h2>NIST PQC標準化プロセス</h2>
+        <h2>量子脅威の全体像</h2>
+        <p>
+          現代暗号は <strong>公開鍵暗号の困難性（素因数分解・離散対数）</strong> と
+          <strong>共通鍵暗号の総当たりが現実的でないこと</strong> の二本柱で成立しています。
+          量子アルゴリズムはそれぞれに対応する弱点を突きます。
+        </p>
+        <div className="info-panel">
+          <h3>暗号の二本柱と量子攻撃</h3>
+          <ul>
+            <li>公開鍵暗号 → Shor で RSA / Diffie-Hellman / ECC が崩壊</li>
+            <li>共通鍵・ハッシュ → Grover で平方根スピードアップ（鍵長2倍で対抗）</li>
+          </ul>
+        </div>
+        <div className="concept-map">
+          <div className="concept-node">
+            <h4>古典暗号崩壊の理由</h4>
+            <p>Shor が数論ベースの暗号を、多項式時間で攻略。Grover は鍵探索の指数を半減。</p>
+          </div>
+          <div className="concept-node">
+            <h4>PQCへの移行</h4>
+            <p>NIST PQCの採択（Kyber/Dilithiumなど）を軸に、TLS・PKI・VPNが順次更新中。</p>
+          </div>
+          <div className="concept-node">
+            <h4>QKDという第2の柱</h4>
+            <p>計算量ではなく量子物理で鍵配送を守るアプローチ。PQCと補完関係にあります。</p>
+          </div>
+        </div>
+      </section>
 
-        <h3>タイムライン</h3>
+      <section className="card">
+        <h2>古典暗号が破られる理由</h2>
+
+        <h3>Shorのアルゴリズム（1994年）</h3>
+        <p>
+          素因数分解と離散対数を多項式時間に落とし込む量子アルゴリズム。
+          <strong>RSA、Diffie-Hellman、ECDH/ECDSAは前提そのものが破られます</strong>。
+        </p>
         <ul>
-          <li><strong>2016年:</strong> NIST PQC標準化プロジェクト開始、82方式が応募</li>
-          <li><strong>2017-2020年:</strong> 第1〜3ラウンド選考</li>
-          <li><strong>2022年7月:</strong> 第1陣として4方式を選定
-            <ul>
-              <li>CRYSTALS-Kyber（鍵カプセル化）</li>
-              <li>CRYSTALS-Dilithium（デジタル署名）</li>
-              <li>FALCON（デジタル署名）</li>
-              <li>SPHINCS+（デジタル署名）</li>
-            </ul>
-          </li>
-          <li><strong>2023年:</strong> FIPS草案公開</li>
-          <li><strong>2024年:</strong> 標準化完了予定</li>
+          <li>RSA-2048解読には約4000論理qubit＋膨大なエラー訂正が必要（推定数百万物理qubit）</li>
+          <li>計算量 O((log N)³) で、古典計算では到達できない速度へ</li>
         </ul>
 
-        <h3>アルゴリズムの分類</h3>
+        <h3>Groverのアルゴリズム（1996年）</h3>
+        <p>総当たり探索を √N に短縮。AES-128は実質64bit安全性、AES-256は128bit相当へ。</p>
         <ul>
-          <li><strong>格子ベース:</strong> Kyber, Dilithium, FALCON（最短ベクトル問題）</li>
-          <li><strong>符号ベース:</strong> Classic McEliece（訂正不能な誤りを持つ符号の復号問題）</li>
-          <li><strong>多変数多項式:</strong> Rainbow（解かれた、SIDHも解かれた）</li>
-          <li><strong>ハッシュベース:</strong> SPHINCS+（ハッシュ関数の安全性のみに依存）</li>
+          <li>対策は鍵長を2倍にする（AES-256 / SHA-512 / 長いHMACキー）</li>
+          <li>ハッシュ関数の衝突耐性・原像計算も半減する点に注意</li>
         </ul>
+
+        <div className="info-panel">
+          <h3>現在の量子計算機 & HNDL</h3>
+          <ul>
+            <li>IBM: Osprey 433 qubit（2022）、Condor 1121 qubit（2023）</li>
+            <li>Google: Sycamoreが量子超越性を実証。まだエラー訂正がボトルネック</li>
+            <li><strong>Harvest Now, Decrypt Later:</strong> 今の通信を記録し量子後に解読する攻撃。
+              長期秘匿データは即PQCへ移行するのが実務ガイドライン</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="card">
+        <h2>PQC（耐量子暗号）へのロードマップ</h2>
+        <p>「いつ・何を・どう置き換えるか」を俯瞰したシラバスです。</p>
+
+        <h3>NIST標準化タイムライン</h3>
+        <ol>
+          <li>2016年: NISTがPQC公募（82方式）</li>
+          <li>2017-2020年: 3ラウンドで安全性・実装性を評価</li>
+          <li>2022年: 第1陣として Kyber / Dilithium / FALCON / SPHINCS+ を選出</li>
+          <li>2024年: FIPSドラフト → 実装指針として各国政府・大手クラウドが採用へ</li>
+        </ol>
+
+        <h3>アルゴリズムファミリー</h3>
+        <div className="concept-map">
+          <div className="concept-node">
+            <h4>格子ベース</h4>
+            <p>Kyber（KEM）、Dilithium/FALCON（署名）。最短ベクトル問題やM-LWE/M-SISを前提。</p>
+          </div>
+          <div className="concept-node">
+            <h4>符号・多変数</h4>
+            <p>Classic McElieceは巨大鍵だが堅牢。Rainbow/SIDHは攻撃により脱落。</p>
+          </div>
+          <div className="concept-node">
+            <h4>ハッシュベース</h4>
+            <p>SPHINCS+ は保守的で信頼性高いが、署名サイズ・計算コストが重い。</p>
+          </div>
+        </div>
       </section>
 
       <section className="card">
         <h2>Kyber（鍵カプセル化機構）</h2>
-
-        <h3>概要</h3>
-        <p>
-          Module Learning With Errors（M-LWE）問題に基づく鍵カプセル化機構（KEM）。
-          TLS、VPN、ディスク暗号化での鍵交換に使用。
-        </p>
+        <p>Module-LWEベースのKEM。TLS・VPN・ディスク暗号化に組み込まれる公開鍵PQCの主役です。</p>
 
         <h3>パラメータセット</h3>
         <ul>
-          <li><strong>Kyber-512:</strong> AES-128相当（公開鍵800bytes）</li>
-          <li><strong>Kyber-768:</strong> AES-192相当（公開鍵1184bytes）</li>
-          <li><strong>Kyber-1024:</strong> AES-256相当（公開鍵1568bytes）</li>
+          <li>Kyber-512: AES-128相当（公開鍵800B / 秘密鍵1632B）</li>
+          <li>Kyber-768: AES-192相当（公開鍵1184B）※ハイブリッドTLSのデファクト</li>
+          <li>Kyber-1024: AES-256相当（公開鍵1568B）</li>
         </ul>
 
-        <h3>パフォーマンス</h3>
+        <h3>実用上の特徴</h3>
         <ul>
-          <li><strong>鍵生成:</strong> 数十マイクロ秒</li>
-          <li><strong>カプセル化:</strong> 数十マイクロ秒</li>
-          <li><strong>脱カプセル化:</strong> 数十マイクロ秒</li>
-        </ul>
-        <p>RSA-2048（数ミリ秒）やECDH P-256（数百マイクロ秒）と比較して実用的な速度。</p>
-
-        <h3>実装</h3>
-        <ul>
-          <li><strong>liboqs:</strong> Open Quantum Safe プロジェクトのC実装</li>
-          <li><strong>Cloudflare:</strong> TLS実験的サポート（2019年〜）</li>
-          <li><strong>Google Chrome:</strong> 実験的実装（chrome://flags）</li>
+          <li>鍵生成・カプセル化・復号は数十μsで完了（ARM/モバイルでも実装可）</li>
+          <li>KEMなので既存の鍵合意APIに差し込みやすい</li>
         </ul>
 
-        <h3>セキュリティ</h3>
-        <ul>
-          <li>古典コンピュータに対しても安全（格子問題の困難性）</li>
-          <li>量子アルゴリズムによる已知の効率的攻撃なし</li>
-          <li>CCA2安全性（選択暗号文攻撃耐性）</li>
-        </ul>
+        <div className="info-panel">
+          <h3>TLS 1.3 ハイブリッド例</h3>
+          <ol>
+            <li>ClientHello に Kyber768 公開鍵（X25519 と並列）</li>
+            <li>Server → Kyberカプセル化で共有秘密 Z<sub>PQC</sub></li>
+            <li>X25519 の Z<sub>ECC</sub> と連結し HKDF → AES-GCM 鍵へ</li>
+          </ol>
+          <p>Cloudflare / Google / AWS などがこの方式でテスト & ロールアウト中。</p>
+        </div>
       </section>
 
       <section className="card">
         <h2>Dilithium（デジタル署名）</h2>
-
-        <h3>概要</h3>
-        <p>
-          M-LWE問題に基づくデジタル署名方式。Fiat-Shamir変換によりゼロ知識証明から構成。
-        </p>
+        <p>M-SIS/M-LWEベースの署名方式。PKI・コード署名・ブロックチェーン向けの本命です。</p>
 
         <h3>パラメータセット</h3>
         <ul>
-          <li><strong>Dilithium2:</strong> AES-128相当（公開鍵1312bytes、署名2420bytes）</li>
-          <li><strong>Dilithium3:</strong> AES-192相当（公開鍵1952bytes、署名3293bytes）</li>
-          <li><strong>Dilithium5:</strong> AES-256相当（公開鍵2592bytes、署名4595bytes）</li>
+          <li>Dilithium2: AES-128相当（PK 1312B / Signature 2420B）</li>
+          <li>Dilithium3: AES-192相当（PK 1952B / Signature 3293B）</li>
+          <li>Dilithium5: AES-256相当（PK 2592B / Signature 4595B）</li>
         </ul>
 
-        <h3>比較: RSA vs ECDSA vs Dilithium</h3>
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '16px' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #e2e8f0' }}>
+        <h3>RSA / ECDSAとの比較</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '12px', border: '1px solid #e2e8f0' }}>
+          <thead style={{ background: '#f8fafc' }}>
+            <tr>
               <th style={{ padding: '8px', textAlign: 'left' }}>方式</th>
-              <th style={{ padding: '8px', textAlign: 'left' }}>公開鍵</th>
+              <th style={{ padding: '8px', textAlign: 'left' }}>公開鍵サイズ</th>
               <th style={{ padding: '8px', textAlign: 'left' }}>署名長</th>
               <th style={{ padding: '8px', textAlign: 'left' }}>量子耐性</th>
             </tr>
@@ -1264,107 +1285,81 @@ function PQCContent() {
           <tbody>
             <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
               <td style={{ padding: '8px' }}>RSA-2048</td>
-              <td style={{ padding: '8px' }}>256 bytes</td>
-              <td style={{ padding: '8px' }}>256 bytes</td>
+              <td style={{ padding: '8px' }}>256B</td>
+              <td style={{ padding: '8px' }}>256B</td>
               <td style={{ padding: '8px' }}>❌</td>
             </tr>
             <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
               <td style={{ padding: '8px' }}>ECDSA P-256</td>
-              <td style={{ padding: '8px' }}>64 bytes</td>
-              <td style={{ padding: '8px' }}>64 bytes</td>
+              <td style={{ padding: '8px' }}>64B</td>
+              <td style={{ padding: '8px' }}>64B</td>
               <td style={{ padding: '8px' }}>❌</td>
             </tr>
             <tr>
               <td style={{ padding: '8px' }}>Dilithium3</td>
-              <td style={{ padding: '8px' }}>1952 bytes</td>
-              <td style={{ padding: '8px' }}>3293 bytes</td>
+              <td style={{ padding: '8px' }}>1952B</td>
+              <td style={{ padding: '8px' }}>3293B</td>
               <td style={{ padding: '8px' }}>✅</td>
             </tr>
           </tbody>
         </table>
         <p style={{ marginTop: '8px', fontSize: '14px', color: '#64748b' }}>
-          署名サイズは大きいが、署名・検証速度はECDSAと同程度
+          サイズは増えるが、署名・検証速度はECDSAと同等でミドルウェアにも投入可能。
         </p>
 
-        <h3>用途</h3>
+        <h3>主なユースケース</h3>
         <ul>
-          <li>TLS証明書の署名</li>
-          <li>ソフトウェア署名・コード署名</li>
-          <li>ブロックチェーン・分散台帳</li>
-          <li>ファームウェア更新の検証</li>
+          <li>TLS/QUIC 証明書（ACMEサーバーのPQC対応）</li>
+          <li>OS/ブラウザ/ドライバーなどのコード署名</li>
+          <li>ブロックチェーン・スマートメーター・OTAアップデート</li>
         </ul>
       </section>
 
       <section className="card">
         <h2>ハイブリッド暗号方式</h2>
-
-        <h3>なぜハイブリッドか</h3>
-        <p>
-          PQC方式は実績が浅く、未知の脆弱性が発見される可能性があります。
-          一方、RSA/ECCは量子コンピュータ以外の攻撃に対しては十分な実績があります。
-        </p>
+        <p>未知の脆弱性に備えて、古典暗号とPQCを<strong>併用</strong>するのが移行期のベストプラクティスです。</p>
 
         <h3>ハイブリッドTLS</h3>
-        <p>
-          古典暗号とPQCを<strong>同時に使用</strong>し、どちらか一方が破られても安全性を維持：
-        </p>
         <ul>
-          <li>X25519（楕円曲線） + Kyber768</li>
-          <li>共有鍵 = KDF(X25519の共有秘密 || Kyberの共有秘密)</li>
-          <li>両方を解読しない限り通信内容は保護される</li>
+          <li>X25519（楕円曲線） + Kyber768 を並列で握手し、共有秘密を連結してKDF</li>
+          <li>片方が破られても、もう片方が通信を守る</li>
         </ul>
 
         <h3>実装例</h3>
         <ul>
-          <li><strong>Cloudflare:</strong> 2019年からハイブリッドTLS実験</li>
-          <li><strong>Google Chrome:</strong> X25519+Kyber768サポート開始</li>
-          <li><strong>Signal:</strong> PQXDH（Post-Quantum Extended Diffie-Hellman）</li>
-          <li><strong>AWS KMS:</strong> Hybrid Post-Quantum TLS option</li>
+          <li>Cloudflare: 2019年からハイブリッドTLSを実ネットで実験</li>
+          <li>Google Chrome / Firefox Nightly: X25519+Kyber768サイファをテスト搭載</li>
+          <li>Signal PQXDH: メッセンジャーでも Kyber + X25519 を同時利用</li>
+          <li>AWS KMS / Azure: PQC TLSオプションをプレビュー提供</li>
         </ul>
 
-        <h3>移行戦略</h3>
+        <h3>移行フェーズ</h3>
         <ol>
-          <li><strong>フェーズ1（現在）:</strong> ハイブリッド方式でリスク分散</li>
-          <li><strong>フェーズ2（2025-2030）:</strong> PQC単独方式へ移行開始</li>
-          <li><strong>フェーズ3（2030-2035）:</strong> 古典暗号の段階的廃止</li>
+          <li><strong>Phase 1:</strong> 既存サービスにハイブリッドを追加（現在）</li>
+          <li><strong>Phase 2:</strong> PQC単独モードを用意し必須要件化（2025-2030）</li>
+          <li><strong>Phase 3:</strong> 古典公開鍵暗号を段階的に廃止（2030年代）</li>
         </ol>
       </section>
 
       <section className="card">
         <h2>量子暗号通信（QKD）</h2>
+        <p>量子物理で盗聴を検知するアプローチ。PQCと相補的な第2の柱です。</p>
 
-        <h3>量子鍵配送（Quantum Key Distribution）</h3>
-        <p>
-          量子力学の原理（測定による状態変化）を利用して、盗聴を物理的に検知しながら鍵を共有。
-        </p>
-
-        <h3>BB84プロトコル（1984年）</h3>
-        <p>
-          Charles BennettとGilles Brassardが提案。量子ビット（光子の偏光状態）で鍵を送信。
-        </p>
+        <h3>BB84 / 量子鍵配送</h3>
         <ul>
-          <li>盗聴者が測定すると量子状態が変化し、検知可能</li>
-          <li>理論的には無条件安全性（計算量的困難性に依存しない）</li>
+          <li>光子の偏光状態などを送り、測定＝盗聴で状態が崩れる</li>
+          <li>中国「墨子号」、NICTの東京QKDネットワークなどが実証中</li>
         </ul>
 
-        <h3>実用化の課題</h3>
+        <h3>実用課題</h3>
         <ul>
-          <li><strong>距離制限:</strong> 光ファイバーで数百km（減衰）</li>
-          <li><strong>高コスト:</strong> 専用ハードウェア必要（数千万円〜）</li>
-          <li><strong>低速:</strong> 鍵生成レートが低い（数kbps〜数Mbps）</li>
-          <li><strong>実装攻撃:</strong> 理論上安全でも、実装の不完全性を突く攻撃</li>
+          <li>距離・コスト・スループットの制約（専用ファイバーや衛星が必要）</li>
+          <li>理論は強固でも実装攻撃に備えたハード設計が求められる</li>
         </ul>
 
-        <h3>量子衛星</h3>
-        <ul>
-          <li><strong>中国「墨子号」（2016年）:</strong> 衛星-地上間QKD実証</li>
-          <li><strong>日本:</strong> NICT、QKDネットワーク東京QKDネットワーク</li>
-        </ul>
-
-        <h3>PQC vs QKD</h3>
         <p>
-          <strong>相補的な技術:</strong> QKDは専用ネットワーク、PQCは既存インフラで動作。
-          コスト・利便性からPQCが主流になる見込みだが、超高セキュリティ用途（政府、金融）ではQKDも併用。
+          <strong>PQC vs QKD:</strong> 既存インフラで展開しやすいPQCが主流。
+          ただし政府・金融・宇宙通信など極秘用途ではQKDとの併用が検討されています。
         </p>
       </section>
 
