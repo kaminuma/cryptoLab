@@ -53,13 +53,37 @@ export default function Learn() {
 function FundamentalsContent() {
   return (
     <>
+      {/* Step 1: 暗号化とは何か (Why?) */}
       <section className="card">
-        <h2>暗号化とは何か</h2>
+        <h2>1. 暗号化とは何か - なぜ必要なのか</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            暗号化は「秘密のメッセージを他人に読まれないようにする技術」です。
+            インターネットで買い物をするとき、パスワードやクレジットカード情報が盗まれないよう守っているのが暗号化です。
+          </p>
+        </div>
+
+        <h3>暗号化が解決する問題</h3>
+        <ul>
+          <li><strong>盗聴防止:</strong> 通信内容を第三者に読まれない</li>
+          <li><strong>改ざん防止:</strong> データが途中で書き換えられていないことを保証</li>
+          <li><strong>なりすまし防止:</strong> 通信相手が本物であることを確認</li>
+          <li><strong>否認防止:</strong> 送信者が「送っていない」と嘘をつけないようにする</li>
+        </ul>
+
+        <h3>暗号化の基本要素</h3>
         <p>
           暗号化（Encryption）は、平文（Plaintext）を暗号文（Ciphertext）に変換するプロセスです。
           この変換は鍵（Key）を用いて行われ、正しい鍵を持つ者のみが復号化（Decryption）により元の平文を復元できます。
         </p>
-        <h3>暗号化の基本要素</h3>
         <ul>
           <li><strong>平文 (P):</strong> 保護したい元のデータ</li>
           <li><strong>暗号文 (C):</strong> 暗号化後のデータ。第三者には意味不明</li>
@@ -77,10 +101,53 @@ function FundamentalsContent() {
           この原理により、現代暗号では<strong>アルゴリズムは公開し、鍵のみを秘密にする</strong>という設計が主流です。
           セキュリティ・バイ・オブスキュリティ（秘匿による安全性）は推奨されません。
         </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: 暗号化で公開してよいのは何でしょうか？（クリックして答えを確認）
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>アルゴリズム（暗号化の方法）</strong>です。<br />
+              Kerckhoffsの原理により、鍵以外のすべて（アルゴリズム、実装コード、暗号文など）が公開されても安全でなければなりません。
+              秘密にすべきは「鍵」のみです。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号化の基本を理解しました。次は、暗号に2つの大きな種類（共通鍵と公開鍵）があることを学びます。
+        </p>
       </section>
 
+      {/* Step 2: 共通鍵 vs 公開鍵 (What?) */}
       <section className="card">
-        <h2>共通鍵暗号 vs 公開鍵暗号</h2>
+        <h2>2. 共通鍵暗号 vs 公開鍵暗号 - 2つの方式</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            暗号には大きく2種類あります。<br />
+            <strong>共通鍵暗号:</strong> 同じ鍵で暗号化と復号化をする（家の鍵のイメージ）<br />
+            <strong>公開鍵暗号:</strong> 異なる2つの鍵を使う（南京錠と鍵のイメージ）
+          </p>
+        </div>
 
         <h3>共通鍵暗号（対称鍵暗号）</h3>
         <p>
@@ -107,19 +174,202 @@ function FundamentalsContent() {
         </ul>
         <p><strong>代表例:</strong> RSA、ECDH、ECDSA、Ed25519</p>
 
-        <h3>ハイブリッド暗号</h3>
-        <p>
-          実際のシステム（TLS、PGP等）では両方を組み合わせます：
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: なぜ現実のシステムでは公開鍵暗号だけでなく共通鍵暗号も使うのでしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>公開鍵暗号は遅すぎる</strong>からです。<br />
+              公開鍵暗号は共通鍵暗号の1000〜10000倍遅いため、大量データ（動画、ファイルなど）の暗号化には不向きです。
+              そのため、公開鍵暗号で安全に鍵を共有し、共通鍵暗号で高速にデータを暗号化する「ハイブリッド方式」が使われます。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 2つの暗号方式を学びました。では、なぜ公開鍵暗号が発明されたのか、その歴史的背景を見ていきましょう。
         </p>
-        <ol>
-          <li>公開鍵暗号で共通鍵（セッション鍵）を安全に共有</li>
-          <li>共通鍵暗号で大量データを高速に暗号化</li>
-        </ol>
-        <p>これにより「鍵配送の安全性」と「暗号化の高速性」を両立します。</p>
       </section>
 
+      {/* Step 3: なぜ公開鍵が発明されたか (History & Problem) */}
       <section className="card">
-        <h2>ハッシュ関数の役割</h2>
+        <h2>3. なぜ公開鍵暗号が発明されたか - 鍵配送問題の解決</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            共通鍵暗号には「鍵をどうやって安全に渡すか」という大問題がありました。<br />
+            例: AさんとBさんが初めて通信するとき、暗号化に使う鍵をどうやって共有する？<br />
+            公開鍵暗号はこの問題を数学的に解決しました。
+          </p>
+        </div>
+
+        <h3>鍵配送問題（Key Distribution Problem）</h3>
+        <p>
+          共通鍵暗号では、通信を始める前に送信者と受信者が同じ鍵を安全に共有する必要があります。
+          しかし、まだ暗号化通信ができない状態で、鍵をどうやって安全に送るのか？
+        </p>
+        <ul>
+          <li><strong>物理的な配送:</strong> 信頼できる人が手渡しで配送（コスト高、スケールしない）</li>
+          <li><strong>事前共有:</strong> オフラインで事前に鍵を交換（柔軟性に欠ける）</li>
+          <li><strong>階層的鍵管理:</strong> 鍵を管理する中央機関が必要（単一障害点）</li>
+        </ul>
+
+        <h3>公開鍵暗号による解決（1976年）</h3>
+        <p>
+          Whitfield DiffieとMartin Hellmanが革命的なアイデアを提案：<br />
+          「公開してもよい鍵（公開鍵）と、秘密にする鍵（秘密鍵）を数学的に関連付ける」
+        </p>
+        <ol>
+          <li>各ユーザーは公開鍵と秘密鍵のペアを生成</li>
+          <li>公開鍵は誰にでも配布してよい（Webサイトで公開してもOK）</li>
+          <li>送信者は受信者の公開鍵で暗号化</li>
+          <li>受信者は自分の秘密鍵でのみ復号化できる</li>
+        </ol>
+        <p>
+          これにより、事前の鍵共有なしで安全な通信が可能になりました。
+        </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: 公開鍵暗号で「公開鍵」を誰かに盗まれても問題ないのはなぜでしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>公開鍵では復号できない</strong>からです。<br />
+              公開鍵暗号では、公開鍵で暗号化したデータは秘密鍵でしか復号できません。
+              公開鍵はその名の通り「公開してよい鍵」であり、暗号化にしか使えません。
+              復号に必要な秘密鍵さえ安全に保管していれば、公開鍵が漏れても問題ありません。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 公開鍵暗号の発明理由を理解しました。次は、実際のWebサイト（HTTPS）でどのように2つの暗号を組み合わせているか見てみましょう。
+        </p>
+      </section>
+
+      {/* Step 4: 実システム(TLS)での組み合わせ方 (Real World) */}
+      <section className="card">
+        <h2>4. 実システムでの暗号の組み合わせ - TLSの仕組み</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            実際のWebサイト（HTTPS）では、共通鍵暗号と公開鍵暗号の<strong>両方</strong>を組み合わせています。<br />
+            公開鍵暗号で安全に鍵を共有 → その鍵で共通鍵暗号を使って高速にデータをやり取り。<br />
+            これを「ハイブリッド暗号」と呼びます。
+          </p>
+        </div>
+
+        <h3>ハイブリッド暗号方式</h3>
+        <p>
+          実際のシステム（TLS、PGP等）では共通鍵暗号と公開鍵暗号を組み合わせます：
+        </p>
+        <ol>
+          <li><strong>ハンドシェイク:</strong> 公開鍵暗号（RSA, ECDH）で共通鍵（セッション鍵）を安全に共有</li>
+          <li><strong>データ転送:</strong> 共通鍵暗号（AES-GCM）で大量データを高速に暗号化</li>
+        </ol>
+        <p>これにより「鍵配送の安全性」と「暗号化の高速性」を両立します。</p>
+
+        <h3>TLS 1.3のハンドシェイク例</h3>
+        <ol>
+          <li>クライアントがサーバーの証明書（公開鍵を含む）を取得</li>
+          <li>ECDH鍵交換でセッション鍵を共有（公開鍵暗号）</li>
+          <li>以降の通信はAES-256-GCMで暗号化（共通鍵暗号）</li>
+          <li>セッション終了後、セッション鍵は破棄（Perfect Forward Secrecy）</li>
+        </ol>
+
+        <h3>なぜ共通鍵暗号も必要なのか</h3>
+        <p>
+          公開鍵暗号だけでは遅すぎるため、実用的ではありません。<br />
+          動画ストリーミング、ファイルダウンロードなど大量データの暗号化には、
+          高速な共通鍵暗号（AES）が必須です。
+        </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: HTTPS通信では、公開鍵暗号と共通鍵暗号をどのように使い分けていますか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>公開鍵暗号で鍵を共有し、共通鍵暗号でデータを暗号化</strong>します。<br />
+              ① ハンドシェイク時: 公開鍵暗号（ECDH）で共通鍵（セッション鍵）を安全に共有<br />
+              ② データ転送時: 共通鍵暗号（AES-GCM）でWebページやファイルを高速に暗号化<br />
+              これにより、安全性と速度の両立を実現しています。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号化の仕組みを理解しました。しかし、暗号システムには暗号化だけでなく、もう1つ重要な要素があります。それが「ハッシュ関数」です。
+        </p>
+      </section>
+
+      {/* Step 5: ハッシュの役割 (Another Building Block) */}
+      <section className="card">
+        <h2>5. ハッシュ関数の役割 - もう1つの重要な部品</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            ハッシュ関数は「データの指紋」を作る技術です。<br />
+            どんなに大きなファイルでも、固定長の短い文字列（ハッシュ値）に変換します。<br />
+            ファイルが1ビットでも変わると、ハッシュ値は全く別のものになります。<br />
+            <strong>用途:</strong> パスワード保存、ファイル検証、デジタル署名
+          </p>
+        </div>
+
+        <h3>ハッシュ関数とは</h3>
         <p>
           ハッシュ関数 H は任意長のメッセージ M を固定長のハッシュ値 h = H(M) に変換します。
         </p>
@@ -131,7 +381,7 @@ function FundamentalsContent() {
           <li><strong>衝突困難性（Collision Resistance）:</strong> H(M₁) = H(M₂) となる任意の M₁ ≠ M₂ を見つけることが困難</li>
         </ul>
 
-        <h3>用途</h3>
+        <h3>実際の用途</h3>
         <ul>
           <li><strong>データ整合性検証:</strong> ファイルの改ざん検知（SHA-256チェックサム）</li>
           <li><strong>パスワード保存:</strong> bcrypt、Argon2（ソルト＋ストレッチング）</li>
@@ -147,13 +397,60 @@ function FundamentalsContent() {
           <li><strong>SHA-2 (SHA-256, SHA-512):</strong> 現在も安全、NIST標準</li>
           <li><strong>SHA-3 (Keccak):</strong> 2015年標準化、SHA-2とは異なる設計（スポンジ構造）</li>
         </ul>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: なぜパスワードを保存するときにハッシュ化するのでしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>データベースが漏洩しても元のパスワードがわからないようにする</strong>ためです。<br />
+              ハッシュ関数は一方向関数なので、ハッシュ値から元のパスワードを復元することは計算量的に困難です。
+              ユーザーがログイン時に入力したパスワードをハッシュ化し、保存済みのハッシュ値と比較することで認証できます。
+              ただし、実際はArgon2やbcryptなど、ソルトとストレッチングを含む専用の関数を使用します。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号の3つの柱（共通鍵・公開鍵・ハッシュ）を理解しました。次は、共通鍵暗号の実装上の重要な概念「モード」について学びます。
+        </p>
       </section>
 
+      {/* Step 6: ブロック暗号 → モードが必要な理由 (Deep Dive) */}
       <section className="card">
-        <h2>暗号モード（Block Cipher Modes）</h2>
+        <h2>6. ブロック暗号とモード - なぜ「モード」が必要なのか</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            AESなどのブロック暗号は「固定サイズのブロック（16バイト）」しか暗号化できません。<br />
+            でも実際のデータは様々なサイズです。動画は数GB、メッセージは数バイト。<br />
+            「モード」は、様々なサイズのデータを安全に暗号化する方法を定義します。<br />
+            <strong>重要:</strong> モードを間違えると、暗号化しても情報が漏れます。
+          </p>
+        </div>
+
+        <h3>ブロック暗号とは</h3>
         <p>
-          ブロック暗号（AESなど）は固定長ブロック（128bit）を暗号化しますが、
-          実際のデータは可変長です。暗号モードは可変長データを安全に暗号化する方法を定義します。
+          ブロック暗号（AESなど）は固定長ブロック（128bit = 16バイト）を暗号化します。
+          しかし実際のデータは可変長です。暗号モードは可変長データを安全に暗号化する方法を定義します。
         </p>
 
         <h3>主要な暗号モード</h3>
@@ -194,6 +491,111 @@ function FundamentalsContent() {
           ストリーム暗号ChaCha20 + Poly1305認証。AES-NIがないデバイスでも高速。
           GoogleがTLSに採用、Android/iOSで標準サポート。
         </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: ECBモードを使用してはいけない理由は何でしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>同じ平文ブロックが同じ暗号文になるため、パターンが漏洩する</strong>からです。<br />
+              ECBモードでは各ブロックを独立に暗号化するため、画像を暗号化しても輪郭が見えてしまいます。
+              また、暗号文ブロックの並び替えや削除も検知できません。
+              必ずCBC、CTR、GCMなどのモードを使用し、現代ではAES-GCMやChaCha20-Poly1305のようなAEAD（認証付き暗号）が推奨されます。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号の理論と実装を学びました。最後に、数学的に安全な暗号でも実装を間違えると破られる現実を見ていきましょう。
+        </p>
+      </section>
+
+      {/* Step 7: 実世界の脆弱性と攻撃 (Security Awareness) */}
+      <section className="card">
+        <h2>7. 実世界の脆弱性と攻撃 - 暗号も完璧ではない</h2>
+
+        <div style={{
+          background: '#fff3cd',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #ffc107',
+          marginBottom: '16px',
+        }}>
+          <strong>⚠️ セキュリティ意識向上</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            数学的に安全な暗号アルゴリズムでも、<strong>実装を間違える</strong>と簡単に破られます。<br />
+            ここで紹介する攻撃は、実際に現実世界で被害を出したものばかりです。<br />
+            暗号を使う開発者は、これらの落とし穴を理解する必要があります。
+          </p>
+        </div>
+
+        <h3>1. ECBモードによるパターン漏洩</h3>
+        <p>
+          同じ平文ブロックが同じ暗号文になるため、画像を暗号化しても輪郭が見えてしまいます。
+        </p>
+
+        <h3>2. IV/ナンスの再利用</h3>
+        <p>
+          CBCモードでIVを使い回すと最初のブロックの等価性が漏洩。<br />
+          CTR/GCMモードでナンスを使い回すと<strong>鍵ストリームが完全に露出</strong>し、平文が復元されます。
+        </p>
+
+        <h3>3. パディングオラクル攻撃</h3>
+        <p>
+          CBCモードで「パディングが正しいかどうか」のエラーメッセージを返すと、
+          攻撃者は暗号文を少しずつ解読できます。
+        </p>
+
+        <h3>4. タイミング攻撃</h3>
+        <p>
+          処理時間のわずかな差（ナノ秒単位）から秘密情報を推測。<br />
+          文字列比較で通常の<code>==</code>を使うと、一致している長さが漏れます。
+        </p>
+
+        <h3>5. 弱い乱数生成器の使用</h3>
+        <p>
+          <code>Math.random()</code>は予測可能なため、鍵生成やトークン生成には絶対使用禁止。<br />
+          必ず<code>crypto.getRandomValues()</code>などのCSPRNGを使用。
+        </p>
+
+        <h3>6. ハードコードされた鍵</h3>
+        <p>
+          ソースコードに鍵を埋め込むと、リポジトリ公開時やアプリ解析で漏洩。<br />
+          環境変数、HSM、Secure Enclaveなどで適切に管理する必要があります。
+        </p>
+
+        <h3>学習を深めるために</h3>
+        <p>
+          これらの攻撃の詳細は「実践セキュリティ」タブで解説しています。<br />
+          暗号の理論だけでなく、実装上の注意点も学ぶことが重要です。
+        </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: なぜMath.random()を暗号鍵の生成に使用してはいけないのでしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>Math.random()は予測可能な乱数だから</strong>です。<br />
+              Math.random()は決定論的な疑似乱数生成器（PRNG）であり、内部状態から次の値を予測できます。
+              暗号鍵、トークン、ソルト、ナンスなどのセキュリティ要素には、暗号学的に安全な乱数生成器（CSPRNG）を使用する必要があります。
+              ブラウザではcrypto.getRandomValues()、Node.jsではcrypto.randomBytes()を使用してください。
+            </p>
+          </details>
+        </div>
       </section>
 
       <section className="card resources">
