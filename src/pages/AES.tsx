@@ -82,361 +82,256 @@ export default function AESPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <h1 className="text-4xl font-bold mb-4">AES (Advanced Encryption Standard)</h1>
-      <p className="text-lg text-gray-600 mb-8">
-        共通鍵暗号方式の標準 - 高速で安全な暗号化
-      </p>
+    <main className="page aes">
+      <header className="page-header">
+        <p className="eyebrow">Symmetric Deep Dive</p>
+        <h1>AESを「なぜ → どのように → 触る」で理解する。</h1>
+        <p className="lede">
+          2001年にNISTが標準化した共通鍵暗号の本命。共通鍵暗号が担う領域と公開鍵暗号との協調、AESの内部構造、そして実際の暗号化フローを一つのページで追えるように再整理しました。
+        </p>
+      </header>
 
-      {/* AESとは */}
-      <section className="mb-12 bg-blue-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">AESとは？</h2>
-        <div className="space-y-4">
+      <section className="card">
+        <div className="card-header">
+          <h2>1. AESの基本情報</h2>
+          <p>Advanced Encryption Standard（AES）はDESの後継として採用されたブロック暗号。16バイト単位でデータを処理し、IoTからクラウドまであらゆる現場で使われています。</p>
+        </div>
+        <ul>
+          <li><strong>標準化:</strong> 2001年にRijndaelがAESとして採択。設計者はJoan DaemenとVincent Rijmen。</li>
+          <li><strong>ブロックサイズ:</strong> 常に128ビット。サイズが固定されているので「モード」で複数ブロックへ拡張します。</li>
+          <li><strong>鍵長:</strong> 128/192/256bit（それぞれ10/12/14ラウンド）。鍵長で安全性と処理コストを調整。</li>
+          <li><strong>用途:</strong> TLS/SSH、VPN、ディスク暗号化、モバイルアプリのデータ保護など「高速に大量データを守る」場面の主役。</li>
+        </ul>
+        <div className="info-panel">
+          <h3>AES = 置換・転置ネットワーク</h3>
           <p>
-            <strong>AES（Advanced Encryption Standard）</strong>は、
-            現在最も広く使われている<strong>共通鍵暗号方式</strong>です。
-            2001年に米国標準技術研究所（NIST）によって標準化されました。
-          </p>
-          <div className="bg-white p-4 rounded border-l-4 border-blue-500">
-            <h3 className="font-bold mb-2">共通鍵暗号の特徴：</h3>
-            <ul className="list-disc list-inside space-y-1">
-              <li><strong>同じ鍵</strong>で暗号化と復号を行う</li>
-              <li><strong>高速</strong>：大量のデータの暗号化に適している</li>
-              <li><strong>鍵の配送問題</strong>：安全に鍵を共有する必要がある</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* RSAとの比較 */}
-      <section className="mb-12 bg-purple-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">RSAとの違い</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse bg-white rounded-lg overflow-hidden">
-            <thead className="bg-purple-200">
-              <tr>
-                <th className="border p-3 text-left">項目</th>
-                <th className="border p-3 text-left">AES（共通鍵暗号）</th>
-                <th className="border p-3 text-left">RSA（公開鍵暗号）</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border p-3 font-semibold">鍵</td>
-                <td className="border p-3">同じ鍵で暗号化・復号</td>
-                <td className="border p-3">公開鍵で暗号化、秘密鍵で復号</td>
-              </tr>
-              <tr className="bg-purple-50">
-                <td className="border p-3 font-semibold">速度</td>
-                <td className="border p-3">⚡ 非常に高速</td>
-                <td className="border p-3">🐌 比較的遅い</td>
-              </tr>
-              <tr>
-                <td className="border p-3 font-semibold">用途</td>
-                <td className="border p-3">大量データの暗号化</td>
-                <td className="border p-3">鍵交換、デジタル署名</td>
-              </tr>
-              <tr className="bg-purple-50">
-                <td className="border p-3 font-semibold">鍵配送</td>
-                <td className="border p-3">⚠️ 事前の安全な共有が必要</td>
-                <td className="border p-3">✅ 公開鍵は自由に配布可能</td>
-              </tr>
-              <tr>
-                <td className="border p-3 font-semibold">実例</td>
-                <td className="border p-3">HTTPS通信の本文暗号化</td>
-                <td className="border p-3">HTTPS通信の鍵交換</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-4 bg-white p-4 rounded border-l-4 border-purple-500">
-          <p className="font-semibold mb-2">💡 実際のHTTPS通信では：</p>
-          <ol className="list-decimal list-inside space-y-1">
-            <li><strong>RSA</strong>で共通鍵（セッション鍵）を安全に交換</li>
-            <li>交換した共通鍵を使って<strong>AES</strong>で本文を高速に暗号化</li>
-          </ol>
-          <p className="mt-2 text-sm text-gray-600">
-            → 両者の長所を組み合わせた「ハイブリッド暗号」を使用
+            各ラウンドで<em>SubBytes / ShiftRows / MixColumns / AddRoundKey</em>の4操作を繰り返し、非線形性と拡散性を確保します。S-BoxはGF(2⁸)上の逆数演算とアフィン変換で構成され、ハードウェア実装もしやすい作りです。
           </p>
         </div>
       </section>
 
-      {/* AESの仕組み */}
-      <section className="mb-12 bg-green-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">AESの仕組み</h2>
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded">
-            <h3 className="font-bold mb-2">📦 ブロック暗号</h3>
-            <p>
-              AESは<strong>128ビット（16バイト）</strong>単位でデータを処理します。
-              これを「ブロック暗号」と呼びます。
-            </p>
-          </div>
-
-          <div className="bg-white p-4 rounded">
-            <h3 className="font-bold mb-2">🔑 鍵長</h3>
-            <p>AESは3つの鍵長をサポート：</p>
-            <ul className="list-disc list-inside ml-4 mt-2">
-              <li><strong>AES-128</strong>：128ビット鍵（10ラウンド）</li>
-              <li><strong>AES-192</strong>：192ビット鍵（12ラウンド）</li>
-              <li><strong>AES-256</strong>：256ビット鍵（14ラウンド）</li>
+      <section className="card">
+        <div className="card-header">
+          <h2>2. 共通鍵暗号としての立ち位置</h2>
+          <p>AESは「同じ鍵」で暗号化/復号する対称方式。鍵配送問題がある代わりに圧倒的な速度を誇り、公開鍵暗号と組み合わせてハイブリッド構成を作ります。</p>
+        </div>
+        <div className="card-grid">
+          <div className="card">
+            <h3>AES（共通鍵）</h3>
+            <ul>
+              <li>暗号化/復号で同じ鍵を使用</li>
+              <li>CPU/ASICで高速（AES-NI対応ならGbps級）</li>
+              <li>鍵配送は別の仕組みで解決する必要あり</li>
+              <li>AES-GCM, ChaCha20-Poly1305 などAEADモードで改ざん検知も実現</li>
             </ul>
           </div>
+          <div className="card">
+            <h3>RSA / ECDH（公開鍵）</h3>
+            <ul>
+              <li>公開鍵で暗号化、秘密鍵で復号</li>
+              <li>鍵配送問題を解決できるが計算は重い</li>
+              <li>ECDHは鍵交換、RSAは暗号化と署名、ECDSA/Ed25519は署名専用</li>
+              <li>Shorのアルゴリズム（量子攻撃）の脅威を受ける</li>
+            </ul>
+          </div>
+        </div>
+        <p>現代のWeb/TLSでは公開鍵暗号でセッション鍵を共有し、共有済みの鍵でAES-GCMを回すハイブリッド構成が常識です。</p>
+        <ol>
+          <li>サーバー証明書（公開鍵）とECDHで「共通鍵」を共有</li>
+          <li>共有鍵からHKDFでAES-GCM用の鍵を導出</li>
+          <li>AESでWebページやAPIレスポンスを高速に暗号化</li>
+        </ol>
+        <p className="hint">ハイブリッド構成にすることで「公開鍵で安全に鍵を届ける」「AESで高速にデータを守る」を同時に満たせます。</p>
+      </section>
 
-          <div className="bg-white p-4 rounded">
-            <h3 className="font-bold mb-2">🔄 4つの基本変換</h3>
-            <ol className="list-decimal list-inside ml-4 space-y-2">
-              <li>
-                <strong>SubBytes</strong>：S-Boxを使った非線形バイト置換
-              </li>
-              <li>
-                <strong>ShiftRows</strong>：行を左にシフト
-              </li>
-              <li>
-                <strong>MixColumns</strong>：列の混合（ガロア体GF(2⁸)での行列演算）
-              </li>
-              <li>
-                <strong>AddRoundKey</strong>：ラウンド鍵とのXOR
-              </li>
+      <section className="card">
+        <div className="card-header">
+          <h2>3. AESの内部構造と安全性メモ</h2>
+          <p>ブロック暗号のラウンド設計と鍵スケジュール、そして攻撃面をまとめておくと実装時のチェックリストになります。</p>
+        </div>
+        <div className="card-grid">
+          <div className="card">
+            <h3>ラウンド処理</h3>
+            <ol>
+              <li><strong>SubBytes:</strong> S-Boxで非線形変換。</li>
+              <li><strong>ShiftRows:</strong> 各行を左シフトして拡散。</li>
+              <li><strong>MixColumns:</strong> 列をGF(2⁸)で混合し、隣接バイトへ影響を伝播。</li>
+              <li><strong>AddRoundKey:</strong> そのラウンド専用の鍵とXOR。</li>
             </ol>
           </div>
+          <div className="card">
+            <h3>鍵スケジュール</h3>
+            <ul>
+              <li>マスター鍵からラウンド鍵を生成</li>
+              <li>Rcon（Round Constant）で各ラウンドを分岐</li>
+              <li>鍵長ごとに異なる回数の展開が必要</li>
+            </ul>
+            <p>鍵派生が硬いので、ラウンド鍵の使い回しで弱点が出にくい設計です。</p>
+          </div>
         </div>
+        <div className="info-panel">
+          <h3>安全性の現在地</h3>
+          <ul>
+            <li><strong>総当たり:</strong> AES-128でも2¹²⁸通り。現実的に不可能。</li>
+            <li><strong>差分/線形解読:</strong> 十分なラウンド数で防御済み。</li>
+            <li><strong>関連鍵攻撃:</strong> AES-256は鍵スケジュールが複雑なぶん差分攻撃の研究がされており理論上の弱点が報告されているが、実用上は問題なし。</li>
+            <li><strong>量子計算:</strong> Groverアルゴリズムで探索が√NになるためAES-128は64bit安全性と見積もられる。長期用途はAES-256が無難。</li>
+            <li><strong>サイドチャネル:</strong> タイミング/電力解析を避けるためAES-NIなど定数時間実装を使う。</li>
+          </ul>
+        </div>
+        <p className="hint">
+          AES-NIのようなCPU命令セットを使うと、S-Boxをテーブル参照ではなく命令レベルで処理できるため、キャッシュ観測によるサイドチャネルを抑えつつ高速化できます。
+        </p>
       </section>
 
-      {/* インタラクティブデモ */}
-      <section className="mb-12 bg-yellow-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">🔐 インタラクティブデモ</h2>
+      <section className="card">
+        <div className="card-header">
+          <h2>4. ハンズオン: 鍵を選び AES を実行</h2>
+          <p>鍵長とブロックモードを選んで暗号化/復号を動かしながら、IVやNonceがどのように扱われるかを確認します。</p>
+        </div>
 
-        <div className="space-y-4">
-          {/* 鍵長選択 */}
-          <div className="bg-white p-4 rounded">
-            <label className="block font-semibold mb-2">鍵長を選択：</label>
-            <div className="flex gap-4">
-              {[128, 192, 256].map((size) => (
-                <label key={size} className="flex items-center">
-                  <input
-                    type="radio"
-                    name="keySize"
-                    value={size}
-                    checked={keySize === size}
-                    onChange={(e) => setKeySize(Number(e.target.value) as 128 | 192 | 256)}
-                    className="mr-2"
-                  />
-                  AES-{size}
-                </label>
-              ))}
-            </div>
-            <button
-              onClick={handleGenerateKey}
-              className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              新しい鍵を生成
-            </button>
-            <p className="mt-2 text-sm font-mono bg-gray-100 p-2 rounded break-all">
-              鍵: {bytesToHex(key)}
-            </p>
-          </div>
+        <label>鍵長</label>
+        <div>
+          {[128, 192, 256].map((size) => (
+            <label key={size}>
+              <input
+                type="radio"
+                name="keySize"
+                value={size}
+                checked={keySize === size}
+                onChange={(event) => setKeySize(Number(event.target.value) as 128 | 192 | 256)}
+              />
+              AES-{size}
+            </label>
+          ))}
+        </div>
+        <button type="button" className="btn btn-secondary" onClick={handleGenerateKey}>
+          ランダム鍵を再生成
+        </button>
+        <label htmlFor="aes-key">現在の鍵（16進表記）</label>
+        <textarea id="aes-key" rows={3} readOnly value={bytesToHex(key)} />
 
-          {/* モード選択 */}
-          <div className="bg-white p-4 rounded">
-            <label className="block font-semibold mb-2">暗号化モードを選択：</label>
-            <div className="flex gap-4">
-              {(['ECB', 'CBC', 'CTR'] as AESMode[]).map((m) => (
-                <label key={m} className="flex items-center">
-                  <input
-                    type="radio"
-                    name="mode"
-                    value={m}
-                    checked={mode === m}
-                    onChange={(e) => setMode(e.target.value as AESMode)}
-                    className="mr-2"
-                  />
-                  {m}
-                </label>
-              ))}
-            </div>
-            {mode === 'ECB' && (
-              <p className="mt-2 text-sm text-red-600">
-                ⚠️ ECBモードは安全性が低いため、実際には使用しないでください
-              </p>
-            )}
-          </div>
+        <label htmlFor="aes-mode">ブロックモード</label>
+        <select
+          id="aes-mode"
+          value={mode}
+          onChange={(event) => setMode(event.target.value as AESMode)}
+        >
+          <option value="CBC">CBC</option>
+          <option value="CTR">CTR</option>
+          <option value="ECB">ECB</option>
+        </select>
+        {mode === 'ECB' && (
+          <p className="hint">⚠️ ECBはパターンがそのまま漏れるので学習用途以外では使用禁止です。</p>
+        )}
 
-          {/* 平文入力 */}
-          <div className="bg-white p-4 rounded">
-            <label className="block font-semibold mb-2">平文：</label>
+        <label htmlFor="aes-plaintext">平文</label>
+        <textarea
+          id="aes-plaintext"
+          rows={4}
+          value={plaintext}
+          onChange={(event) => setPlaintext(event.target.value)}
+          placeholder="Hello, AES!"
+        />
+
+        <div className="actions">
+          <button type="button" className="btn btn-primary" onClick={handleEncrypt}>
+            暗号化
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDecrypt}
+            disabled={!ciphertext}
+          >
+            復号
+          </button>
+        </div>
+
+        {ciphertext && (
+          <>
+            <label htmlFor="aes-ciphertext">暗号文（16進数）</label>
             <textarea
-              value={plaintext}
-              onChange={(e) => setPlaintext(e.target.value)}
-              className="w-full border rounded p-2 font-mono"
+              id="aes-ciphertext"
               rows={3}
+              value={bytesToHex(ciphertext)}
+              readOnly
             />
-          </div>
-
-          {/* 暗号化ボタン */}
-          <div className="flex gap-4">
-            <button
-              onClick={handleEncrypt}
-              className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-            >
-              暗号化
-            </button>
-            <button
-              onClick={handleDecrypt}
-              className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700"
-              disabled={!ciphertext}
-            >
-              復号
-            </button>
-          </div>
-
-          {/* 結果表示 */}
-          {ciphertext && (
-            <div className="bg-white p-4 rounded">
-              <h3 className="font-semibold mb-2">暗号文（16進数）：</h3>
-              <p className="font-mono text-sm bg-gray-100 p-2 rounded break-all">
-                {bytesToHex(ciphertext)}
-              </p>
-              {iv && (
-                <>
-                  <h3 className="font-semibold mb-2 mt-4">
-                    {mode === 'CTR' ? 'Nonce' : 'IV'}（初期化ベクトル）：
-                  </h3>
-                  <p className="font-mono text-sm bg-gray-100 p-2 rounded break-all">
-                    {bytesToHex(iv)}
-                  </p>
-                </>
-              )}
-            </div>
-          )}
-
-          {decrypted && (
-            <div className="bg-white p-4 rounded border-2 border-green-500">
-              <h3 className="font-semibold mb-2">復号結果：</h3>
-              <p className="font-mono bg-green-50 p-2 rounded">
-                {decrypted}
-              </p>
-              {decrypted === plaintext && (
-                <p className="text-green-600 mt-2">✅ 正しく復号されました！</p>
-              )}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ブロック暗号モードの比較 */}
-      <section className="mb-12 bg-red-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">🔗 ブロック暗号モードの比較</h2>
-
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded">
-            <p className="mb-4">
-              ブロック暗号（AES）は128ビット単位でしか処理できません。
-              より長いデータを暗号化するには<strong>「モード」</strong>が必要です。
-            </p>
-
-            <div className="space-y-3">
-              <div className="border-l-4 border-red-500 pl-4">
-                <h3 className="font-bold text-red-700">ECB (Electronic Codebook)</h3>
-                <p className="text-sm mt-1">
-                  各ブロックを独立に暗号化。
-                  <strong className="text-red-600">同じ平文ブロック → 同じ暗号文ブロック</strong>
-                  になるため、パターンが見えてしまう！
-                </p>
-              </div>
-
-              <div className="border-l-4 border-blue-500 pl-4">
-                <h3 className="font-bold text-blue-700">CBC (Cipher Block Chaining)</h3>
-                <p className="text-sm mt-1">
-                  前のブロックの暗号文とXORしてから暗号化。
-                  <strong className="text-blue-600">同じ平文でも異なる暗号文</strong>になる。
-                  IVが必要。
-                </p>
-              </div>
-
-              <div className="border-l-4 border-green-500 pl-4">
-                <h3 className="font-bold text-green-700">CTR (Counter Mode)</h3>
-                <p className="text-sm mt-1">
-                  カウンターを暗号化してストリームを作り、平文とXOR。
-                  <strong className="text-green-600">並列処理可能</strong>で高速。
-                  Nonceが必要。
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* モード比較デモ */}
-          <div className="bg-white p-4 rounded">
-            <h3 className="font-bold mb-3">実験：同じ文字列を各モードで暗号化</h3>
-            <p className="text-sm text-gray-600 mb-3">
-              繰り返しパターンのある文字列（例：&quot;AAAA...&quot;）を暗号化すると、
-              各モードの違いがわかります。
-            </p>
-
-            <label className="block font-semibold mb-2">テスト文字列：</label>
-            <input
-              type="text"
-              value={compareText}
-              onChange={(e) => setCompareText(e.target.value)}
-              className="w-full border rounded p-2 font-mono mb-3"
-              placeholder="繰り返しパターンのある文字列を入力"
-            />
-
-            <button
-              onClick={handleCompare}
-              className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 mb-4"
-            >
-              各モードで暗号化
-            </button>
-
-            {ecbResult && (
-              <div className="space-y-3">
-                <div>
-                  <h4 className="font-semibold text-red-700">ECB結果：</h4>
-                  <p className="font-mono text-xs bg-red-50 p-2 rounded break-all">
-                    {ecbResult}
-                  </p>
-                  <p className="text-xs text-red-600 mt-1">
-                    👀 繰り返しパターンが見えやすい（同じブロックは同じ暗号文）
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-blue-700">CBC結果：</h4>
-                  <p className="font-mono text-xs bg-blue-50 p-2 rounded break-all">
-                    {cbcResult}
-                  </p>
-                  <p className="text-xs text-blue-600 mt-1">
-                    ✅ パターンが見えにくい（チェイニングにより各ブロックが異なる）
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-green-700">CTR結果：</h4>
-                  <p className="font-mono text-xs bg-green-50 p-2 rounded break-all">
-                    {ctrResult}
-                  </p>
-                  <p className="text-xs text-green-600 mt-1">
-                    ✅ パターンが見えにくい（カウンターにより各ブロックが異なる）
-                  </p>
-                </div>
-              </div>
+            {iv && (
+              <>
+                <label htmlFor="aes-iv">{mode === 'CTR' ? 'Nonce' : 'IV'}</label>
+                <textarea id="aes-iv" rows={2} value={bytesToHex(iv)} readOnly />
+              </>
             )}
-          </div>
-        </div>
+          </>
+        )}
+
+        {decrypted && (
+          <>
+            <label htmlFor="aes-decrypted">復号結果</label>
+            <textarea id="aes-decrypted" rows={3} value={decrypted} readOnly />
+            {decrypted === plaintext && <p className="hint">✅ 入力と一致しました。</p>}
+          </>
+        )}
       </section>
 
-      {/* まとめ */}
-      <section className="bg-indigo-50 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">📚 まとめ</h2>
-        <div className="space-y-2">
-          <p>✅ AESは<strong>共通鍵暗号</strong>の標準で、高速な暗号化が可能</p>
-          <p>✅ RSAとは用途が異なり、<strong>大量データの暗号化</strong>に適している</p>
-          <p>✅ <strong>ECBモード</strong>は安全性が低く、実用では避けるべき</p>
-          <p>✅ <strong>CBC</strong>や<strong>CTR</strong>モードは安全なパターン隠蔽が可能</p>
-          <p>✅ 実際のシステムでは<strong>ハイブリッド暗号</strong>（RSA+AES）を使用</p>
+      <section className="card">
+        <div className="card-header">
+          <h2>5. ブロックモードの違いを可視化</h2>
+          <p>128ビットごとに暗号化するAESは、そのままだと長いメッセージを守れません。モードをどう選ぶかで安全性が激変します。</p>
         </div>
+        <ul>
+          <li><strong>ECB:</strong> ブロックごとに独立。パターンがそのまま露出するため禁止。</li>
+          <li><strong>CBC:</strong> 前の暗号文とXORしてから暗号化。IVを確実にランダム生成するのが鍵。パディングエラーをそのまま返すと「パディング・オラクル攻撃」の温床になるので、AEADかEncrypt-then-MACで保護するのが実務の定石。</li>
+          <li><strong>CTR:</strong> カウンタを暗号化してストリーム化。高速だがNonce再利用と認証欠如に注意。</li>
+          <li><strong>GCM:</strong> CTR + GMACで認証付き暗号 (AEAD)。GMACではGHASH（GF(2¹²⁸)上の多項式演算）を使ってタグを生成し、TLS 1.3などの標準構成になっている。</li>
+        </ul>
+
+        <label htmlFor="compare-text">同じ文字列を各モードで暗号化</label>
+        <input
+          id="compare-text"
+          type="text"
+          value={compareText}
+          onChange={(event) => setCompareText(event.target.value)}
+          placeholder="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        />
+        <button type="button" className="btn btn-secondary" onClick={handleCompare}>
+          各モードで暗号化
+        </button>
+
+        {ecbResult && (
+          <div className="card-grid">
+            <div className="card">
+              <h3>ECB</h3>
+              <p className="hint">同じブロックが同じ暗号文になる。</p>
+              <textarea rows={3} value={ecbResult} readOnly />
+            </div>
+            <div className="card">
+              <h3>CBC</h3>
+              <p className="hint">パターンが崩れ、チェインによって各ブロックが変化。</p>
+              <textarea rows={3} value={cbcResult} readOnly />
+            </div>
+            <div className="card">
+              <h3>CTR</h3>
+              <p className="hint">疑似ストリーム暗号。Nonceの再利用だけは厳禁。</p>
+              <textarea rows={3} value={ctrResult} readOnly />
+            </div>
+          </div>
+        )}
       </section>
-    </div>
+
+      <section className="card">
+        <div className="card-header">
+          <h2>6. まとめと次の一歩</h2>
+        </div>
+        <ul>
+          <li>AESは共通鍵暗号の標準であり、公開鍵暗号と組み合わせて初めて実用になる。</li>
+          <li>内部構造はSPN方式。SubBytes/ShiftRows/MixColumns/AddRoundKeyを理解すると攻撃面のニュースが読みやすくなる。</li>
+          <li>ECBは歴史資料。CBC/CTR/GCMなどモードの選び方が安全性を左右する。</li>
+          <li>量子時代を見据えるならAES-256 + AEAD（GCMやChaCha20-Poly1305）を基準にする。</li>
+        </ul>
+        <p>次は共通鍵暗号ラボ（AES-GCMデモ）や公開鍵ラボ（ECDH→HKDF→AES）を触って、ハイブリッド構成全体を見るのがおすすめです。</p>
+      </section>
+    </main>
   )
 }

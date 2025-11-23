@@ -53,13 +53,40 @@ export default function Learn() {
 function FundamentalsContent() {
   return (
     <>
+      {/* Step 1: 暗号化とは何か (Why?) */}
       <section className="card">
-        <h2>暗号化とは何か</h2>
+        <h2>1. 暗号化とは何か - なぜ必要なのか</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            暗号化は「秘密のメッセージを他人に読まれないようにする技術」です。
+            インターネットで買い物をするとき、パスワードやクレジットカード情報が盗まれないよう守っているのが暗号化です。
+          </p>
+        </div>
+
+        <h3>暗号化が解決する問題</h3>
+        <ul>
+          <li><strong>盗聴防止:</strong> 通信内容を第三者に読まれない</li>
+          <li><strong>改ざん防止:</strong> データが途中で書き換えられていないことを保証</li>
+          <li><strong>なりすまし防止:</strong> 通信相手が本物であることを確認</li>
+          <li><strong>否認防止:</strong> デジタル署名により送信者が「送っていない」と言い逃れできないようにする</li>
+        </ul>
+        <p style={{ fontSize: '14px', color: '#475569' }}>
+          ※ 暗号化は「読めなくする」役割で、否認防止はデジタル署名技術の役割です。暗号化と署名はセットで語られますが、担う機能は別です。
+        </p>
+
+        <h3>暗号化の基本要素</h3>
         <p>
           暗号化（Encryption）は、平文（Plaintext）を暗号文（Ciphertext）に変換するプロセスです。
           この変換は鍵（Key）を用いて行われ、正しい鍵を持つ者のみが復号化（Decryption）により元の平文を復元できます。
         </p>
-        <h3>暗号化の基本要素</h3>
         <ul>
           <li><strong>平文 (P):</strong> 保護したい元のデータ</li>
           <li><strong>暗号文 (C):</strong> 暗号化後のデータ。第三者には意味不明</li>
@@ -77,10 +104,53 @@ function FundamentalsContent() {
           この原理により、現代暗号では<strong>アルゴリズムは公開し、鍵のみを秘密にする</strong>という設計が主流です。
           セキュリティ・バイ・オブスキュリティ（秘匿による安全性）は推奨されません。
         </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: 暗号化で公開してよいのは何でしょうか？（クリックして答えを確認）
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>アルゴリズム（暗号化の方法）</strong>です。<br />
+              Kerckhoffsの原理により、鍵以外のすべて（アルゴリズム、実装コード、暗号文など）が公開されても安全でなければなりません。
+              秘密にすべきは「鍵」のみです。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号化の基本を理解しました。次は、暗号に2つの大きな種類（共通鍵と公開鍵）があることを学びます。
+        </p>
       </section>
 
+      {/* Step 2: 共通鍵 vs 公開鍵 (What?) */}
       <section className="card">
-        <h2>共通鍵暗号 vs 公開鍵暗号</h2>
+        <h2>2. 共通鍵暗号 vs 公開鍵暗号 - 2つの方式</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            暗号には大きく2種類あります。<br />
+            <strong>共通鍵暗号:</strong> 同じ鍵で暗号化と復号化をする（家の鍵のイメージ）<br />
+            <strong>公開鍵暗号:</strong> 異なる2つの鍵を使う（南京錠と鍵のイメージ）
+          </p>
+        </div>
 
         <h3>共通鍵暗号（対称鍵暗号）</h3>
         <p>
@@ -88,7 +158,7 @@ function FundamentalsContent() {
         </p>
         <ul>
           <li><strong>長所:</strong> 暗号化・復号化が高速（ハードウェア実装可能）</li>
-          <li><strong>長所:</strong> 鍵長が短くても高い安全性（AES-128は量子時代でも64ビット安全性）</li>
+          <li><strong>長所:</strong> 鍵長が短くても高い安全性（AES-128はGroverの平方根探索により量子時代でも64ビット安全性）</li>
           <li><strong>短所:</strong> n人が通信するには n(n-1)/2 個の鍵が必要</li>
           <li><strong>短所:</strong> 鍵を安全に共有する仕組みが別途必要</li>
         </ul>
@@ -105,21 +175,204 @@ function FundamentalsContent() {
           <li><strong>短所:</strong> 暗号化・復号化が遅い（共通鍵の1000〜10000倍）</li>
           <li><strong>短所:</strong> 量子コンピュータによる脅威（Shorのアルゴリズム）</li>
         </ul>
-        <p><strong>代表例:</strong> RSA、ECDH、ECDSA、Ed25519</p>
+        <p><strong>代表例:</strong> RSA（暗号化・署名）、ECDH（鍵交換）、ECDSA・Ed25519（署名）</p>
 
-        <h3>ハイブリッド暗号</h3>
-        <p>
-          実際のシステム（TLS、PGP等）では両方を組み合わせます：
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: 公開鍵暗号の最大の利点は何でしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>鍵配送問題の解決</strong>です。<br />
+              公開鍵は誰でも知ってよいため、事前に秘密の鍵を共有する必要がありません。
+              公開鍵で暗号化したデータは、対応する秘密鍵でしか復号できないため、安全に通信できます。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 2つの暗号方式を学びました。では、なぜ公開鍵暗号が発明されたのか、その歴史的背景を見ていきましょう。
         </p>
-        <ol>
-          <li>公開鍵暗号で共通鍵（セッション鍵）を安全に共有</li>
-          <li>共通鍵暗号で大量データを高速に暗号化</li>
-        </ol>
-        <p>これにより「鍵配送の安全性」と「暗号化の高速性」を両立します。</p>
       </section>
 
+      {/* Step 3: なぜ公開鍵が発明されたか (History & Problem) */}
       <section className="card">
-        <h2>ハッシュ関数の役割</h2>
+        <h2>3. なぜ公開鍵暗号が発明されたか - 鍵配送問題の解決</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            共通鍵暗号には「鍵をどうやって安全に渡すか」という大問題がありました。<br />
+            例: AさんとBさんが初めて通信するとき、暗号化に使う鍵をどうやって共有する？<br />
+            公開鍵暗号はこの問題を数学的に解決しました。
+          </p>
+        </div>
+
+        <h3>鍵配送問題（Key Distribution Problem）</h3>
+        <p>
+          共通鍵暗号では、通信を始める前に送信者と受信者が同じ鍵を安全に共有する必要があります。
+          しかし、まだ暗号化通信ができない状態で、鍵をどうやって安全に送るのか？
+        </p>
+        <ul>
+          <li><strong>物理的な配送:</strong> 信頼できる人が手渡しで配送（コスト高、スケールしない）</li>
+          <li><strong>事前共有:</strong> オフラインで事前に鍵を交換（柔軟性に欠ける）</li>
+          <li><strong>階層的鍵管理:</strong> 鍵を管理する中央機関が必要（単一障害点）</li>
+        </ul>
+
+        <h3>公開鍵暗号による解決（1976年）</h3>
+        <p>
+          Whitfield DiffieとMartin Hellmanが革命的なアイデアを提案：<br />
+          「公開してもよい鍵（公開鍵）と、秘密にする鍵（秘密鍵）を数学的に関連付ける」
+        </p>
+        <ol>
+          <li>各ユーザーは公開鍵と秘密鍵のペアを生成</li>
+          <li>公開鍵は誰にでも配布してよい（Webサイトで公開してもOK）</li>
+          <li>送信者は受信者の公開鍵で暗号化</li>
+          <li>受信者は自分の秘密鍵でのみ復号化できる</li>
+        </ol>
+        <p>
+          これにより、事前の鍵共有なしで安全な通信が可能になりました。Diffie-Hellmanは暗号文そのものを作れない鍵交換プロトコルですが、その発想が公開鍵方式（RSAなど）の基盤となりました。
+        </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: 公開鍵暗号で「公開鍵」を誰かに盗まれても問題ないのはなぜでしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>公開鍵では復号できない</strong>からです。<br />
+              公開鍵暗号では、公開鍵で暗号化したデータは秘密鍵でしか復号できません。
+              公開鍵はその名の通り「公開してよい鍵」であり、暗号化にしか使えません。
+              復号に必要な秘密鍵さえ安全に保管していれば、公開鍵が漏れても問題ありません。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 公開鍵暗号の発明理由を理解しました。次は、実際のWebサイト（HTTPS）でどのように2つの暗号を組み合わせているか見てみましょう。
+        </p>
+      </section>
+
+      {/* Step 4: 実システム(TLS)での組み合わせ方 (Real World) */}
+      <section className="card">
+        <h2>4. 実システムでの暗号の組み合わせ - TLSの仕組み</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            実際のWebサイト（HTTPS）では、共通鍵暗号と公開鍵暗号の<strong>両方</strong>を組み合わせています。<br />
+            公開鍵暗号で安全に鍵を共有 → その鍵で共通鍵暗号を使って高速にデータをやり取り。<br />
+            これを「ハイブリッド暗号」と呼びます。
+          </p>
+        </div>
+
+        <h3>ハイブリッド暗号方式</h3>
+        <p>
+          実際のシステム（TLS、PGP等）では共通鍵暗号と公開鍵暗号を組み合わせます：
+        </p>
+        <ol>
+          <li><strong>ハンドシェイク:</strong> 公開鍵暗号（RSA, ECDH。TLS 1.3ならP-256やx25519など）で共通鍵（セッション鍵）を安全に共有</li>
+          <li><strong>データ転送:</strong> 共通鍵暗号（AES-GCM）で大量データを高速に暗号化</li>
+        </ol>
+        <p>これにより「鍵配送の安全性」と「暗号化の高速性」を両立します。</p>
+
+        <h3>TLS 1.3のハンドシェイク例</h3>
+        <ol>
+          <li>クライアントがサーバーの証明書（公開鍵を含む）を取得</li>
+          <li>ECDH鍵交換（P-256やx25519などの楕円曲線）でセッション鍵を共有（公開鍵暗号）</li>
+          <li>以降の通信はAES-256-GCMで暗号化（共通鍵暗号）</li>
+          <li>セッション終了後、セッション鍵は破棄（Perfect Forward Secrecy）</li>
+        </ol>
+
+        <h3>なぜ共通鍵暗号も必要なのか</h3>
+        <p>
+          公開鍵暗号だけでは遅すぎるため、実用的ではありません。<br />
+          動画ストリーミング、ファイルダウンロードなど大量データの暗号化には、
+          高速な共通鍵暗号（AES）が必須です。
+        </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: HTTPS通信では、公開鍵暗号と共通鍵暗号をどのように使い分けていますか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>公開鍵暗号で鍵を共有し、共通鍵暗号でデータを暗号化</strong>します。<br />
+              ① ハンドシェイク時: 公開鍵暗号（ECDH）で共通鍵（セッション鍵）を安全に共有<br />
+              ② データ転送時: 共通鍵暗号（AES-GCM）でWebページやファイルを高速に暗号化<br />
+              これにより、安全性と速度の両立を実現しています。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号化の仕組みを理解しました。しかし、暗号システムには暗号化だけでなく、もう1つ重要な要素があります。それが「ハッシュ関数」です。
+        </p>
+      </section>
+
+      {/* Step 5: ハッシュの役割 (Another Building Block) */}
+      <section className="card">
+        <h2>5. ハッシュ関数の役割 - もう1つの重要な部品</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            ハッシュ関数は「データの指紋」を作る技術です。<br />
+            どんなに大きなファイルでも、固定長の短い文字列（ハッシュ値）に変換します。<br />
+            ファイルが1ビットでも変わると、ハッシュ値は全く別のものになります。<br />
+            <strong>用途:</strong> パスワード保存、ファイル検証、デジタル署名
+          </p>
+        </div>
+
+        <h3>ハッシュ関数とは</h3>
         <p>
           ハッシュ関数 H は任意長のメッセージ M を固定長のハッシュ値 h = H(M) に変換します。
         </p>
@@ -131,7 +384,7 @@ function FundamentalsContent() {
           <li><strong>衝突困難性（Collision Resistance）:</strong> H(M₁) = H(M₂) となる任意の M₁ ≠ M₂ を見つけることが困難</li>
         </ul>
 
-        <h3>用途</h3>
+        <h3>実際の用途</h3>
         <ul>
           <li><strong>データ整合性検証:</strong> ファイルの改ざん検知（SHA-256チェックサム）</li>
           <li><strong>パスワード保存:</strong> bcrypt、Argon2（ソルト＋ストレッチング）</li>
@@ -144,16 +397,63 @@ function FundamentalsContent() {
         <ul>
           <li><strong>MD5 (128bit):</strong> 2004年衝突発見、現在は完全に危殆化</li>
           <li><strong>SHA-1 (160bit):</strong> 2017年Google/CWIが実用的衝突攻撃、TLS証明書では2016年に非推奨</li>
-          <li><strong>SHA-2 (SHA-256, SHA-512):</strong> 現在も安全、NIST標準</li>
+          <li><strong>SHA-2 (SHA-256, SHA-512):</strong> 現在も安全、NIST標準（量子攻撃下でもGroverにより128bit相当の安全性を保持）</li>
           <li><strong>SHA-3 (Keccak):</strong> 2015年標準化、SHA-2とは異なる設計（スポンジ構造）</li>
         </ul>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: なぜパスワードを保存するときにハッシュ化するのでしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>データベースが漏洩しても元のパスワードがわからないようにする</strong>ためです。<br />
+              ハッシュ関数は一方向関数なので、ハッシュ値から元のパスワードを復元することは計算量的に困難です。
+              ユーザーがログイン時に入力したパスワードをハッシュ化し、保存済みのハッシュ値と比較することで認証できます。
+              ただし、実際はArgon2やbcryptなど、ソルトとストレッチングを含む専用の関数を使用します。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号の3つの柱（共通鍵・公開鍵・ハッシュ）を理解しました。次は、共通鍵暗号の実装上の重要な概念「モード」について学びます。
+        </p>
       </section>
 
+      {/* Step 6: ブロック暗号 → モードが必要な理由 (Deep Dive) */}
       <section className="card">
-        <h2>暗号モード（Block Cipher Modes）</h2>
+        <h2>6. ブロック暗号とモード - なぜ「モード」が必要なのか</h2>
+
+        <div style={{
+          background: '#f0f9ff',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #0ea5e9',
+          marginBottom: '16px',
+        }}>
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            AESなどのブロック暗号は「固定サイズのブロック（16バイト）」しか暗号化できません。<br />
+            でも実際のデータは様々なサイズです。動画は数GB、メッセージは数バイト。<br />
+            「モード」は、様々なサイズのデータを安全に暗号化する方法を定義します。<br />
+            <strong>重要:</strong> モードを間違えると、暗号化しても情報が漏れます。
+          </p>
+        </div>
+
+        <h3>ブロック暗号とは</h3>
         <p>
-          ブロック暗号（AESなど）は固定長ブロック（128bit）を暗号化しますが、
-          実際のデータは可変長です。暗号モードは可変長データを安全に暗号化する方法を定義します。
+          ブロック暗号（AESなど）は固定長ブロック（128bit = 16バイト）を暗号化します。
+          しかし実際のデータは可変長です。暗号モードは可変長データを安全に暗号化する方法を定義します。
         </p>
 
         <h3>主要な暗号モード</h3>
@@ -176,7 +476,7 @@ function FundamentalsContent() {
           カウンタ値を暗号化してストリーム暗号のように動作。並列処理可能で高速。
           ナンス（Nonce）＋カウンタで各ブロックを暗号化。
         </p>
-        <p><strong>注意:</strong> ナンスを再利用すると鍵ストリームが露出</p>
+        <p><strong>注意:</strong> ナンスを再利用すると鍵ストリームが露出し、CTR単体では改ざん検知ができない（認証付きのGCMなどと組み合わせる）</p>
 
         <h4>🌟 GCM (Galois/Counter Mode) - 推奨</h4>
         <p>
@@ -194,6 +494,111 @@ function FundamentalsContent() {
           ストリーム暗号ChaCha20 + Poly1305認証。AES-NIがないデバイスでも高速。
           GoogleがTLSに採用、Android/iOSで標準サポート。
         </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: ECBモードを使用してはいけない理由は何でしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>同じ平文ブロックが同じ暗号文になるため、パターンが漏洩する</strong>からです。<br />
+              ECBモードでは各ブロックを独立に暗号化するため、画像を暗号化しても輪郭が見えてしまいます。
+              また、暗号文ブロックの並び替えや削除も検知できません。
+              必ずCBC、CTR、GCMなどのモードを使用し、現代ではAES-GCMやChaCha20-Poly1305のようなAEAD（認証付き暗号）が推奨されます。
+            </p>
+          </details>
+        </div>
+
+        {/* 次のステップへの橋渡し */}
+        <p style={{
+          marginTop: '24px',
+          padding: '12px 16px',
+          background: 'linear-gradient(to right, #e0f2fe, transparent)',
+          borderLeft: '3px solid #0ea5e9',
+          borderRadius: '4px',
+          fontWeight: '500'
+        }}>
+          💡 <strong>次のステップへ:</strong> 暗号の理論と実装を学びました。最後に、数学的に安全な暗号でも実装を間違えると破られる現実を見ていきましょう。
+        </p>
+      </section>
+
+      {/* Step 7: 実世界の脆弱性と攻撃 (Security Awareness) */}
+      <section className="card">
+        <h2>7. 実世界の脆弱性と攻撃 - 暗号も完璧ではない</h2>
+
+        <div style={{
+          background: '#fff3cd',
+          padding: '16px',
+          borderRadius: '8px',
+          borderLeft: '4px solid #ffc107',
+          marginBottom: '16px',
+        }}>
+          <strong>⚠️ セキュリティ意識向上</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            数学的に安全な暗号アルゴリズムでも、<strong>実装を間違える</strong>と簡単に破られます。<br />
+            ここで紹介する攻撃は、実際に現実世界で被害を出したものばかりです。<br />
+            暗号を使う開発者は、これらの落とし穴を理解する必要があります。
+          </p>
+        </div>
+
+        <h3>1. ECBモードによるパターン漏洩</h3>
+        <p>
+          同じ平文ブロックが同じ暗号文になるため、画像を暗号化しても輪郭が見えてしまいます。
+        </p>
+
+        <h3>2. IV/ナンスの再利用</h3>
+        <p>
+          CBCモードでIVを使い回すと最初のブロックの等価性が漏洩。<br />
+          CTR/GCMモードでナンスを使い回すと<strong>鍵ストリームが完全に露出</strong>し、平文が復元されます。
+        </p>
+
+        <h3>3. パディングオラクル攻撃</h3>
+        <p>
+          CBCモードで「パディングが正しいかどうか」のエラーメッセージを返すと、
+          攻撃者は暗号文を少しずつ解読できます。
+        </p>
+
+        <h3>4. タイミング攻撃</h3>
+        <p>
+          処理時間のわずかな差（ナノ秒単位）から秘密情報を推測。<br />
+          文字列比較で通常の<code>==</code>を使うと、一致している長さが漏れます。
+        </p>
+
+        <h3>5. 弱い乱数生成器の使用</h3>
+        <p>
+          <code>Math.random()</code>は予測可能なため、鍵生成やトークン生成には絶対使用禁止。<br />
+          必ず<code>crypto.getRandomValues()</code>などのCSPRNGを使用。
+        </p>
+
+        <h3>6. ハードコードされた鍵</h3>
+        <p>
+          ソースコードに鍵を埋め込むと、リポジトリ公開時やアプリ解析で漏洩。<br />
+          環境変数、HSM、Secure Enclaveなどで適切に管理する必要があります。
+        </p>
+
+        <h3>学習を深めるために</h3>
+        <p>
+          これらの攻撃の詳細は「実践セキュリティ」タブで解説しています。<br />
+          暗号の理論だけでなく、実装上の注意点も学ぶことが重要です。
+        </p>
+
+        {/* 理解度チェック */}
+        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
+          <details>
+            <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
+              Q: なぜMath.random()を暗号鍵の生成に使用してはいけないのでしょうか？
+            </summary>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+              A: <strong>Math.random()は予測可能な乱数だから</strong>です。<br />
+              Math.random()は決定論的な疑似乱数生成器（PRNG）であり、内部状態から次の値を予測できます。
+              暗号鍵、トークン、ソルト、ナンスなどのセキュリティ要素には、暗号学的に安全な乱数生成器（CSPRNG）を使用する必要があります。
+              ブラウザではcrypto.getRandomValues()、Node.jsではcrypto.randomBytes()を使用してください。
+            </p>
+          </details>
+        </div>
       </section>
 
       <section className="card resources">
@@ -604,7 +1009,7 @@ secrets.token_bytes(16)`}</pre>
 
         <h3>タイミング攻撃</h3>
         <p>
-          処理時間のわずかな差（ナノ秒単位）を計測することで、秘密情報を推測する攻撃です。
+          サイドチャネル攻撃の一種で、処理時間のわずかな差（ナノ秒単位）を計測することで秘密情報を推測する攻撃です。
         </p>
         <ul>
           <li><strong>文字列比較:</strong> 通常の比較（<code>==</code>, <code>strcmp</code>）は不一致の時点で処理を終えるため、一致している長さが推測可能。</li>
@@ -702,156 +1107,177 @@ secrets.token_bytes(16)`}</pre>
 }
 
 // ポスト量子暗号タブ
+
 function PQCContent() {
   return (
     <>
       <section className="card">
-        <h2>量子コンピュータの脅威</h2>
-
-        <h3>量子コンピュータとは</h3>
+        <h2>量子コンピューター基礎</h2>
         <p>
-          量子ビット（qubit）を利用し、重ね合わせとエンタングルメントにより
-          古典コンピュータでは不可能な並列計算を実現。
+          暗号の量子脅威を理解するには、まず古典計算と量子計算の違いを押さえるのが近道です。
+          bitとqubitのギャップ、重ね合わせや干渉といった直感を掴んでおくと、ShorやGroverの威力が腑に落ちます。
         </p>
-
-        <h3>Shorのアルゴリズム（1994年）</h3>
+        <h3>bit vs qubit</h3>
+        <ul>
+          <li><strong>bit:</strong> 0か1のどちらか一方のみをとる。n個で2ⁿ通りを順番に計算する。</li>
+          <li><strong>qubit:</strong> |0⟩と|1⟩の重ね合わせをとれる。n個で2ⁿ通りを同時に扱い、後段の干渉で必要なパターンだけを強調する。</li>
+        </ul>
+        <h3>重ね合わせと干渉</h3>
         <p>
-          Peter Shorが発表した量子アルゴリズム。<strong>素因数分解と離散対数問題を多項式時間で解く</strong>。
+          量子状態は波として足し引きされます。アルゴリズムは「正解の振幅を増幅」「誤りを打ち消す」ように構築され、
+          Groverの振幅増幅やShorの周期発見がその代表例です。
         </p>
-        <ul>
-          <li><strong>影響を受ける暗号:</strong>
-            <ul>
-              <li>RSA（素因数分解）</li>
-              <li>ECDH、ECDSA（楕円曲線離散対数）</li>
-              <li>Diffie-Hellman（離散対数）</li>
-            </ul>
-          </li>
-          <li><strong>計算量:</strong> O((log N)³) - Nビット整数の因数分解</li>
-          <li><strong>必要な量子ビット数:</strong> 2048bit RSA解読に約4098 qubit（エラー訂正込み）</li>
-        </ul>
-
-        <h3>Groverのアルゴリズム（1996年）</h3>
+        <h3>量子もつれ（エンタングルメント）</h3>
         <p>
-          データベース検索を√N倍高速化。共通鍵暗号の鍵探索に適用可能。
+          複数qubitの状態が独立でなくなる量子特有の相関。Shorのフーリエ変換や量子エラー訂正の核となります。
         </p>
+        <h3>量子計算が得意な問題</h3>
         <ul>
-          <li><strong>影響:</strong>
-            <ul>
-              <li>AES-128 → 実質64bit安全性（2⁶⁴回の量子ゲート操作）</li>
-              <li>AES-256 → 実質128bit安全性（依然として安全）</li>
-            </ul>
-          </li>
-          <li><strong>対策:</strong> 鍵長を2倍にすることで従来と同等の安全性を維持</li>
+          <li>周期発見・素因数分解・離散対数（→ RSA/ECCが崩壊）</li>
+          <li>構造を持つ探索（→ Groverで√Nスピードアップ）</li>
+          <li>量子シミュレーション（化学・物性）など</li>
         </ul>
-
-        <h3>現在の量子コンピュータの状況</h3>
-        <ul>
-          <li><strong>IBM Quantum:</strong> 433 qubit（2022年、Osprey）、1121 qubit（2023年、Condor）</li>
-          <li><strong>Google:</strong> 72 qubit（2018年、Bristlecone）、Sycamoreで量子超越性実証</li>
-          <li><strong>問題点:</strong>
-            <ul>
-              <li>エラー率が高い（デコヒーレンス）</li>
-              <li>エラー訂正に論理qubitあたり1000物理qubit必要</li>
-              <li>RSA-2048解読には数百万qubit規模が必要（2030年代？）</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>Harvest Now, Decrypt Later攻撃</h3>
         <p>
-          現在暗号化された通信を記録しておき、将来量子コンピュータで解読する攻撃。
-          <strong>長期保存データは今すぐPQC移行が必要</strong>。
+          この基礎を押さえると、「なぜShorでRSAが破れるのか」「なぜGroverで鍵検索が半減するのか」
+          ひいては「なぜPQCが必要なのか」という流れが理解しやすくなります。
         </p>
       </section>
 
       <section className="card">
-        <h2>NIST PQC標準化プロセス</h2>
+        <h2>量子脅威の全体像</h2>
+        <p>
+          現代暗号は <strong>公開鍵暗号の困難性（素因数分解・離散対数）</strong> と
+          <strong>共通鍵暗号の総当たりが現実的でないこと</strong> の二本柱で成立しています。
+          量子アルゴリズムはそれぞれに対応する弱点を突きます。
+        </p>
+        <div className="info-panel">
+          <h3>暗号の二本柱と量子攻撃</h3>
+          <ul>
+            <li>公開鍵暗号 → Shor で RSA / Diffie-Hellman / ECC が崩壊</li>
+            <li>共通鍵・ハッシュ → Grover で平方根スピードアップ（鍵長2倍で対抗）</li>
+          </ul>
+        </div>
+        <div className="concept-map">
+          <div className="concept-node">
+            <h4>古典暗号崩壊の理由</h4>
+            <p>Shor が数論ベースの暗号を、多項式時間で攻略。Grover は鍵探索の指数を半減。</p>
+          </div>
+          <div className="concept-node">
+            <h4>PQCへの移行</h4>
+            <p>NIST PQCの採択（Kyber/Dilithiumなど）を軸に、TLS・PKI・VPNが順次更新中。</p>
+          </div>
+          <div className="concept-node">
+            <h4>QKDという第2の柱</h4>
+            <p>計算量ではなく量子物理で鍵配送を守るアプローチ。PQCと補完関係にあります。</p>
+          </div>
+        </div>
+      </section>
 
-        <h3>タイムライン</h3>
+      <section className="card">
+        <h2>古典暗号が破られる理由</h2>
+
+        <h3>Shorのアルゴリズム（1994年）</h3>
+        <p>
+          素因数分解と離散対数を多項式時間に落とし込む量子アルゴリズム。
+          <strong>RSA、Diffie-Hellman、ECDH/ECDSAは前提そのものが破られます</strong>。
+        </p>
         <ul>
-          <li><strong>2016年:</strong> NIST PQC標準化プロジェクト開始、82方式が応募</li>
-          <li><strong>2017-2020年:</strong> 第1〜3ラウンド選考</li>
-          <li><strong>2022年7月:</strong> 第1陣として4方式を選定
-            <ul>
-              <li>CRYSTALS-Kyber（鍵カプセル化）</li>
-              <li>CRYSTALS-Dilithium（デジタル署名）</li>
-              <li>FALCON（デジタル署名）</li>
-              <li>SPHINCS+（デジタル署名）</li>
-            </ul>
-          </li>
-          <li><strong>2023年:</strong> FIPS草案公開</li>
-          <li><strong>2024年:</strong> 標準化完了予定</li>
+          <li>RSA-2048解読には約4000論理qubit＋膨大なエラー訂正が必要（推定数百万物理qubit）</li>
+          <li>計算量 O((log N)³) で、古典計算では到達できない速度へ</li>
         </ul>
 
-        <h3>アルゴリズムの分類</h3>
+        <h3>Groverのアルゴリズム（1996年）</h3>
+        <p>総当たり探索を √N に短縮。AES-128は実質64bit安全性、AES-256は128bit相当へ。</p>
         <ul>
-          <li><strong>格子ベース:</strong> Kyber, Dilithium, FALCON（最短ベクトル問題）</li>
-          <li><strong>符号ベース:</strong> Classic McEliece（訂正不能な誤りを持つ符号の復号問題）</li>
-          <li><strong>多変数多項式:</strong> Rainbow（解かれた、SIDHも解かれた）</li>
-          <li><strong>ハッシュベース:</strong> SPHINCS+（ハッシュ関数の安全性のみに依存）</li>
+          <li>対策は鍵長を2倍にする（AES-256 / SHA-512 / 長いHMACキー）</li>
+          <li>ハッシュ関数の衝突耐性・原像計算も半減する点に注意</li>
         </ul>
+
+        <div className="info-panel">
+          <h3>現在の量子計算機 & HNDL</h3>
+          <ul>
+            <li>IBM: Osprey 433 qubit（2022）、Condor 1121 qubit（2023）</li>
+            <li>Google: Sycamoreが量子超越性を実証。まだエラー訂正がボトルネック</li>
+            <li><strong>Harvest Now, Decrypt Later:</strong> 今の通信を記録し量子後に解読する攻撃。
+              長期秘匿データは即PQCへ移行するのが実務ガイドライン</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="card">
+        <h2>PQC（耐量子暗号）へのロードマップ</h2>
+        <p>「いつ・何を・どう置き換えるか」を俯瞰したシラバスです。</p>
+
+        <h3>NIST標準化タイムライン</h3>
+        <ol>
+          <li>2016年: NISTがPQC公募（82方式）</li>
+          <li>2017-2020年: 3ラウンドで安全性・実装性を評価</li>
+          <li>2022年: 第1陣として Kyber / Dilithium / FALCON / SPHINCS+ を選出</li>
+          <li>2024年: FIPSドラフト → 実装指針として各国政府・大手クラウドが採用へ</li>
+        </ol>
+
+        <h3>アルゴリズムファミリー</h3>
+        <div className="concept-map">
+          <div className="concept-node">
+            <h4>格子ベース</h4>
+            <p>Kyber（KEM）、Dilithium/FALCON（署名）。最短ベクトル問題やM-LWE/M-SISを前提。</p>
+          </div>
+          <div className="concept-node">
+            <h4>符号・多変数</h4>
+            <p>Classic McElieceは巨大鍵だが堅牢。Rainbow/SIDHは攻撃により脱落。</p>
+          </div>
+          <div className="concept-node">
+            <h4>ハッシュベース</h4>
+            <p>SPHINCS+ は保守的で信頼性高いが、署名サイズ・計算コストが重い。</p>
+          </div>
+        </div>
       </section>
 
       <section className="card">
         <h2>Kyber（鍵カプセル化機構）</h2>
-
-        <h3>概要</h3>
-        <p>
-          Module Learning With Errors（M-LWE）問題に基づく鍵カプセル化機構（KEM）。
-          TLS、VPN、ディスク暗号化での鍵交換に使用。
-        </p>
+        <p>Module-LWEベースのKEM。TLS・VPN・ディスク暗号化に組み込まれる公開鍵PQCの主役です。</p>
 
         <h3>パラメータセット</h3>
         <ul>
-          <li><strong>Kyber-512:</strong> AES-128相当（公開鍵800bytes）</li>
-          <li><strong>Kyber-768:</strong> AES-192相当（公開鍵1184bytes）</li>
-          <li><strong>Kyber-1024:</strong> AES-256相当（公開鍵1568bytes）</li>
+          <li>Kyber-512: AES-128相当（公開鍵800B / 秘密鍵1632B）</li>
+          <li>Kyber-768: AES-192相当（公開鍵1184B）※ハイブリッドTLSのデファクト</li>
+          <li>Kyber-1024: AES-256相当（公開鍵1568B）</li>
         </ul>
 
-        <h3>パフォーマンス</h3>
+        <h3>実用上の特徴</h3>
         <ul>
-          <li><strong>鍵生成:</strong> 数十マイクロ秒</li>
-          <li><strong>カプセル化:</strong> 数十マイクロ秒</li>
-          <li><strong>脱カプセル化:</strong> 数十マイクロ秒</li>
-        </ul>
-        <p>RSA-2048（数ミリ秒）やECDH P-256（数百マイクロ秒）と比較して実用的な速度。</p>
-
-        <h3>実装</h3>
-        <ul>
-          <li><strong>liboqs:</strong> Open Quantum Safe プロジェクトのC実装</li>
-          <li><strong>Cloudflare:</strong> TLS実験的サポート（2019年〜）</li>
-          <li><strong>Google Chrome:</strong> 実験的実装（chrome://flags）</li>
+          <li>鍵生成・カプセル化・復号は数十μsで完了（ARM/モバイルでも実装可）</li>
+          <li>KEMなので既存の鍵合意APIに差し込みやすい</li>
         </ul>
 
-        <h3>セキュリティ</h3>
-        <ul>
-          <li>古典コンピュータに対しても安全（格子問題の困難性）</li>
-          <li>量子アルゴリズムによる已知の効率的攻撃なし</li>
-          <li>CCA2安全性（選択暗号文攻撃耐性）</li>
-        </ul>
+        <div className="info-panel">
+          <h3>TLS 1.3 ハイブリッド例</h3>
+          <ol>
+            <li>ClientHello に Kyber768 公開鍵（X25519 と並列）</li>
+            <li>Server → Kyberカプセル化で共有秘密 Z<sub>PQC</sub></li>
+            <li>X25519 の Z<sub>ECC</sub> と連結し HKDF → AES-GCM 鍵へ</li>
+          </ol>
+          <p>Cloudflare / Google / AWS などがこの方式でテスト & ロールアウト中。</p>
+        </div>
       </section>
 
       <section className="card">
         <h2>Dilithium（デジタル署名）</h2>
-
-        <h3>概要</h3>
-        <p>
-          M-LWE問題に基づくデジタル署名方式。Fiat-Shamir変換によりゼロ知識証明から構成。
-        </p>
+        <p>M-SIS/M-LWEベースの署名方式。PKI・コード署名・ブロックチェーン向けの本命です。</p>
 
         <h3>パラメータセット</h3>
         <ul>
-          <li><strong>Dilithium2:</strong> AES-128相当（公開鍵1312bytes、署名2420bytes）</li>
-          <li><strong>Dilithium3:</strong> AES-192相当（公開鍵1952bytes、署名3293bytes）</li>
-          <li><strong>Dilithium5:</strong> AES-256相当（公開鍵2592bytes、署名4595bytes）</li>
+          <li>Dilithium2: AES-128相当（PK 1312B / Signature 2420B）</li>
+          <li>Dilithium3: AES-192相当（PK 1952B / Signature 3293B）</li>
+          <li>Dilithium5: AES-256相当（PK 2592B / Signature 4595B）</li>
         </ul>
 
-        <h3>比較: RSA vs ECDSA vs Dilithium</h3>
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '16px' }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #e2e8f0' }}>
+        <h3>RSA / ECDSAとの比較</h3>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '12px', border: '1px solid #e2e8f0' }}>
+          <thead style={{ background: '#f8fafc' }}>
+            <tr>
               <th style={{ padding: '8px', textAlign: 'left' }}>方式</th>
-              <th style={{ padding: '8px', textAlign: 'left' }}>公開鍵</th>
+              <th style={{ padding: '8px', textAlign: 'left' }}>公開鍵サイズ</th>
               <th style={{ padding: '8px', textAlign: 'left' }}>署名長</th>
               <th style={{ padding: '8px', textAlign: 'left' }}>量子耐性</th>
             </tr>
@@ -859,107 +1285,81 @@ function PQCContent() {
           <tbody>
             <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
               <td style={{ padding: '8px' }}>RSA-2048</td>
-              <td style={{ padding: '8px' }}>256 bytes</td>
-              <td style={{ padding: '8px' }}>256 bytes</td>
+              <td style={{ padding: '8px' }}>256B</td>
+              <td style={{ padding: '8px' }}>256B</td>
               <td style={{ padding: '8px' }}>❌</td>
             </tr>
             <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
               <td style={{ padding: '8px' }}>ECDSA P-256</td>
-              <td style={{ padding: '8px' }}>64 bytes</td>
-              <td style={{ padding: '8px' }}>64 bytes</td>
+              <td style={{ padding: '8px' }}>64B</td>
+              <td style={{ padding: '8px' }}>64B</td>
               <td style={{ padding: '8px' }}>❌</td>
             </tr>
             <tr>
               <td style={{ padding: '8px' }}>Dilithium3</td>
-              <td style={{ padding: '8px' }}>1952 bytes</td>
-              <td style={{ padding: '8px' }}>3293 bytes</td>
+              <td style={{ padding: '8px' }}>1952B</td>
+              <td style={{ padding: '8px' }}>3293B</td>
               <td style={{ padding: '8px' }}>✅</td>
             </tr>
           </tbody>
         </table>
         <p style={{ marginTop: '8px', fontSize: '14px', color: '#64748b' }}>
-          署名サイズは大きいが、署名・検証速度はECDSAと同程度
+          サイズは増えるが、署名・検証速度はECDSAと同等でミドルウェアにも投入可能。
         </p>
 
-        <h3>用途</h3>
+        <h3>主なユースケース</h3>
         <ul>
-          <li>TLS証明書の署名</li>
-          <li>ソフトウェア署名・コード署名</li>
-          <li>ブロックチェーン・分散台帳</li>
-          <li>ファームウェア更新の検証</li>
+          <li>TLS/QUIC 証明書（ACMEサーバーのPQC対応）</li>
+          <li>OS/ブラウザ/ドライバーなどのコード署名</li>
+          <li>ブロックチェーン・スマートメーター・OTAアップデート</li>
         </ul>
       </section>
 
       <section className="card">
         <h2>ハイブリッド暗号方式</h2>
-
-        <h3>なぜハイブリッドか</h3>
-        <p>
-          PQC方式は実績が浅く、未知の脆弱性が発見される可能性があります。
-          一方、RSA/ECCは量子コンピュータ以外の攻撃に対しては十分な実績があります。
-        </p>
+        <p>未知の脆弱性に備えて、古典暗号とPQCを<strong>併用</strong>するのが移行期のベストプラクティスです。</p>
 
         <h3>ハイブリッドTLS</h3>
-        <p>
-          古典暗号とPQCを<strong>同時に使用</strong>し、どちらか一方が破られても安全性を維持：
-        </p>
         <ul>
-          <li>X25519（楕円曲線） + Kyber768</li>
-          <li>共有鍵 = KDF(X25519の共有秘密 || Kyberの共有秘密)</li>
-          <li>両方を解読しない限り通信内容は保護される</li>
+          <li>X25519（楕円曲線） + Kyber768 を並列で握手し、共有秘密を連結してKDF</li>
+          <li>片方が破られても、もう片方が通信を守る</li>
         </ul>
 
         <h3>実装例</h3>
         <ul>
-          <li><strong>Cloudflare:</strong> 2019年からハイブリッドTLS実験</li>
-          <li><strong>Google Chrome:</strong> X25519+Kyber768サポート開始</li>
-          <li><strong>Signal:</strong> PQXDH（Post-Quantum Extended Diffie-Hellman）</li>
-          <li><strong>AWS KMS:</strong> Hybrid Post-Quantum TLS option</li>
+          <li>Cloudflare: 2019年からハイブリッドTLSを実ネットで実験</li>
+          <li>Google Chrome / Firefox Nightly: X25519+Kyber768サイファをテスト搭載</li>
+          <li>Signal PQXDH: メッセンジャーでも Kyber + X25519 を同時利用</li>
+          <li>AWS KMS / Azure: PQC TLSオプションをプレビュー提供</li>
         </ul>
 
-        <h3>移行戦略</h3>
+        <h3>移行フェーズ</h3>
         <ol>
-          <li><strong>フェーズ1（現在）:</strong> ハイブリッド方式でリスク分散</li>
-          <li><strong>フェーズ2（2025-2030）:</strong> PQC単独方式へ移行開始</li>
-          <li><strong>フェーズ3（2030-2035）:</strong> 古典暗号の段階的廃止</li>
+          <li><strong>Phase 1:</strong> 既存サービスにハイブリッドを追加（現在）</li>
+          <li><strong>Phase 2:</strong> PQC単独モードを用意し必須要件化（2025-2030）</li>
+          <li><strong>Phase 3:</strong> 古典公開鍵暗号を段階的に廃止（2030年代）</li>
         </ol>
       </section>
 
       <section className="card">
         <h2>量子暗号通信（QKD）</h2>
+        <p>量子物理で盗聴を検知するアプローチ。PQCと相補的な第2の柱です。</p>
 
-        <h3>量子鍵配送（Quantum Key Distribution）</h3>
-        <p>
-          量子力学の原理（測定による状態変化）を利用して、盗聴を物理的に検知しながら鍵を共有。
-        </p>
-
-        <h3>BB84プロトコル（1984年）</h3>
-        <p>
-          Charles BennettとGilles Brassardが提案。量子ビット（光子の偏光状態）で鍵を送信。
-        </p>
+        <h3>BB84 / 量子鍵配送</h3>
         <ul>
-          <li>盗聴者が測定すると量子状態が変化し、検知可能</li>
-          <li>理論的には無条件安全性（計算量的困難性に依存しない）</li>
+          <li>光子の偏光状態などを送り、測定＝盗聴で状態が崩れる</li>
+          <li>中国「墨子号」、NICTの東京QKDネットワークなどが実証中</li>
         </ul>
 
-        <h3>実用化の課題</h3>
+        <h3>実用課題</h3>
         <ul>
-          <li><strong>距離制限:</strong> 光ファイバーで数百km（減衰）</li>
-          <li><strong>高コスト:</strong> 専用ハードウェア必要（数千万円〜）</li>
-          <li><strong>低速:</strong> 鍵生成レートが低い（数kbps〜数Mbps）</li>
-          <li><strong>実装攻撃:</strong> 理論上安全でも、実装の不完全性を突く攻撃</li>
+          <li>距離・コスト・スループットの制約（専用ファイバーや衛星が必要）</li>
+          <li>理論は強固でも実装攻撃に備えたハード設計が求められる</li>
         </ul>
 
-        <h3>量子衛星</h3>
-        <ul>
-          <li><strong>中国「墨子号」（2016年）:</strong> 衛星-地上間QKD実証</li>
-          <li><strong>日本:</strong> NICT、QKDネットワーク東京QKDネットワーク</li>
-        </ul>
-
-        <h3>PQC vs QKD</h3>
         <p>
-          <strong>相補的な技術:</strong> QKDは専用ネットワーク、PQCは既存インフラで動作。
-          コスト・利便性からPQCが主流になる見込みだが、超高セキュリティ用途（政府、金融）ではQKDも併用。
+          <strong>PQC vs QKD:</strong> 既存インフラで展開しやすいPQCが主流。
+          ただし政府・金融・宇宙通信など極秘用途ではQKDとの併用が検討されています。
         </p>
       </section>
 
