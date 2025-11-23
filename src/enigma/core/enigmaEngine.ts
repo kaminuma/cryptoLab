@@ -77,29 +77,38 @@ export class EnigmaMachine {
     }
 
     encodeChar(ch: string): string {
+        // console.log(`Encoding ${ch}`);
         // 1. Plugboard
         let current = applyPlugboard(ch, this.plugboard);
+        // console.log(`Plugboard: ${ch} -> ${current}`);
 
         // 2. Step Rotors
         this.stepRotors();
+        // console.log(`Rotors stepped: ${this.positions.join(',')}`);
 
         // 3. Forward Pass (Right to Left)
-        // Rotor array is [Left, Mid, Right] (or [4th, Left, Mid, Right])
-        // We iterate from end to start.
         for (let i = this.rotors.length - 1; i >= 0; i--) {
+            const before = current;
             current = this.forwardPass(current, i);
+            // console.log(`Rotor ${i} (${this.rotors[i].id}) Forward: ${before} -> ${current}`);
         }
 
         // 4. Reflector
+        const beforeRef = current;
         current = this.reflect(current);
+        // console.log(`Reflector (${this.reflector}): ${beforeRef} -> ${current}`);
 
         // 5. Backward Pass (Left to Right)
         for (let i = 0; i < this.rotors.length; i++) {
+            const before = current;
             current = this.backwardPass(current, i);
+            // console.log(`Rotor ${i} (${this.rotors[i].id}) Backward: ${before} -> ${current}`);
         }
 
         // 6. Plugboard
+        const beforePlug = current;
         current = applyPlugboard(current, this.plugboard);
+        // console.log(`Plugboard Out: ${beforePlug} -> ${current}`);
 
         return current;
     }

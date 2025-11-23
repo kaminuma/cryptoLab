@@ -7,7 +7,7 @@ const testCase = {
     "positions": ["A", "A", "A"],
     "plugboard": { "A": "B" },
     "input": "HELLOWORLD",
-    "expected": "RFKTMBXVVW"
+    "expected": "ILBDBBMTBZ"
 };
 
 function runTest() {
