@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EnigmaMachine } from '../core/enigmaEngine';
 import modelsData from '../data/models.json';
 import { ModelSelector } from './ModelSelector';
