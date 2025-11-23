@@ -8,13 +8,14 @@ export type ClassicalCipher = {
   | 'playfair'
   | 'hill'
   | 'otp'
+  | 'enigma'
   name: string
   era: string
   type: string
   description: string
   algorithm: string
   highlights: string[]
-  interactive?: 'caesar' | 'vigenere' | 'atbash' | 'autokey' | 'otp'
+  interactive?: 'caesar' | 'vigenere' | 'atbash' | 'autokey' | 'otp' | 'enigma'
   references?: Array<{ label: string; url: string }>
 }
 
@@ -110,4 +111,17 @@ export const classicalCiphers: ClassicalCipher[] = [
     ],
   },
 
+  {
+    id: 'enigma',
+    name: 'エニグマ',
+    era: '1920〜40 年代',
+    type: '電気機械ローター',
+    description: 'ローター・反射板・プラグボードで多段換字を行う機械式暗号。第二次世界大戦で著名。',
+    algorithm: '複数の回転ローター（円盤）と反射板、プラグボードを組み合わせた電気機械式暗号機。各ローターは26個の接点を持ち、内部配線で入出力を置換する。キーを押すと電流がプラグボード→ローター群→反射板→逆順にローター群→プラグボードと通過し、対応するランプが点灯。キー入力ごとに右端ローターが1ステップ回転し（オドメーター式に桁上がりも）、置換パターンが変化する。反射板により暗号化と復号が同一操作となるが、同時に「文字が自分自身に暗号化されない」という構造的弱点が生まれた。初期設定（ローター順序・位置・プラグボード配線）が鍵となる。ブレッチリーパークの Alan Turing らが Bombe マシンで解読に成功し、連合国の勝利に貢献した。',
+    highlights: ['同じ文字が自分自身にマップされない構造', 'ローター設定＋日替わりキー', 'ブレッチリーパークの解読で有名'],
+    interactive: 'enigma',
+    references: [
+      { label: 'Bletchley Park archives', url: 'https://bletchleypark.org.uk/' },
+    ],
+  },
 ]

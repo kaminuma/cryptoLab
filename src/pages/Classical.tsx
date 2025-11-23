@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import * as echarts from 'echarts'
 import { classicalCiphers } from '@/data/classical'
 import { caesarEncrypt, caesarDecrypt } from '@/lib/classical/caesar'
@@ -275,7 +276,7 @@ export default function ClassicalPage() {
           )}
         </section>
 
-        {interactiveType && (
+        {interactiveType && interactiveType !== 'enigma' && (
           <>
             <section className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
               <div className="card-header">
@@ -441,6 +442,32 @@ export default function ClassicalPage() {
         )}
 
       </div>
+
+      {interactiveType === 'enigma' && (
+        <section className="card" style={{ marginBottom: 'var(--spacing-lg)', textAlign: 'center', padding: '3rem' }}>
+          <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>エニグマ シミュレータ</h3>
+          <p style={{ marginBottom: '2rem', color: 'var(--color-text-muted)' }}>
+            実機に近い操作感でエニグマ（I, M3, M4, Commercial, G, T）を体験できる<br />
+            高忠実度シミュレータを用意しました。
+          </p>
+          <Link
+            to="/enigma"
+            className="primary"
+            style={{
+              display: 'inline-block',
+              textDecoration: 'none',
+              padding: '1rem 2rem',
+              fontSize: '1.2rem',
+              borderRadius: '8px',
+              background: 'var(--color-primary)',
+              color: '#fff'
+            }}
+          >
+            シミュレータを起動する
+          </Link>
+        </section>
+      )}
+
 
       <section className="card caution">
         <h2>注意</h2>
