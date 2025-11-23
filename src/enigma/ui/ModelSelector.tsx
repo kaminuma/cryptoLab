@@ -29,7 +29,10 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
                 ))}
             </div>
             <div className="mt-4 text-sm text-gray-400">
-                {/* Description could go here */}
+                {/* 選択中モデルの説明文を表示 */}
+                {modelsData[selectedModel as keyof typeof modelsData].description && (
+                    <div className="mb-1">{modelsData[selectedModel as keyof typeof modelsData].description}</div>
+                )}
                 Selected: {selectedModel} ({modelsData[selectedModel as keyof typeof modelsData].rotorCount} Rotors)
             </div>
         </div>
