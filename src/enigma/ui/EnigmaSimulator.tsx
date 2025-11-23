@@ -160,8 +160,18 @@ export const EnigmaSimulator: React.FC = () => {
     return (
         <div className="enigma-container">
             <div className="text-center">
-                <h1 className="text-4xl font-bold text-[#d4af37] mb-2 tracking-widest">ENIGMA</h1>
-                <div className="text-xs text-gray-500 tracking-[0.5em]">CIPHER MACHINE SIMULATOR</div>
+                <h1
+                    className="text-4xl font-bold mb-2 tracking-widest"
+                    style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}
+                >
+                    ENIGMA
+                </h1>
+                <div
+                    className="text-xs tracking-[0.5em]"
+                    style={{ color: '#b0b0b0', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
+                >
+                    CIPHER MACHINE SIMULATOR
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto w-full">
