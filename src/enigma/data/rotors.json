@@ -1,0 +1,88 @@
+{
+    "I": {
+        "wiring": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
+        "notch": [
+            "Q"
+        ],
+        "turnoverRule": "WEHRMACHT"
+    },
+    "II": {
+        "wiring": "AJDKSIRUXBLHWTMCQGZNPYFVOE",
+        "notch": [
+            "E"
+        ],
+        "turnoverRule": "WEHRMACHT"
+    },
+    "III": {
+        "wiring": "BDFHJLCPRTXVZNYEIWGAKMUSQO",
+        "notch": [
+            "V"
+        ],
+        "turnoverRule": "WEHRMACHT"
+    },
+    "IV": {
+        "wiring": "ESOVPZJAYQUIRHXLNFTGKDCMWB",
+        "notch": [
+            "J"
+        ],
+        "turnoverRule": "WEHRMACHT"
+    },
+    "V": {
+        "wiring": "VZBRGITYUPSDNHLXAWMJQOFECK",
+        "notch": [
+            "Z"
+        ],
+        "turnoverRule": "WEHRMACHT"
+    },
+    "VI": {
+        "wiring": "JPGVOUMFYQBENHZRDKASXLICTW",
+        "notch": [
+            "Z",
+            "M"
+        ],
+        "turnoverRule": "NAVY"
+    },
+    "VII": {
+        "wiring": "NZJHGRCXMYSWBOUFAIVLPEKQDT",
+        "notch": [
+            "Z",
+            "M"
+        ],
+        "turnoverRule": "NAVY"
+    },
+    "VIII": {
+        "wiring": "FKQHTLXOCBJSPDZRAMEWNIUYGV",
+        "notch": [
+            "Z",
+            "M"
+        ],
+        "turnoverRule": "NAVY"
+    },
+    "Beta": {
+        "wiring": "LEYJVCNIXWPBQMDRTAKZGFUHOS",
+        "notch": [],
+        "turnoverRule": "FIXED",
+        "isFourthRotor": true
+    },
+    "Gamma": {
+        "wiring": "FSOKANUERHMBTIYCWLQPZXVGJD",
+        "notch": [],
+        "turnoverRule": "FIXED",
+        "isFourthRotor": true
+    },
+    "Commercial-I": {
+        "wiring": "LPGSZMHAEOQKVXRFYDITBJCNWU",
+        "notch": [],
+        "turnoverRule": "FIXED"
+    },
+    "Commercial-II": {
+        "wiring": "SLVGBTFXJQOHEWIRZYAMKPCNDU",
+        "notch": [],
+        "turnoverRule": "FIXED"
+    },
+    "Commercial-III": {
+        "wiring": "CJGDPSHKTURAWZXFMYNQOBVLIE",
+        "notch": [],
+        "turnoverRule": "FIXED"
+    }
+}
