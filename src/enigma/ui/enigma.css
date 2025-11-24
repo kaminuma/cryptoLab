@@ -51,6 +51,10 @@
     padding-bottom: 0.5rem;
 }
 
+.text-enigma-accent {
+    color: var(--enigma-accent);
+}
+
 /* Controls */
 .enigma-select {
     background: rgba(0, 0, 0, 0.3);
@@ -301,4 +305,68 @@
 
 .text-gray-500 {
     color: #6b7280;
+}
+
+.text-white {
+    color: #ffffff;
+}
+
+.text-gray-100 {
+    color: #f3f4f6;
+}
+
+.text-gray-200 {
+    color: #e5e7eb;
+}
+
+.text-gray-300 {
+    color: #d1d5db;
+}
+
+.text-indigo-200 {
+    color: #c7d2fe;
+}
+
+.text-indigo-300 {
+    color: #a5b4fc;
+}
+
+.text-indigo-400 {
+    color: #818cf8;
+}
+
+.bg-gray-700 {
+    background-color: #374151;
+}
+
+.bg-gray-800 {
+    background-color: #1f2937;
+}
+
+.bg-gray-900 {
+    background-color: #111827;
+}
+
+.border-gray-500 {
+    border-color: #6b7280;
+}
+
+.border-gray-600 {
+    border-color: #4b5563;
+}
+
+.border-gray-700 {
+    border-color: #374151;
+}
+
+.shadow-md {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.drop-shadow-sm {
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+}
+
+.rounded-full {
+    border-radius: 9999px;
 }

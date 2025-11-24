@@ -7,6 +7,8 @@ import { Plugboard } from './Plugboard';
 import { Keyboard } from './Keyboard';
 import { InputArea } from './InputArea';
 import { OutputArea } from './OutputArea';
+import { ToggleSwitch } from '../../components/ui/ToggleSwitch';
+import { EnigmaManual } from './EnigmaManual';
 import './enigma.css';
 
 const DEFAULT_MODEL = "Enigma-I";
@@ -23,6 +25,12 @@ export const EnigmaSimulator: React.FC = () => {
     const [inputText, setInputText] = useState("");
     const [outputText, setOutputText] = useState("");
     const [activeLamp, setActiveLamp] = useState<string | null>(null);
+
+    // Realism Mode State
+    const [isRealismMode, setIsRealismMode] = useState(false);
+
+    // Manual Modal State
+    const [isManualOpen, setIsManualOpen] = useState(false);
 
     // Handle Model Change
     const handleModelChange = (newModel: string) => {
@@ -52,20 +60,14 @@ export const EnigmaSimulator: React.FC = () => {
         }
     };
 
-    // Batch processing for Input Area
+    // Batch processing for Input Area (Only in Batch Mode)
     useEffect(() => {
+        if (isRealismMode) return; // Skip batch processing in Realism Mode
+
         if (!inputText) {
             setOutputText("");
             return;
         }
-
-        // Re-instantiate machine to process whole string from current settings?
-        // No, usually input area implies "typing these keys".
-        // But if we type in the box, we want to see the result of the whole string.
-        // HOWEVER, Enigma is stateful. If we type "HELL", the rotors move.
-        // If we then type "O", they move again.
-        // If we backspace, we can't easily "undo" rotor movement without resetting or reversing.
-        // For a simulator, usually "Input Area" resets the machine to the configured start settings and processes the whole string.
 
         const machine = new EnigmaMachine(
             model,
@@ -82,56 +84,57 @@ export const EnigmaSimulator: React.FC = () => {
         }
         setOutputText(out);
 
-        // Note: We do NOT update 'positions' state here, because that would sync the UI rotors to the end of the message,
-        // making it hard to edit the message (as the start state would be lost or we'd need separate "start" and "current" states).
-        // Usually, "Rotor Config" sets the START positions.
-        // The "Current Position" could be shown elsewhere, or we just assume the config is the start state.
+    }, [inputText, model, rotors, reflector, ringSettings, positions, plugboard, isRealismMode]);
 
-    }, [inputText, model, rotors, reflector, ringSettings, positions, plugboard]);
+    // Clear IO when switching modes
+    useEffect(() => {
+        setInputText("");
+        setOutputText("");
+    }, [isRealismMode]);
 
     // Interactive Key Press
     const handleKeyDown = (char: string) => {
-        // Create a temporary machine state from current "visual" positions?
-        // Or do we want the keyboard to update the "Start Positions"?
-        // Usually interactive mode updates the positions permanently.
-        // But that conflicts with the "Input Area" batch mode.
+        if (isRealismMode) {
+            // Realism Mode: Step rotors and update state
+            const machine = new EnigmaMachine(
+                model,
+                [...rotors],
+                reflector,
+                [...ringSettings],
+                [...positions], // Current positions
+                { ...plugboard }
+            );
 
-        // Let's support interactive mode separately or just let it update the positions state.
-        // If we update positions state, the Input Area would re-process with NEW start positions, which is wrong.
+            const encoded = machine.encodeChar(char);
 
-        // COMPROMISE:
-        // Keyboard clicks are for "Interactive Mode". They update the positions state and append to Input/Output.
-        // Editing Input Area is "Batch Mode". It uses the current positions as START positions.
+            // Update UI state
+            setActiveLamp(encoded);
+            setPositions(machine.positions); // Update rotor positions!
+            setInputText(prev => prev + char);
+            setOutputText(prev => prev + encoded);
 
-        // Actually, let's just have the keyboard append to inputText.
-        // Then the useEffect triggers and re-calculates everything.
-        // This is the most consistent way.
+        } else {
+            // Batch Mode: Just append to input, useEffect handles the rest
+            setInputText(prev => prev + char);
 
-        setInputText(prev => prev + char);
+            // Visual feedback (lamp) simulation for Batch Mode
+            const machine = new EnigmaMachine(
+                model,
+                [...rotors],
+                reflector,
+                [...ringSettings],
+                [...positions],
+                { ...plugboard }
+            );
 
-        // Calculate just this char for the lamp (visual feedback)
-        // We need to know the state *before* this char was added to calculate the lamp.
-        // But since we are using batch processing in useEffect, we can just simulate it.
+            // Fast forward to current input length
+            for (let i = 0; i < inputText.length; i++) {
+                machine.encodeChar(inputText[i]);
+            }
 
-        // To get the lamp for THIS key press, we need to run the machine up to this point.
-        const machine = new EnigmaMachine(
-            model,
-            [...rotors],
-            reflector,
-            [...ringSettings],
-            [...positions],
-            { ...plugboard }
-        );
-
-        // Fast forward to current input length
-        // (This is inefficient for long strings but fine for <1000 chars)
-        for (let i = 0; i < inputText.length; i++) {
-            machine.encodeChar(inputText[i]);
+            const encoded = machine.encodeChar(char);
+            setActiveLamp(encoded);
         }
-
-        // Now encode the new char
-        const encoded = machine.encodeChar(char);
-        setActiveLamp(encoded);
     };
 
     const handleKeyUp = () => {
@@ -159,7 +162,9 @@ export const EnigmaSimulator: React.FC = () => {
 
     return (
         <div className="enigma-container">
-            <div className="text-center">
+            <EnigmaManual isOpen={isManualOpen} onClose={() => setIsManualOpen(false)} />
+
+            <div className="text-center relative">
                 <h1
                     className="text-4xl font-bold mb-2 tracking-widest"
                     style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}
@@ -172,11 +177,39 @@ export const EnigmaSimulator: React.FC = () => {
                 >
                     CIPHER MACHINE SIMULATOR
                 </div>
+
+                <button
+                    onClick={() => setIsManualOpen(true)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs enigma-btn px-4 py-2 transition-all hover:scale-105"
+                >
+                    仕様書 (Specs)
+                </button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto w-full">
                 {/* Left Column: Settings */}
                 <div className="flex flex-col gap-4">
+                    <div className="enigma-panel">
+                        <div className="enigma-title">Operation Mode</div>
+                        <ToggleSwitch
+                            checked={isRealismMode}
+                            onChange={setIsRealismMode}
+                        />
+                    </div>
+                    <div className="enigma-panel px-4 pb-4 pt-3">
+                        <div className="text-xs leading-relaxed">
+                            {isRealismMode ? (
+                                <p className="text-gray-200">
+                                    <span className="text-indigo-400 font-bold">実機モード:</span> キーを打つたびにローターが回転します。実機の操作感を体験できます。（コピペ入力不可）
+                                </p>
+                            ) : (
+                                <p className="text-gray-200">
+                                    <span className="text-enigma-accent font-bold">一括変換モード:</span> 長文をコピペして瞬時に変換できます。ローター設定は固定されます。
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
                     <ModelSelector selectedModel={model} onSelectModel={handleModelChange} />
                     <RotorConfig
                         model={model}
@@ -203,8 +236,25 @@ export const EnigmaSimulator: React.FC = () => {
                 {/* Right Column: IO & Plugboard */}
                 <div className="flex flex-col gap-4">
                     <div className="flex gap-4">
-                        <InputArea value={inputText} onChange={setInputText} />
-                        <OutputArea value={outputText} />
+                        {isRealismMode ? (
+                            <div className="w-full flex flex-col gap-2">
+                                <div className="bg-gray-900 p-4 rounded border border-gray-700 h-32 overflow-y-auto font-mono text-sm text-gray-300">
+                                    <div className="text-xs text-gray-500 mb-1">入力ログ (Log)</div>
+                                    {inputText || <span className="text-gray-600 italic">キーボードで入力してください...</span>}
+                                </div>
+                                <OutputArea value={outputText} label="出力 (Output)" placeholder="変換結果..." />
+                            </div>
+                        ) : (
+                            <>
+                                <InputArea
+                                    value={inputText}
+                                    onChange={setInputText}
+                                    label="入力 (Input)"
+                                    placeholder="ここにメッセージを入力..."
+                                />
+                                <OutputArea value={outputText} label="出力 (Output)" placeholder="変換結果..." />
+                            </>
+                        )}
                     </div>
 
                     {modelConfig.hasPlugboard && (
@@ -220,3 +270,4 @@ export const EnigmaSimulator: React.FC = () => {
         </div>
     );
 };
+
