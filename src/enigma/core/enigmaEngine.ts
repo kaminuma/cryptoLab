@@ -2,6 +2,7 @@ import rotorsData from '../data/rotors.json';
 import reflectorsData from '../data/reflectors.json';
 import { applyPlugboard } from './plugboard';
 import { stepStandard, stepNavy, stepTirpitz, stepCustom } from './stepping';
+import modelsData from '../data/models.json';
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -34,26 +35,9 @@ export class EnigmaMachine {
     }
 
     stepRotors() {
-        // Delegate to stepping.ts based on model/steppingMode
-        // We need to know the stepping mode. Ideally this is passed in or looked up.
-        // For now, we look up from models.json (but we don't have it imported here easily without circular deps or just importing it).
-        // Let's import models.json.
-        // Actually, let's just switch on model name or pass stepping mode.
-        // The spec says "models.json の steppingMode と対応させる".
-
-        // Simple mapping for now based on model names in spec
-        let steppingMode = "STANDARD";
-        if (this.model === "M3" || this.model === "M4") steppingMode = "NAVY";
-        if (this.model === "G") steppingMode = "TIRPITZ";
-        if (this.model === "T") steppingMode = "CUSTOM";
-        if (this.model === "Commercial-D") steppingMode = "FIXED"; // Commercial-D uses FIXED (no stepping? or just simple?)
-        // Spec says Commercial-D steppingMode: "FIXED".
-        // "FIXED" usually means no stepping or simple. Let's assume simple odometer for Commercial if not specified, 
-        // but spec says "FIXED". Wait, "FIXED" might mean "No stepping" (like Typex static mode)? 
-        // Or maybe it refers to the reflector being fixed?
-        // Actually, Commercial Enigma *does* step. 
-        // Let's look at rotors.json: Commercial rotors have "turnoverRule": "FIXED".
-        // I will use stepCustom (Odometer) for Commercial/FIXED for now as it's the most likely behavior for non-military Enigmas.
+        // Look up stepping mode from models.json
+        const modelConfig = modelsData[this.model as keyof typeof modelsData];
+        const steppingMode = modelConfig ? modelConfig.steppingMode : "STANDARD";
 
         let newRotors;
         switch (steppingMode) {
