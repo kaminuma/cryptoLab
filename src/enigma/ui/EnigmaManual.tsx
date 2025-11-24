@@ -50,8 +50,8 @@ export const EnigmaManual: React.FC<EnigmaManualProps> = ({ isOpen, onClose }) =
                             概要 (Overview)
                         </h3>
                         <p className="text-sm leading-relaxed mb-2 text-gray-200">
-                            本シミュレータは、第二次世界大戦で使用されたドイツ軍の暗号機「Enigma I」の動作を忠実に再現しています。
-                            ローターの配線、ノッチ（回転トリガー）の位置、ダブルステッピング（二重回転）などの機械的挙動は、歴史的な仕様に基づいています。
+                            本シミュレータは、第二次世界大戦で使用されたドイツ軍のEnigma暗号機（Enigma-I、M3、M4など）や民間用・特殊用途モデル（Commercial-D、G、T）の動作を忠実に再現しています。
+                            各モデルのローター配線、ノッチ（回転トリガー）の位置、ダブルステッピング（二重回転）などの機械的挙動は、歴史的な仕様に基づいて実装されています。
                         </p>
                     </section>
 
@@ -94,15 +94,15 @@ export const EnigmaManual: React.FC<EnigmaManualProps> = ({ isOpen, onClose }) =
                                 <tbody>
                                     <tr className="hover:bg-gray-800/50">
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">Enigma-I</td>
-                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">ドイツ陸・空軍標準モデル</td>
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">ドイツ陸・空軍標準モデル（Wehrmacht）</td>
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-center text-gray-200">3</td>
-                                        <td className="p-3 text-gray-200">Double Stepping (標準)</td>
+                                        <td className="p-3 text-gray-200">Standard (標準式)</td>
                                     </tr>
                                     <tr className="hover:bg-gray-800/50">
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">M3</td>
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">海軍用モデル (初期)</td>
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-center text-gray-200">3</td>
-                                        <td className="p-3 text-gray-200">Double Stepping (標準)</td>
+                                        <td className="p-3 text-gray-200">Navy (海軍式)</td>
                                     </tr>
                                     <tr className="hover:bg-gray-800/50">
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">M4</td>
@@ -111,16 +111,22 @@ export const EnigmaManual: React.FC<EnigmaManualProps> = ({ isOpen, onClose }) =
                                         <td className="p-3 text-gray-200">Navy (左端は回転しない)</td>
                                     </tr>
                                     <tr className="hover:bg-gray-800/50">
-                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">Commercial</td>
-                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">民間用モデル</td>
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">Commercial-D</td>
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">民間用モデル（プラグボード無し）</td>
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-center text-gray-200">3</td>
-                                        <td className="p-3 text-gray-200">Odometer (単純回転)</td>
+                                        <td className="p-3 text-gray-200">Fixed (固定式)</td>
                                     </tr>
                                     <tr className="hover:bg-gray-800/50">
-                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">G / T</td>
-                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">特殊モデル (Abwehr/Tirpitz)</td>
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">G</td>
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">諜報機関用 (Abwehr)</td>
                                         <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-center text-gray-200">3</td>
-                                        <td className="p-3 text-gray-200">Gear Driven (ギア駆動)</td>
+                                        <td className="p-3 text-gray-200">Tirpitz (特殊式)</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-800/50">
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 font-bold text-enigma-accent">T</td>
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-gray-200">戦艦Tirpitz用（日本海軍向け）</td>
+                                        <td className="p-3 border-r border-[var(--enigma-accent)]/10 text-center text-gray-200">3</td>
+                                        <td className="p-3 text-gray-200">Custom (カスタム式)</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -136,6 +142,8 @@ export const EnigmaManual: React.FC<EnigmaManualProps> = ({ isOpen, onClose }) =
                         </h3>
                         <p className="text-sm mb-4 text-gray-200">
                             各ローターは固有の内部配線と「ノッチ（切り欠き）」を持っています。ノッチは隣のローターを回転させるタイミングを決定します。
+                            <br />
+                            <span className="text-xs text-gray-300">※ノッチ表記「X → Y」は、ローターがX位置からY位置に回転する際に左隣のローターが1つ進むことを意味します。</span>
                         </p>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-xs border-collapse">
@@ -195,6 +203,26 @@ export const EnigmaManual: React.FC<EnigmaManualProps> = ({ isOpen, onClose }) =
                         </div>
                     </section>
 
+                    {/* Plugboard */}
+                    <section>
+                        <h3 className="text-sm font-bold text-enigma-accent mb-3 border-b border-[var(--enigma-accent)]/30 pb-1 uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-2 h-2 bg-[var(--enigma-accent)] rounded-full inline-block"></span>
+                            プラグボード (Plugboard / Steckerbrett)
+                        </h3>
+                        <p className="text-sm mb-3 text-gray-200">
+                            プラグボードは、信号がローターに入る前と出た後に文字を入れ替える装置です。最大10組（20文字）のペアを設定できます。
+                            軍用モデル（Enigma-I、M3、M4）には搭載されていますが、民間用・特殊用途モデル（Commercial-D、G、T）には搭載されていません。
+                        </p>
+                        <div className="bg-black/40 p-4 rounded border border-[var(--enigma-accent)]/20">
+                            <p className="text-xs text-gray-300 mb-2">
+                                <span className="font-bold text-enigma-accent">例:</span> A ⇄ M のペアを設定すると、キーボードで A を押したとき、ローターには M として入力されます。
+                            </p>
+                            <p className="text-xs text-gray-300">
+                                <span className="font-bold text-enigma-accent">セキュリティ強化:</span> プラグボードは暗号強度を劇的に向上させ、連合国による解読を困難にしました。
+                            </p>
+                        </div>
+                    </section>
+
                     {/* Stepping Logic */}
                     <section>
                         <h3 className="text-sm font-bold text-enigma-accent mb-3 border-b border-[var(--enigma-accent)]/30 pb-1 uppercase tracking-widest flex items-center gap-2">
@@ -214,6 +242,38 @@ export const EnigmaManual: React.FC<EnigmaManualProps> = ({ isOpen, onClose }) =
                                 <span className="font-bold text-enigma-accent">3. ダブルステッピング (Double Stepping):</span> 中央のローター（Slot 2）は、特異な機械的構造により「自分のノッチ位置に来た時」にも回転します。これにより、中央ローターが連続して2回回転する現象（ダブルステップ）が発生します。本シミュレータはこの挙動も再現しています。
                             </p>
                         </div>
+                    </section>
+
+                    {/* Usage Tips */}
+                    <section>
+                        <h3 className="text-sm font-bold text-enigma-accent mb-3 border-b border-[var(--enigma-accent)]/30 pb-1 uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-2 h-2 bg-[var(--enigma-accent)] rounded-full inline-block"></span>
+                            使い方のヒント (Usage Tips)
+                        </h3>
+                        <div className="space-y-3 text-sm">
+                            <p className="text-gray-200">
+                                <span className="font-bold text-enigma-accent">暗号化と復号化:</span> Enigmaの特性として、同じ設定で2回処理すると元に戻ります。つまり、暗号化と復号化は同じ操作です。
+                            </p>
+                            <p className="text-gray-200">
+                                <span className="font-bold text-enigma-accent">初期設定の重要性:</span> 送信者と受信者が同じローター選択・配置・リング設定・初期位置・プラグボード設定を持つ必要があります。
+                            </p>
+                            <p className="text-gray-200">
+                                <span className="font-bold text-enigma-accent">実機モード vs 一括変換:</span> 実機モードでは1文字ずつローターが回転し、実際のEnigmaの動作を体験できます。一括変換モードでは長文を瞬時に変換できます。
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* Historical Note */}
+                    <section>
+                        <h3 className="text-sm font-bold text-enigma-accent mb-3 border-b border-[var(--enigma-accent)]/30 pb-1 uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-2 h-2 bg-[var(--enigma-accent)] rounded-full inline-block"></span>
+                            歴史的背景 (Historical Background)
+                        </h3>
+                        <p className="text-sm leading-relaxed text-gray-200">
+                            Enigma暗号機は1918年にドイツの技術者アルトゥール・シェルビウスによって発明され、第二次世界大戦でドイツ軍の主要な暗号通信手段として使用されました。
+                            イギリスのブレッチリー・パークでアラン・チューリングらが率いるチームがEnigmaの解読に成功し、戦争の早期終結に大きく貢献したとされています。
+                            この解読作業は現代コンピュータ科学の礎となりました。
+                        </p>
                     </section>
                 </div>
 
