@@ -40,6 +40,7 @@ export default function PublicKeyPage() {
 
   useEffect(() => {
     document.title = '公開鍵暗号 - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
   const [saltBase64, setSaltBase64] = useState(randomSalt)
   const [infoString, setInfoString] = useState('CryptoLab demo key')

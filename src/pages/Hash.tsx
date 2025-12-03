@@ -16,6 +16,7 @@ export default function Hash() {
 
   useEffect(() => {
     document.title = 'ハッシュ関数 - CryptoLab';
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   useEffect(() => {

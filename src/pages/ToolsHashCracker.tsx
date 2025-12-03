@@ -58,6 +58,8 @@ export default function ToolsPage() {
   }
 
   useEffect(() => {
+    document.title = 'ハッシュクラッカー - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()

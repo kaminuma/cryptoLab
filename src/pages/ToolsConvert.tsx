@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 
 type NumberBase = 'auto' | 'decimal' | 'hex' | 'binary' | 'octal'
 
@@ -190,6 +190,11 @@ export default function ToolsPage() {
   const [base64Cipher, setBase64Cipher] = useState('ZmxhZ3tjcnlwdG99')
   const [hexPlain, setHexPlain] = useState('cryptolab')
   const [hexInput, setHexInput] = useState('63727970746f6c6162')
+
+  useEffect(() => {
+    document.title = '変換ツール - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
 
   const numberConversion = useMemo<NumberConversion>(() => {
     if (!numberInput.trim()) {

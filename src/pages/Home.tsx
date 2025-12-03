@@ -28,6 +28,7 @@ const steps = [
 export default function Home() {
   useEffect(() => {
     document.title = 'CryptoLab - 暗号技術のハンズオン学習'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
   return (

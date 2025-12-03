@@ -16,6 +16,7 @@ export default function Labs() {
 
   useEffect(() => {
     document.title = 'ラボ - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
   const handleTabChange = (tabId: TabId) => {

@@ -14,6 +14,7 @@ export default function Learn() {
 
   useEffect(() => {
     document.title = '学習 - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
   const handleTabChange = (tabId: TabId) => {
