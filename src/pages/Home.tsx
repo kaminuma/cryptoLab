@@ -67,8 +67,7 @@ export default function Home() {
           ))}
         </ol>
         <p className="hint">
-          量子アルゴリズム実験は <a href="https://github.com/kaminuma/quantum-rsa-lab" target="_blank" rel="noreferrer">Quantum RSA Lab</a>{' '}
-          を参照してください。
+          量子アルゴリズム実験機能は現在開発中です。
         </p>
       </section>
     </div>

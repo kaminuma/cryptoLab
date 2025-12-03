@@ -72,17 +72,6 @@ export default function NavBar() {
               ))}
             </div>
           </div>
-
-          <a
-            className="nav-link"
-            href="https://github.com/kaminuma/quantum-rsa-lab"
-            target="_blank"
-            rel="noreferrer"
-            onClick={closeMenu}
-            style={{ border: '1px solid var(--color-border)', borderRadius: '999px' }}
-          >
-            Quantum RSA Lab ↗
-          </a>
         </nav>
       </div>
     </header>
