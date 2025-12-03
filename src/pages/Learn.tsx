@@ -16,6 +16,11 @@ export default function Learn() {
     document.title = '学習 - CryptoLab'
   }, [])
 
+  const handleTabChange = (tabId: TabId) => {
+    setActiveTab(tabId)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <div className="learn page">
       <section className="page-header">
@@ -32,7 +37,7 @@ export default function Learn() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className={`tab${activeTab === tab.id ? ' active' : ''}`}
           >
             <span className="tab-label">{tab.label}</span>
