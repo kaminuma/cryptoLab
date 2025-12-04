@@ -16,7 +16,14 @@ export default function Labs() {
 
   useEffect(() => {
     document.title = 'ラボ - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
+
+  const handleTabChange = (tabId: TabId) => {
+    setActiveTab(tabId)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const ActiveComponent = useMemo(
     () => tabs.find((tab) => tab.id === activeTab)?.component ?? ClassicalPage,
     [activeTab],
@@ -36,7 +43,7 @@ export default function Labs() {
             key={tab.id}
             type="button"
             className={`tab${tab.id === activeTab ? ' active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
           >
             <span className="tab-label">{tab.label}</span>
             <span className="tab-desc">{tab.description}</span>

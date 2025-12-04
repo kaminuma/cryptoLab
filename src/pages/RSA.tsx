@@ -36,6 +36,7 @@ export default function RSAPage() {
 
   useEffect(() => {
     document.title = 'RSA - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
   // 小さい数での鍵生成

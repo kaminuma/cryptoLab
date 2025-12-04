@@ -29,6 +29,7 @@ export default function ClassicalPage() {
 
   useEffect(() => {
     document.title = '古典暗号 - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
   const selectedCipher = classicalCiphers.find((cipher) => cipher.id === selectedId) ?? classicalCiphers[0]
   const interactiveType = selectedCipher.interactive ?? null

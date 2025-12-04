@@ -14,7 +14,13 @@ export default function Learn() {
 
   useEffect(() => {
     document.title = '学習 - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
+
+  const handleTabChange = (tabId: TabId) => {
+    setActiveTab(tabId)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <div className="learn page">
@@ -32,7 +38,7 @@ export default function Learn() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className={`tab${activeTab === tab.id ? ' active' : ''}`}
           >
             <span className="tab-label">{tab.label}</span>

@@ -33,6 +33,7 @@ const roadmap = [
 export default function PQC() {
   useEffect(() => {
     document.title = '量子耐性暗号 - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
   return (
     <div className="pqc page">

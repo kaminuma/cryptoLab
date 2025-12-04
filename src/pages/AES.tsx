@@ -27,6 +27,7 @@ export default function AESPage() {
 
   useEffect(() => {
     document.title = 'AES - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
   const handleGenerateKey = () => {

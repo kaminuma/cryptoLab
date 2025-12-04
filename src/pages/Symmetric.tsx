@@ -34,6 +34,7 @@ export default function SymmetricPage() {
 
   useEffect(() => {
     document.title = '共通鍵暗号 - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
   const [passphrase, setPassphrase] = useState('cryptolab-demo')
   const [ivBase64, setIvBase64] = useState('')
