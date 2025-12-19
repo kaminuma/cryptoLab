@@ -85,10 +85,11 @@ export default function AESPage() {
   return (
     <main className="page aes">
       <header className="page-header">
-        <p className="eyebrow">Symmetric Deep Dive</p>
-        <h1>AESを「なぜ → どのように → 触る」で理解する。</h1>
+        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>[ SYSTEM_CORE: AES_ENGINE ]</p>
+        <h1 style={{ letterSpacing: '-0.05em' }}>対称鍵暗号: AES の深淵</h1>
         <p className="lede">
-          2001年にNISTが標準化した共通鍵暗号の本命。共通鍵暗号が担う領域と公開鍵暗号との協調、AESの内部構造、そして実際の暗号化フローを一つのページで追えるように再整理しました。
+          2001年にNISTが標準化した共通鍵暗号の本命。
+          SPN構造による攪乱と拡散のメカニズム、そして現代の通信を支える「モード」の重要性を解き明かす。
         </p>
       </header>
 

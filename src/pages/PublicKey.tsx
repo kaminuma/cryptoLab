@@ -147,11 +147,14 @@ export default function PublicKeyPage() {
   }
 
   return (
-    <main className="page public">
+    <main className="page public-key">
       <header className="page-header">
-        <p className="eyebrow">公開鍵暗号ラボ</p>
-        <h1>ECDH → HKDF → AES-GCM をワンフローで確認。</h1>
-        <p className="lede">鍵共有 → キー派生 → 暗号化までの流れを 1 画面で実行し、共有秘密の一致や派生キーの状態を可視化します。</p>
+        <p className="eyebrow" style={{ color: 'var(--color-secondary)', textShadow: '0 0 10px var(--color-secondary)' }}>[ PROTOCOL: KEY_EXCHANGE ]</p>
+        <h1 style={{ letterSpacing: '-0.05em' }}>公開鍵暗号 & 鍵交換</h1>
+        <p className="lede">
+          非対称鍵による信頼の構築。
+          ECDH による秘密の共有から、デジタル署名による身元証明まで、現代の信頼基盤を解剖する。
+        </p>
       </header>
 
       <section className="card">

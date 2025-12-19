@@ -268,11 +268,14 @@ export default function ToolsPage() {
 
   return (
     <main className="page tools">
-      <section className="page-header">
-        <p className="eyebrow">Tools</p>
-        <h1>暗号解読で頻出の変換ツール</h1>
-        <p className="lede">CTF でよく使う表記揺れの解消・Base64/Hex/ASCII 変換を 1 つの画面でまとめて扱えます。</p>
-      </section>
+      <header className="page-header">
+        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>[ UTILITY: DATA_CONVERTER ]</p>
+        <h1 style={{ letterSpacing: '-0.05em' }}>データ変換 & 解析ツール</h1>
+        <p className="lede">
+          暗号解読の第一歩は、データの姿を正しく捉えること。
+          Base64, Hex, ASCII などの主要なエンコーディングを自在に操り、隠されたメッセージを暴き出す。
+        </p>
+      </header>
 
       <section className="card">
         <div className="card-header">

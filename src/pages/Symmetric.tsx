@@ -95,9 +95,12 @@ export default function SymmetricPage() {
   return (
     <main className="page symmetric">
       <header className="page-header">
-        <p className="eyebrow">共通鍵暗号ラボ</p>
-        <h1>AES-GCM で短文を暗号化・復号する。</h1>
-        <p className="lede">パスフレーズから 256bit キーを派生し、暗号化と復号のワークフローを WebCrypto 上で安全に確認できます。</p>
+        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>[ SYSTEM STATUS: SECURE ]</p>
+        <h1 style={{ letterSpacing: '-0.05em' }}>現代共通鍵暗号: AES-GCM</h1>
+        <p className="lede">
+          現代のインターネット通信を支える最強の盾。
+          WebCrypto API を直接叩き、ミリ秒単位で実行される暗号化シーケンスを観測せよ。
+        </p>
       </header>
 
       <section className="card">

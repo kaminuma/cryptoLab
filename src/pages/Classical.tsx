@@ -162,9 +162,12 @@ export default function ClassicalPage() {
   return (
     <main className="page classical">
       <header className="page-header">
-        <p className="eyebrow">Classical Archive</p>
-        <h1>時代ごとの暗号を選び、背景と挙動を同時に学ぶ。</h1>
-        <p className="lede">換字式・転置式・ローター式などをカタログ化し、Demo 対応のものはその場で暗号化フローを確認できます。</p>
+        <p className="eyebrow" style={{ fontStyle: 'italic', letterSpacing: '0.2em' }}>— Classified Archive —</p>
+        <h1 style={{ fontFamily: 'var(--font-classic)', fontWeight: 800 }}>古典暗号の解読と歴史</h1>
+        <p className="lede">
+          シーザー暗号からヴィジュネル暗号まで。
+          数世紀にわたり情報を守り続けた「知の遺産」を、当時の息吹を感じるインターフェースで体験します。
+        </p>
       </header>
 
       <section className="card">

@@ -15,6 +15,11 @@ export default function Learn() {
   useEffect(() => {
     document.title = '学習 - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
+    // Default to modern/hacker theme for Learn page unless specific sections are classical
+    document.documentElement.setAttribute('data-theme', 'hacker')
+    return () => {
+      document.documentElement.removeAttribute('data-theme')
+    }
   }, [])
 
   const handleTabChange = (tabId: TabId) => {
@@ -25,21 +30,21 @@ export default function Learn() {
   return (
     <div className="learn page">
       <section className="page-header">
-        <p className="eyebrow">Learn</p>
-        <h1>暗号技術の体系的理解</h1>
-        <p className="lede">
+        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>[ KNOWLEDGE_BASE ]</p>
+        <h1 style={{ letterSpacing: '-0.02em' }}>暗号技術の体系的理解</h1>
+        <p className="lede" style={{ maxWidth: '800px', margin: '0 auto' }}>
           古典暗号から最新のポスト量子暗号まで、暗号技術の理論と実装を深く学ぶための総合ガイド。
-          中級者向けに、数学的背景から実装上の注意点まで網羅的に解説します。
+          数学的背景から実装上の注意点まで網羅的に解説します。
         </p>
       </section>
 
-      {/* タブナビゲーション */}
-      <nav className="tab-bar">
+      <nav className="tab-bar" style={{ maxWidth: '600px', margin: '0 auto var(--spacing-xl)' }}>
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
             className={`tab${activeTab === tab.id ? ' active' : ''}`}
+            style={{ flex: 1 }}
           >
             <span className="tab-label">{tab.label}</span>
           </button>
@@ -63,13 +68,7 @@ function FundamentalsContent() {
       <section className="card">
         <h2>1. 暗号化とは何か - なぜ必要なのか</h2>
 
-        <div style={{
-          background: '#f0f9ff',
-          padding: '16px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #0ea5e9',
-          marginBottom: '16px',
-        }}>
+        <div className="callout callout-info">
           <strong>💡 初学者向けポイント</strong>
           <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
             暗号化は「秘密のメッセージを他人に読まれないようにする技術」です。
@@ -112,7 +111,7 @@ function FundamentalsContent() {
         </p>
 
         {/* 理解度チェック */}
-        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+        <div className="callout">
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
@@ -127,15 +126,8 @@ function FundamentalsContent() {
         </div>
 
         {/* 次のステップへの橋渡し */}
-        <p style={{
-          marginTop: '24px',
-          padding: '12px 16px',
-          background: 'linear-gradient(to right, #e0f2fe, transparent)',
-          borderLeft: '3px solid #0ea5e9',
-          borderRadius: '4px',
-          fontWeight: '500'
-        }}>
-          💡 <strong>次のステップへ:</strong> 暗号化の基本を理解しました。次は、暗号に2つの大きな種類（共通鍵と公開鍵）があることを学びます。
+        <p className="callout callout-info" style={{ fontWeight: '500' }}>
+          💡 <strong>次のステップへ:</strong> 暗号化の基本を理解しました。次は、共通鍵暗号と公開鍵暗号の違いを詳しく見ていきましょう。
         </p>
       </section>
 
@@ -143,13 +135,7 @@ function FundamentalsContent() {
       <section className="card">
         <h2>2. 共通鍵暗号 vs 公開鍵暗号 - 2つの方式</h2>
 
-        <div style={{
-          background: '#f0f9ff',
-          padding: '16px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #0ea5e9',
-          marginBottom: '16px',
-        }}>
+        <div className="callout callout-info">
           <strong>💡 初学者向けポイント</strong>
           <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
             暗号には大きく2種類あります。<br />
@@ -184,13 +170,13 @@ function FundamentalsContent() {
         <p><strong>代表例:</strong> RSA（暗号化・署名）、ECDH（鍵交換）、ECDSA・Ed25519（署名）</p>
 
         {/* 理解度チェック */}
-        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+        <div className="callout">
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
               Q: 公開鍵暗号の最大の利点は何でしょうか？
             </summary>
-            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid var(--color-primary)' }}>
               A: <strong>鍵配送問題の解決</strong>です。<br />
               公開鍵は誰でも知ってよいため、事前に秘密の鍵を共有する必要がありません。
               公開鍵で暗号化したデータは、対応する秘密鍵でしか復号できないため、安全に通信できます。
@@ -199,14 +185,7 @@ function FundamentalsContent() {
         </div>
 
         {/* 次のステップへの橋渡し */}
-        <p style={{
-          marginTop: '24px',
-          padding: '12px 16px',
-          background: 'linear-gradient(to right, #e0f2fe, transparent)',
-          borderLeft: '3px solid #0ea5e9',
-          borderRadius: '4px',
-          fontWeight: '500'
-        }}>
+        <p className="callout callout-info" style={{ fontWeight: '500' }}>
           💡 <strong>次のステップへ:</strong> 2つの暗号方式を学びました。では、なぜ公開鍵暗号が発明されたのか、その歴史的背景を見ていきましょう。
         </p>
       </section>
@@ -215,13 +194,7 @@ function FundamentalsContent() {
       <section className="card">
         <h2>3. なぜ公開鍵暗号が発明されたか - 鍵配送問題の解決</h2>
 
-        <div style={{
-          background: '#f0f9ff',
-          padding: '16px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #0ea5e9',
-          marginBottom: '16px',
-        }}>
+        <div className="callout callout-info">
           <strong>💡 初学者向けポイント</strong>
           <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
             共通鍵暗号には「鍵をどうやって安全に渡すか」という大問題がありました。<br />
@@ -257,13 +230,13 @@ function FundamentalsContent() {
         </p>
 
         {/* 理解度チェック */}
-        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+        <div className="callout">
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
               Q: 公開鍵暗号で「公開鍵」を誰かに盗まれても問題ないのはなぜでしょうか？
             </summary>
-            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid var(--color-primary)' }}>
               A: <strong>公開鍵では復号できない</strong>からです。<br />
               公開鍵暗号では、公開鍵で暗号化したデータは秘密鍵でしか復号できません。
               公開鍵はその名の通り「公開してよい鍵」であり、暗号化にしか使えません。
@@ -273,15 +246,8 @@ function FundamentalsContent() {
         </div>
 
         {/* 次のステップへの橋渡し */}
-        <p style={{
-          marginTop: '24px',
-          padding: '12px 16px',
-          background: 'linear-gradient(to right, #e0f2fe, transparent)',
-          borderLeft: '3px solid #0ea5e9',
-          borderRadius: '4px',
-          fontWeight: '500'
-        }}>
-          💡 <strong>次のステップへ:</strong> 公開鍵暗号の発明理由を理解しました。次は、実際のWebサイト（HTTPS）でどのように2つの暗号を組み合わせているか見てみましょう。
+        <p className="callout callout-info" style={{ fontWeight: '500' }}>
+          💡 <strong>次のステップへ:</strong> 公開鍵暗号の発明理由を理解しました。次は、実際のWebサイト（HTTPS）でどのように2つの暗号を組み合わせているか見ていきましょう。
         </p>
       </section>
 
@@ -289,13 +255,7 @@ function FundamentalsContent() {
       <section className="card">
         <h2>4. 実システムでの暗号の組み合わせ - TLSの仕組み</h2>
 
-        <div style={{
-          background: '#f0f9ff',
-          padding: '16px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #0ea5e9',
-          marginBottom: '16px',
-        }}>
+        <div className="callout callout-info">
           <strong>💡 初学者向けポイント</strong>
           <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
             実際のWebサイト（HTTPS）では、共通鍵暗号と公開鍵暗号の<strong>両方</strong>を組み合わせています。<br />
@@ -330,13 +290,13 @@ function FundamentalsContent() {
         </p>
 
         {/* 理解度チェック */}
-        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+        <div className="callout">
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
               Q: HTTPS通信では、公開鍵暗号と共通鍵暗号をどのように使い分けていますか？
             </summary>
-            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid var(--color-primary)' }}>
               A: <strong>公開鍵暗号で鍵を共有し、共通鍵暗号でデータを暗号化</strong>します。<br />
               ① ハンドシェイク時: 公開鍵暗号（ECDH）で共通鍵（セッション鍵）を安全に共有<br />
               ② データ転送時: 共通鍵暗号（AES-GCM）でWebページやファイルを高速に暗号化<br />
@@ -346,14 +306,7 @@ function FundamentalsContent() {
         </div>
 
         {/* 次のステップへの橋渡し */}
-        <p style={{
-          marginTop: '24px',
-          padding: '12px 16px',
-          background: 'linear-gradient(to right, #e0f2fe, transparent)',
-          borderLeft: '3px solid #0ea5e9',
-          borderRadius: '4px',
-          fontWeight: '500'
-        }}>
+        <p className="callout callout-info" style={{ fontWeight: '500' }}>
           💡 <strong>次のステップへ:</strong> 暗号化の仕組みを理解しました。しかし、暗号システムには暗号化だけでなく、もう1つ重要な要素があります。それが「ハッシュ関数」です。
         </p>
       </section>
@@ -362,13 +315,7 @@ function FundamentalsContent() {
       <section className="card">
         <h2>5. ハッシュ関数の役割 - もう1つの重要な部品</h2>
 
-        <div style={{
-          background: '#f0f9ff',
-          padding: '16px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #0ea5e9',
-          marginBottom: '16px',
-        }}>
+        <div className="callout callout-info">
           <strong>💡 初学者向けポイント</strong>
           <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
             ハッシュ関数は「データの指紋」を作る技術です。<br />
@@ -408,13 +355,13 @@ function FundamentalsContent() {
         </ul>
 
         {/* 理解度チェック */}
-        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+        <div className="callout">
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
               Q: なぜパスワードを保存するときにハッシュ化するのでしょうか？
             </summary>
-            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid var(--color-primary)' }}>
               A: <strong>データベースが漏洩しても元のパスワードがわからないようにする</strong>ためです。<br />
               ハッシュ関数は一方向関数なので、ハッシュ値から元のパスワードを復元することは計算量的に困難です。
               ユーザーがログイン時に入力したパスワードをハッシュ化し、保存済みのハッシュ値と比較することで認証できます。
@@ -424,14 +371,7 @@ function FundamentalsContent() {
         </div>
 
         {/* 次のステップへの橋渡し */}
-        <p style={{
-          marginTop: '24px',
-          padding: '12px 16px',
-          background: 'linear-gradient(to right, #e0f2fe, transparent)',
-          borderLeft: '3px solid #0ea5e9',
-          borderRadius: '4px',
-          fontWeight: '500'
-        }}>
+        <p className="callout callout-info" style={{ fontWeight: '500' }}>
           💡 <strong>次のステップへ:</strong> 暗号の3つの柱（共通鍵・公開鍵・ハッシュ）を理解しました。次は、共通鍵暗号の実装上の重要な概念「モード」について学びます。
         </p>
       </section>
@@ -440,13 +380,7 @@ function FundamentalsContent() {
       <section className="card">
         <h2>6. ブロック暗号とモード - なぜ「モード」が必要なのか</h2>
 
-        <div style={{
-          background: '#f0f9ff',
-          padding: '16px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #0ea5e9',
-          marginBottom: '16px',
-        }}>
+        <div className="callout callout-info">
           <strong>💡 初学者向けポイント</strong>
           <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
             AESなどのブロック暗号は「固定サイズのブロック（16バイト）」しか暗号化できません。<br />
@@ -502,31 +436,24 @@ function FundamentalsContent() {
         </p>
 
         {/* 理解度チェック */}
-        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+        <div className="callout">
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
-              Q: ECBモードを使用してはいけない理由は何でしょうか？
+              Q: なぜECBモードを使用してはいけないのでしょうか？
             </summary>
-            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid #0ea5e9' }}>
-              A: <strong>同じ平文ブロックが同じ暗号文になるため、パターンが漏洩する</strong>からです。<br />
-              ECBモードでは各ブロックを独立に暗号化するため、画像を暗号化しても輪郭が見えてしまいます。
-              また、暗号文ブロックの並び替えや削除も検知できません。
+            <p style={{ marginTop: '12px', paddingLeft: '12px', borderLeft: '3px solid var(--color-primary)' }}>
+              A: <strong>同じ平文ブロックが常に同じ暗号文ブロックに変換される</strong>ため、データのパターンが丸見えになってしまうからです。<br />
+              有名な「ECBペンギン」の例のように、画像データをECBで暗号化すると、輪郭がそのまま残ってしまいます。
+              安全な通信には、CBCやGCMのように、前のブロックやカウンタを利用して暗号文を変化させるモードが必須です。
               必ずCBC、CTR、GCMなどのモードを使用し、現代ではAES-GCMやChaCha20-Poly1305のようなAEAD（認証付き暗号）が推奨されます。
             </p>
           </details>
         </div>
 
         {/* 次のステップへの橋渡し */}
-        <p style={{
-          marginTop: '24px',
-          padding: '12px 16px',
-          background: 'linear-gradient(to right, #e0f2fe, transparent)',
-          borderLeft: '3px solid #0ea5e9',
-          borderRadius: '4px',
-          fontWeight: '500'
-        }}>
-          💡 <strong>次のステップへ:</strong> 暗号の理論と実装を学びました。最後に、数学的に安全な暗号でも実装を間違えると破られる現実を見ていきましょう。
+        <p className="callout callout-info" style={{ fontWeight: '500' }}>
+          💡 <strong>次のステップへ:</strong> 暗号化の仕組みとモードを学びました。最後に、どんなに強力な暗号でも避けて通れない「実装上の脆弱性」について学びます。
         </p>
       </section>
 
@@ -534,13 +461,7 @@ function FundamentalsContent() {
       <section className="card">
         <h2>7. 実世界の脆弱性と攻撃 - 暗号も完璧ではない</h2>
 
-        <div style={{
-          background: '#fff3cd',
-          padding: '16px',
-          borderRadius: '8px',
-          borderLeft: '4px solid #ffc107',
-          marginBottom: '16px',
-        }}>
+          <div className="callout callout-warning">
           <strong>⚠️ セキュリティ意識向上</strong>
           <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
             数学的に安全な暗号アルゴリズムでも、<strong>実装を間違える</strong>と簡単に破られます。<br />
@@ -591,7 +512,7 @@ function FundamentalsContent() {
         </p>
 
         {/* 理解度チェック */}
-        <div style={{ marginTop: '24px', padding: '16px', background: '#f8f9fa', borderRadius: '8px' }}>
+        <div className="callout">
           <h4 style={{ marginTop: 0 }}>🔍 理解度チェック</h4>
           <details>
             <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '8px 0' }}>
@@ -872,16 +793,12 @@ function SecurityContent() {
           <strong>セキュリティに関わる乱数生成には<code>Math.random()</code>を絶対に使用してはいけません</strong>。
         </p>
 
-        <div style={{
-          background: '#f0f9ff',
-          padding: '12px',
-          borderRadius: '4px',
-          borderLeft: '4px solid #0ea5e9',
-          marginBottom: '16px',
-          fontSize: '14px'
-        }}>
-          <strong>注:</strong> UIのアニメーションやゲームの演出など、
-          セキュリティに関係のない用途であれば<code>Math.random()</code>を使用しても問題ありません。
+        <div className="callout callout-info">
+          <strong>💡 初学者向けポイント</strong>
+          <p style={{ marginTop: '8px', marginBottom: '0', fontSize: '14px' }}>
+            乱数は暗号の「命」です。鍵を作るときに、予測しやすい乱数（Math.random()など）を使ってしまうと、どんなに強力な暗号アルゴリズムを使っていても、攻撃者に鍵を推測されてしまいます。<br />
+            <strong>鉄則:</strong> 暗号鍵の生成には、必ず OS レベルの安全な乱数生成器（CSPRNG）を使用してください。
+          </p>
         </div>
 
         <h4>使用してはいけない理由</h4>
@@ -903,18 +820,18 @@ function SecurityContent() {
         <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
           <div>
             <strong>ブラウザ (Web Crypto API)</strong>
-            <pre style={{ background: '#f8fafc', padding: '8px', fontSize: '12px', overflowX: 'auto' }}>{`const val = new Uint32Array(1);
-crypto.getRandomValues(val);`}</pre>
+            <pre><code>{`const val = new Uint32Array(1);
+crypto.getRandomValues(val);`}</code></pre>
           </div>
           <div>
             <strong>Node.js</strong>
-            <pre style={{ background: '#f8fafc', padding: '8px', fontSize: '12px', overflowX: 'auto' }}>{`const crypto = require('crypto');
-crypto.randomBytes(16);`}</pre>
+            <pre><code>{`const crypto = require('crypto');
+ const val = crypto.randomBytes(4);`}</code></pre>
           </div>
           <div>
             <strong>Python</strong>
-            <pre style={{ background: '#f8fafc', padding: '8px', fontSize: '12px', overflowX: 'auto' }}>{`import secrets
-secrets.token_bytes(16)`}</pre>
+            <pre><code>{`import secrets
+ val = secrets.token_bytes(4)`}</code></pre>
           </div>
         </div>
       </section>
@@ -1063,14 +980,7 @@ secrets.token_bytes(16)`}</pre>
         </p>
 
         <h3>証明書検証の重要性</h3>
-        <div style={{
-          background: '#fef2f2',
-          padding: '12px',
-          borderRadius: '4px',
-          borderLeft: '4px solid #dc2626',
-          marginBottom: '16px',
-          fontSize: '14px'
-        }}>
+          <div className="callout callout-warning">
           <strong>警告:</strong> 中間者攻撃（MITM）は、クライアント側で<strong>証明書の検証を省略または不適切に実装したとき</strong>に成立します。
           「オレオレ証明書」を安易に許可したり、検証コードを無効化してはいけません。
         </div>
@@ -1280,7 +1190,7 @@ function PQCContent() {
 
         <h3>RSA / ECDSAとの比較</h3>
         <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '12px', border: '1px solid #e2e8f0' }}>
-          <thead style={{ background: '#f8fafc' }}>
+          <thead>
             <tr>
               <th style={{ padding: '8px', textAlign: 'left' }}>方式</th>
               <th style={{ padding: '8px', textAlign: 'left' }}>公開鍵サイズ</th>

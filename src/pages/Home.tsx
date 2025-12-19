@@ -34,18 +34,27 @@ export default function Home() {
   return (
     <div className="home">
       <section className="hero">
-        <p className="eyebrow">Hands-on Cryptography</p>
-        <h1>暗号を学んで・実践し・楽しむ</h1>
-        <p>
-          CryptoLab は、学習・実装・可視化を一続きで進められるハンズオンサイトです。
-          WebCrypto を扱うラボ群や PQC ロードマップを、同じ UI で切り替えながら体験できます。
+        <p className="eyebrow" style={{ letterSpacing: '0.3em' }}>THE CRYPTO LAB</p>
+        <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)', lineHeight: 1.1 }}>
+          <span style={{ fontFamily: 'var(--font-classic)', color: '#8b7355' }}>歴史</span>を解読し、
+          <br />
+          <span style={{ 
+            fontFamily: 'var(--font-mono)', 
+            color: '#00d2ff', 
+            WebkitTextStroke: '1px #000',
+            paintOrder: 'stroke fill'
+          }}>未来</span>を実装する。
+        </h1>
+        <p style={{ maxWidth: '700px', margin: 'var(--spacing-lg) auto', fontSize: '1.1rem' }}>
+          CryptoLab は、古典から現代、そしてポスト量子暗号までを網羅する
+          インタラクティブな学習プラットフォームです。
         </p>
         <div className="hero-actions">
-          <Link to="/labs" className="btn btn-primary">
-            ラボを開く
+          <Link to="/labs" className="btn btn-primary" style={{ padding: '16px 40px', fontSize: '1.1rem' }}>
+            ラボを開始する
           </Link>
-          <Link to="/learn" className="btn btn-secondary">
-            解説を読む
+          <Link to="/learn" className="btn btn-secondary" style={{ padding: '16px 40px', fontSize: '1.1rem' }}>
+            知識を深める
           </Link>
         </div>
       </section>
