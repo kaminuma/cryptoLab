@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -17,11 +17,39 @@ const toolsLinks = [
 ]
 
 export default function NavBar() {
-  const [showToolsDropdown, setShowToolsDropdown] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const location = useLocation()
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
+
+  // Auto-theme based on path if not in Labs
+  useEffect(() => {
+    if (location.pathname.startsWith('/labs')) return
+
+    const classicalPaths = ['/enigma']
+    const hackerPaths = ['/hash', '/aes', '/rsa', '/pqc', '/tools']
+    const mathPaths = ['/hash', '/rsa']
+    const pqcPaths = ['/pqc']
+    
+    if (classicalPaths.some(path => location.pathname.startsWith(path))) {
+      document.documentElement.setAttribute('data-theme', 'classic')
+      document.documentElement.removeAttribute('data-subtheme')
+    } else if (hackerPaths.some(path => location.pathname.startsWith(path))) {
+      document.documentElement.setAttribute('data-theme', 'hacker')
+      
+      if (mathPaths.some(path => location.pathname.startsWith(path))) {
+        document.documentElement.setAttribute('data-subtheme', 'math')
+      } else if (pqcPaths.some(path => location.pathname.startsWith(path))) {
+        document.documentElement.setAttribute('data-subtheme', 'pqc')
+      } else {
+        document.documentElement.removeAttribute('data-subtheme')
+      }
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+      document.documentElement.removeAttribute('data-subtheme')
+    }
+  }, [location.pathname])
 
   return (
     <header className="navbar">
@@ -51,7 +79,6 @@ export default function NavBar() {
             </NavLink>
           ))}
 
-          {/* Tools Dropdown */}
           <div className="nav-dropdown">
             <span className="nav-link nav-dropdown-trigger">
               Tools <span style={{ fontSize: '0.8em' }}>▼</span>
@@ -62,10 +89,7 @@ export default function NavBar() {
                   key={link.to}
                   to={link.to}
                   className={({ isActive }) => `nav-dropdown-item${isActive ? ' active' : ''}`}
-                  onClick={() => {
-                    closeMenu()
-                    setShowToolsDropdown(false)
-                  }}
+                  onClick={closeMenu}
                 >
                   {link.label}
                 </NavLink>

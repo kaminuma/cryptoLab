@@ -8,6 +8,7 @@ export default function Footer() {
         </div>
         <div className="footer-links">
           <span>© {year} CryptoLab</span>
+          <br />
           <a href="https://www.nist.gov/news-events/news/2022/07/nist-announces-first-four-quantum-resistant-cryptographic-algorithms" target="_blank" rel="noreferrer">
             NIST PQC 参考
           </a>

@@ -51,20 +51,12 @@ export default function Hash() {
     const data = step.data;
 
     return (
-      <div style={{
-        background: '#f8fafc',
-        padding: '12px',
-        borderRadius: '4px',
-        fontSize: '13px',
-        fontFamily: 'monospace',
-        marginTop: '8px',
-        border: '1px solid #e2e8f0'
-      }}>
+      <div className="callout" style={{ fontSize: '13px', fontFamily: 'monospace' }}>
         {Object.entries(data).map(([key, value]) => (
           <div key={key} style={{ marginBottom: '8px' }}>
-            <span style={{ color: '#64748b', fontWeight: 'bold' }}>{key}:</span>{' '}
+            <span style={{ color: 'var(--color-text-muted)', fontWeight: 'bold' }}>{key}:</span>{' '}
             <span style={{
-              color: key === 'hash' ? '#2563eb' : '#0f172a',
+              color: key === 'hash' ? 'var(--color-primary)' : 'var(--color-text-main)',
               wordBreak: 'break-all'
             }}>
               {typeof value === 'object' && Array.isArray(value)
@@ -94,7 +86,7 @@ export default function Hash() {
               style={{
                 width: '12px',
                 height: '12px',
-                background: isDifferent ? '#ef4444' : '#e2e8f0',
+                background: isDifferent ? 'var(--color-accent)' : 'var(--color-border)',
                 borderRadius: '2px'
               }}
               title={`Bit ${i * 32 + j}: ${isDifferent ? '異なる' : '同じ'}`}
@@ -107,15 +99,15 @@ export default function Hash() {
     return (
       <div>
         <div style={{ marginBottom: '16px' }}>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#2563eb', marginBottom: '8px' }}>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-primary)', marginBottom: '8px' }}>
             {differentBits} / {totalBits} ビット ({percentage.toFixed(1)}%)
           </div>
-          <div style={{ color: '#64748b' }}>
+          <div style={{ color: 'var(--color-text-subtle)' }}>
             1文字違うだけで約半分のビットが変化（理想: 50%）
           </div>
         </div>
         <div style={{ marginTop: '16px' }}>
-          <div style={{ color: '#64748b', marginBottom: '8px', fontSize: '13px' }}>
+          <div style={{ color: 'var(--color-text-subtle)', marginBottom: '8px', fontSize: '13px' }}>
             ビット差分の可視化（赤=異なる、灰=同じ）
           </div>
           {rows}
@@ -125,28 +117,26 @@ export default function Hash() {
   };
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-      <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#0f172a' }}>ハッシュ関数 (SHA-256)</h1>
-      <p style={{ color: '#64748b', marginBottom: '32px' }}>
-        ハッシュ関数の内部動作を可視化して理解する
-      </p>
+    <main className="page hash">
+      <header className="page-header">
+        <p className="eyebrow" style={{ color: 'var(--color-primary)' }}>[ HASH_ALGORITHM: SHA-256 ]</p>
+        <h1>ハッシュ関数 & 整合性</h1>
+        <p className="lede">
+          不可逆なデータの指紋。
+          SHA-256 によるデータの要約から、改ざん検知のメカニズムまで、デジタル世界の整合性を支える技術を体験する。
+        </p>
+      </header>
 
       {/* 重要な概念説明 */}
-      <section style={{
-        background: 'rgba(239, 68, 68, 0.05)',
-        padding: '24px',
-        borderRadius: '8px',
-        marginBottom: '32px',
-        border: '2px solid #ef4444'
-      }}>
-        <h2 style={{ fontSize: '20px', marginBottom: '16px', color: '#dc2626' }}>
+      <section className="card" style={{ borderLeft: '4px solid var(--color-accent)' }}>
+        <h2 style={{ color: 'var(--color-accent)', marginBottom: 'var(--spacing-md)' }}>
           📌 重要: ハッシュ関数 ≠ 暗号化
         </h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
           <div>
-            <h3 style={{ fontSize: '16px', marginBottom: '8px', color: '#2563eb' }}>❌ 暗号化 (Encryption)</h3>
-            <ul style={{ color: '#475569', lineHeight: '1.8', paddingLeft: '20px' }}>
+            <h3 style={{ fontSize: '16px', marginBottom: '8px', color: 'var(--color-accent)' }}>❌ 暗号化 (Encryption)</h3>
+            <ul style={{ color: 'var(--color-text-muted)', lineHeight: '1.8', paddingLeft: '20px' }}>
               <li><strong>目的:</strong> データを秘密にする</li>
               <li><strong>特徴:</strong> 復号可能（鍵があれば元に戻せる）</li>
               <li><strong>用途:</strong> 機密データの保護</li>
@@ -155,8 +145,8 @@ export default function Hash() {
           </div>
 
           <div>
-            <h3 style={{ fontSize: '16px', marginBottom: '8px', color: '#2563eb' }}>✅ ハッシュ関数 (Hash Function)</h3>
-            <ul style={{ color: '#475569', lineHeight: '1.8', paddingLeft: '20px' }}>
+            <h3 style={{ fontSize: '16px', marginBottom: '8px', color: 'var(--color-primary)' }}>✅ ハッシュ関数 (Hash Function)</h3>
+            <ul style={{ color: 'var(--color-text-muted)', lineHeight: '1.8', paddingLeft: '20px' }}>
               <li><strong>目的:</strong> データの「指紋」を作る</li>
               <li><strong>特徴:</strong> 一方向のみ（元に戻せない）</li>
               <li><strong>用途:</strong> 完全性確認、パスワード保管、デジタル署名</li>
@@ -165,15 +155,9 @@ export default function Hash() {
           </div>
         </div>
 
-        <div style={{
-          marginTop: '20px',
-          padding: '16px',
-          background: 'rgba(37, 99, 235, 0.05)',
-          borderRadius: '4px',
-          border: '1px solid #cbd5e1'
-        }}>
-          <strong style={{ color: '#2563eb' }}>ハッシュ関数の3つの重要な性質:</strong>
-          <ol style={{ marginTop: '8px', color: '#475569', lineHeight: '1.8', paddingLeft: '20px' }}>
+        <div className="callout callout-info">
+          <strong style={{ color: 'var(--color-primary)' }}>ハッシュ関数の3つの重要な性質:</strong>
+          <ol style={{ marginTop: '8px', color: 'var(--color-text-muted)', lineHeight: '1.8', paddingLeft: '20px' }}>
             <li><strong>決定性:</strong> 同じ入力は常に同じハッシュ値になる</li>
             <li><strong>一方向性:</strong> ハッシュ値から元のデータを復元できない</li>
             <li><strong>衝突耐性:</strong> 同じハッシュ値を持つ異なる入力を見つけるのが困難</li>
@@ -182,12 +166,12 @@ export default function Hash() {
       </section>
 
       {/* アルゴリズムの説明 */}
-      <section style={{ marginBottom: '32px', padding: '24px', background: 'rgba(37, 99, 235, 0.05)', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
-        <h2 style={{ fontSize: '24px', marginBottom: '16px', color: '#0f172a' }}>SHA-256アルゴリズムの流れ</h2>
+      <section className="card">
+        <h2 style={{ color: 'var(--color-primary)' }}>SHA-256アルゴリズムの流れ</h2>
 
-        <div style={{ color: '#475569', lineHeight: '1.8' }}>
+        <div style={{ color: 'var(--color-text-muted)', lineHeight: '1.8' }}>
           <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ color: '#2563eb', marginBottom: '8px' }}>1. パディング処理</h3>
+            <h3 style={{ color: 'var(--color-primary)', marginBottom: '8px' }}>1. パディング処理</h3>
             <p>メッセージを512ビット（64バイト）の倍数に調整します。</p>
             <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
               <li>メッセージの末尾に'1'ビット（0x80）を追加</li>
@@ -197,7 +181,7 @@ export default function Hash() {
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ color: '#2563eb', marginBottom: '8px' }}>2. メッセージスケジュール生成</h3>
+            <h3 style={{ color: 'var(--color-primary)', marginBottom: '8px' }}>2. メッセージスケジュール生成</h3>
             <p>各512ビットブロックから64個の32ビットワード（W₀〜W₆₃）を生成します。</p>
             <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
               <li>W₀〜W₁₅: ブロックを直接32ビットワードに変換</li>
@@ -206,7 +190,7 @@ export default function Hash() {
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ color: '#2563eb', marginBottom: '8px' }}>3. 圧縮関数（64ラウンド）</h3>
+            <h3 style={{ color: 'var(--color-primary)', marginBottom: '8px' }}>3. 圧縮関数（64ラウンド）</h3>
             <p>8個のハッシュ値（a〜h）を64回更新します。</p>
             <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
               <li>各ラウンドでΣ₀、Σ₁、Ch、Maj関数を使用</li>
@@ -216,47 +200,33 @@ export default function Hash() {
           </div>
 
           <div>
-            <h3 style={{ color: '#2563eb', marginBottom: '8px' }}>4. 最終ハッシュ生成</h3>
+            <h3 style={{ color: 'var(--color-primary)', marginBottom: '8px' }}>4. 最終ハッシュ生成</h3>
             <p>更新されたハッシュ値を元の値に加算し、8個の32ビット値を連結して256ビットのハッシュを生成します。</p>
           </div>
         </div>
       </section>
 
       {/* 実装コード */}
-      <section style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '24px', marginBottom: '16px', color: '#0f172a' }}>実装コード（TypeScript）</h2>
-        <p style={{ color: '#64748b', marginBottom: '16px' }}>
+      <section className="card">
+        <h2 style={{ fontSize: '24px', marginBottom: '16px', color: 'var(--color-text-main)' }}>実装コード（TypeScript）</h2>
+        <p style={{ color: 'var(--color-text-subtle)', marginBottom: '16px' }}>
           このデモで使用しているSHA-256の完全な実装コードです。暗号化ライブラリを使わず、アルゴリズムをゼロから実装しています。
           Web Crypto APIとの出力一致を確認済みです。
         </p>
 
-        <details style={{
-          background: '#fff',
-          borderRadius: '8px',
-          border: '1px solid #e2e8f0',
-          padding: '16px'
-        }}>
+        <details className="card">
           <summary style={{
             cursor: 'pointer',
             fontWeight: 'bold',
-            color: '#2563eb',
+            color: 'var(--color-primary)',
             userSelect: 'none',
             marginBottom: '16px'
-          }}>
+          }}
+          className="callout">
             📄 コードを表示する (クリックして展開)
           </summary>
 
-          <pre style={{
-            background: '#f8fafc',
-            padding: '16px',
-            borderRadius: '4px',
-            overflow: 'auto',
-            fontSize: '13px',
-            lineHeight: '1.6',
-            border: '1px solid #e2e8f0',
-            margin: 0
-          }}>
-            <code>{`// SHA-256の初期ハッシュ値 (H0〜H7)
+          <pre><code>{`// SHA-256の初期ハッシュ値 (H0〜H7)
 // 最初の8つの素数の平方根の小数部分の最初の32ビット
 const H: number[] = [
   0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
@@ -418,11 +388,11 @@ export function sha256(input: string): string {
       </section>
 
       {/* SHA-256デモ */}
-      <section style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '24px', marginBottom: '16px', color: '#0f172a' }}>SHA-256 デモ</h2>
+      <section className="card">
+        <h2 style={{ color: 'var(--color-primary)' }}>SHA-256 デモ</h2>
 
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#0f172a' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--color-text-main)' }}>
             入力テキスト:
           </label>
           <input
@@ -432,45 +402,36 @@ export function sha256(input: string): string {
             style={{
               width: '100%',
               padding: '12px',
-              fontSize: '16px',
-              background: '#fff',
-              border: '1px solid #cbd5e1',
-              borderRadius: '4px',
-              color: '#0f172a'
+              fontSize: '16px'
             }}
+            className="text-input"
             placeholder="ハッシュ化したいテキストを入力..."
           />
         </div>
 
         {result && (
-          <div style={{
-            background: '#f8fafc',
-            padding: '16px',
-            borderRadius: '8px',
-            border: '1px solid #e2e8f0',
-            marginBottom: '16px'
-          }}>
+          <div className="callout" style={{ marginBottom: '16px' }}>
             <div style={{ marginBottom: '12px' }}>
-              <strong style={{ color: '#2563eb' }}>自作 SHA-256:</strong>
+              <strong style={{ color: 'var(--color-primary)' }}>自作 SHA-256:</strong>
               <div style={{
                 fontFamily: 'monospace',
                 fontSize: '14px',
                 wordBreak: 'break-all',
                 marginTop: '4px',
-                color: isMatch ? '#16a34a' : '#dc2626'
+                color: isMatch ? 'var(--color-success)' : 'var(--color-accent)'
               }}>
                 {result.hash}
               </div>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
-              <strong style={{ color: '#2563eb' }}>Web Crypto API:</strong>
+              <strong style={{ color: 'var(--color-primary)' }}>Web Crypto API:</strong>
               <div style={{
                 fontFamily: 'monospace',
                 fontSize: '14px',
                 wordBreak: 'break-all',
                 marginTop: '4px',
-                color: '#0f172a'
+                color: 'var(--color-text-main)'
               }}>
                 {webCryptoHash}
               </div>
@@ -478,10 +439,10 @@ export function sha256(input: string): string {
 
             <div style={{
               padding: '8px 12px',
-              background: isMatch ? 'rgba(22, 163, 74, 0.1)' : 'rgba(220, 38, 38, 0.1)',
+              background: isMatch ? 'rgba(var(--color-success-rgb), 0.1)' : 'rgba(var(--color-accent-rgb), 0.1)',
               borderRadius: '4px',
-              border: `1px solid ${isMatch ? '#16a34a' : '#dc2626'}`,
-              color: isMatch ? '#16a34a' : '#dc2626'
+              border: `1px solid ${isMatch ? 'var(--color-success)' : 'var(--color-accent)'}`,
+              color: isMatch ? 'var(--color-success)' : 'var(--color-accent)'
             }}>
               {isMatch ? '✓ 一致しました！実装は正しいです' : '✗ 一致しません（実装エラー）'}
             </div>
@@ -490,25 +451,25 @@ export function sha256(input: string): string {
       </section>
 
       {/* 処理ステップの可視化 */}
-      <section style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '24px', marginBottom: '16px', color: '#0f172a' }}>処理ステップの詳細</h2>
-        <p style={{ color: '#64748b', marginBottom: '16px' }}>
+      <section className="card">
+        <h2 style={{ color: 'var(--color-primary)' }}>処理ステップの詳細</h2>
+        <p style={{ color: 'var(--color-text-subtle)', marginBottom: '16px' }}>
           クリックして各ステップの詳細を表示
         </p>
 
-        <div style={{ background: '#fff', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+        <div className="callout" style={{ padding: 0, overflow: 'hidden' }}>
           {result?.steps.map((step, idx) => (
             <div key={idx} style={{
-              borderBottom: idx < result.steps.length - 1 ? '1px solid #e2e8f0' : 'none'
+              borderBottom: idx < result.steps.length - 1 ? '1px solid var(--color-border)' : 'none'
             }}>
               <button
                 onClick={() => toggleStep(step.step)}
                 style={{
                   width: '100%',
                   padding: '16px',
-                  background: expandedSteps.has(step.step) ? '#f8fafc' : 'transparent',
+                  background: expandedSteps.has(step.step) ? 'rgba(var(--color-primary-rgb), 0.05)' : 'transparent',
                   border: 'none',
-                  color: '#0f172a',
+                  color: 'var(--color-text-main)',
                   textAlign: 'left',
                   cursor: 'pointer',
                   display: 'flex',
@@ -521,11 +482,11 @@ export function sha256(input: string): string {
                   <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
                     {step.step.replace(/_/g, ' ').toUpperCase()}
                   </div>
-                  <div style={{ color: '#64748b', fontSize: '14px' }}>
+                  <div style={{ color: 'var(--color-text-subtle)', fontSize: '14px' }}>
                     {step.description}
                   </div>
                 </div>
-                <span style={{ fontSize: '20px', color: '#94a3b8' }}>
+                <span style={{ fontSize: '20px', color: 'var(--color-text-subtle)' }}>
                   {expandedSteps.has(step.step) ? '▼' : '▶'}
                 </span>
               </button>
@@ -541,15 +502,15 @@ export function sha256(input: string): string {
       </section>
 
       {/* アバランシェ効果デモ */}
-      <section>
-        <h2 style={{ fontSize: '24px', marginBottom: '16px', color: '#0f172a' }}>アバランシェ効果</h2>
-        <p style={{ color: '#64748b', marginBottom: '16px' }}>
+      <section className="card">
+        <h2 style={{ color: 'var(--color-primary)' }}>アバランシェ効果</h2>
+        <p style={{ color: 'var(--color-text-subtle)', marginBottom: '16px' }}>
           わずか1文字の違いでハッシュ値が大きく変化することを確認
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#0f172a' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--color-text-main)' }}>
               入力1:
             </label>
             <input
@@ -559,17 +520,14 @@ export function sha256(input: string): string {
               style={{
                 width: '100%',
                 padding: '12px',
-                fontSize: '16px',
-                background: '#fff',
-                border: '1px solid #cbd5e1',
-                borderRadius: '4px',
-                color: '#0f172a'
+                fontSize: '16px'
               }}
+              className="text-input"
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#0f172a' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'var(--color-text-main)' }}>
               入力2:
             </label>
             <input
@@ -579,25 +537,17 @@ export function sha256(input: string): string {
               style={{
                 width: '100%',
                 padding: '12px',
-                fontSize: '16px',
-                background: '#fff',
-                border: '1px solid #cbd5e1',
-                borderRadius: '4px',
-                color: '#0f172a'
+                fontSize: '16px'
               }}
+              className="text-input"
             />
           </div>
         </div>
 
-        <div style={{
-          background: '#fff',
-          padding: '24px',
-          borderRadius: '8px',
-          border: '1px solid #e2e8f0'
-        }}>
+        <div className="callout">
           {renderAvalancheVisualization()}
         </div>
       </section>
-    </div>
+    </main>
   );
 }

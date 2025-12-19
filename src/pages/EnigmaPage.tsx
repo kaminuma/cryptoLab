@@ -6,14 +6,18 @@ const EnigmaPage: React.FC = () => {
     useEffect(() => {
         document.title = 'Enigma Simulator - CryptoLab';
         window.scrollTo({ top: 0, behavior: 'instant' });
+        document.documentElement.setAttribute('data-theme', 'classic');
+        return () => {
+            document.documentElement.removeAttribute('data-theme');
+        };
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#1a1a1a] relative">
+        <div className="page enigma-page" style={{ position: 'relative', minHeight: '100vh' }}>
             <Link
                 to="/labs"
-                className="absolute top-4 left-4 text-gray-500 hover:text-[#d4af37] transition-colors z-50 flex items-center gap-2 no-underline"
-                style={{ textDecoration: 'none' }}
+                className="btn btn-secondary"
+                style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100, padding: '8px 16px' }}
             >
                 ← Back to Labs
             </Link>

@@ -36,12 +36,15 @@ export default function PQC() {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
   return (
-    <div className="pqc page">
-      <section className="page-header">
-        <p className="eyebrow">Post-Quantum Readiness</p>
-        <h1>量子耐性暗号（PQC）への移行計画</h1>
-        <p className="lede">NIST の公式アナウンスに沿って里程標と実装ステップをまとめ、CryptoLab への組み込みロードマップを公開しています。</p>
-      </section>
+    <main className="page pqc">
+      <header className="page-header">
+        <p className="eyebrow" style={{ color: 'var(--color-accent)' }}>[ STATUS: QUANTUM_READY ]</p>
+        <h1>ポスト量子暗号 (PQC)</h1>
+        <p className="lede">
+          量子コンピュータの脅威に備える、次世代の暗号規格。
+          格子暗号、多変数多項式暗号など、数学の最前線が切り拓く未来の安全基盤。
+        </p>
+      </header>
 
       <section className="card">
         <h2>主要マイルストーン</h2>
@@ -75,6 +78,6 @@ export default function PQC() {
           <li>金融・公共用途での公開は、FIPS 203/204 の正式発行を確認したうえで仕様を固定してください。</li>
         </ul>
       </section>
-    </div>
+    </main>
   )
 }

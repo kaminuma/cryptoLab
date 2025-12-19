@@ -29,6 +29,14 @@ export default function Labs() {
     [activeTab],
   )
 
+  useEffect(() => {
+    const theme = activeTab === 'classical' ? 'classic' : 'hacker'
+    document.documentElement.setAttribute('data-theme', theme)
+    return () => {
+      document.documentElement.removeAttribute('data-theme')
+    }
+  }, [activeTab])
+
   return (
     <div>
       <section className="page-header">
