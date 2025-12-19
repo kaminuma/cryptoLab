@@ -83,7 +83,7 @@ function FundamentalsContent() {
           <li><strong>なりすまし防止:</strong> 通信相手が本物であることを確認</li>
           <li><strong>否認防止:</strong> デジタル署名により送信者が「送っていない」と言い逃れできないようにする</li>
         </ul>
-        <p style={{ fontSize: '14px', color: '#475569' }}>
+        <p style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>
           ※ 暗号化は「読めなくする」役割で、否認防止はデジタル署名技術の役割です。暗号化と署名はセットで語られますが、担う機能は別です。
         </p>
 
