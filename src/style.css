@@ -204,11 +204,18 @@ a:hover {
   padding: var(--spacing-xs);
 }
 
+/* Navigation Links Container */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;
   }
-  
+
   .nav-links {
     display: none;
     flex-direction: column;
@@ -221,17 +228,10 @@ a:hover {
     border-bottom: 1px solid var(--color-border);
     z-index: 100;
   }
-  
+
   .nav-links.open {
     display: flex;
   }
-}
-
-/* Navigation Links Container */
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
 }
 
 /* Navigation Links */
