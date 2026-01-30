@@ -14,6 +14,7 @@ const links = [
 const toolsLinks = [
   { to: '/tools/convert', label: 'Convert' },
   { to: '/tools/hash-cracker', label: 'Hash Cracker' },
+  { to: '/tools/xor', label: 'XOR' },
 ]
 
 export default function NavBar() {

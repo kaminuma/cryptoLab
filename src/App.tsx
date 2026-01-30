@@ -10,6 +10,7 @@ import Hash from '@/pages/Hash'
 import AESPage from '@/pages/AES'
 import ToolsConvert from '@/pages/ToolsConvert'
 import ToolsHashCracker from '@/pages/ToolsHashCracker'
+import ToolsXorConverter from '@/pages/ToolsXorConverter'
 import EnigmaPage from '@/pages/EnigmaPage'
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/aes" element={<AESPage />} />
           <Route path="/tools/convert" element={<ToolsConvert />} />
           <Route path="/tools/hash-cracker" element={<ToolsHashCracker />} />
+          <Route path="/tools/xor" element={<ToolsXorConverter />} />
           <Route path="/enigma" element={<EnigmaPage />} />
         </Routes>
       </main>
