@@ -53,29 +53,9 @@ export default function NavBar() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Auto-theme based on path if not in Labs
+  // ページ遷移時にテーマをリセット（Enigmaページ以外は通常テーマ）
   useEffect(() => {
-    if (location.pathname.startsWith('/labs')) return
-
-    const classicalPaths = ['/enigma']
-    const hackerPaths = ['/hash', '/aes', '/rsa', '/pqc', '/tools']
-    const mathPaths = ['/hash', '/rsa']
-    const pqcPaths = ['/pqc']
-    
-    if (classicalPaths.some(path => location.pathname.startsWith(path))) {
-      document.documentElement.setAttribute('data-theme', 'classic')
-      document.documentElement.removeAttribute('data-subtheme')
-    } else if (hackerPaths.some(path => location.pathname.startsWith(path))) {
-      document.documentElement.setAttribute('data-theme', 'hacker')
-      
-      if (mathPaths.some(path => location.pathname.startsWith(path))) {
-        document.documentElement.setAttribute('data-subtheme', 'math')
-      } else if (pqcPaths.some(path => location.pathname.startsWith(path))) {
-        document.documentElement.setAttribute('data-subtheme', 'pqc')
-      } else {
-        document.documentElement.removeAttribute('data-subtheme')
-      }
-    } else {
+    if (!location.pathname.startsWith('/enigma')) {
       document.documentElement.removeAttribute('data-theme')
       document.documentElement.removeAttribute('data-subtheme')
     }
