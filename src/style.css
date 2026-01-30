@@ -66,50 +66,6 @@
   --font-mono: 'Courier Prime', 'Courier New', monospace;
 }
 
-/* Hacker Style Theme */
-[data-theme='hacker'] {
-  --color-primary: #39ff14; /* Neon Green */
-  --color-primary-rgb: 57, 255, 20;
-  --color-primary-hover: #32e612;
-  --color-secondary: #00f3ff; /* Cyber Blue */
-  --color-accent: #ff00ff; /* Neon Pink */
-
-  --color-bg-body: #0a0a0a; /* Deep Black */
-  --color-bg-card: rgba(26, 26, 26, 0.8);
-  --color-bg-card-hover: rgba(38, 38, 38, 1);
-
-  --color-text-main: #ffffff;
-  --color-text-muted: #f1f5f9;
-  --color-text-subtle: #e2e8f0;
-
-  --color-border: #333;
-  --color-border-hover: #444;
-
-  --font-sans: var(--font-mono);
-  --font-mono: var(--font-mono);
-
-  --shadow-md: 0 0 10px rgba(57, 255, 20, 0.2);
-  --shadow-lg: 0 0 20px rgba(57, 255, 20, 0.3);
-
-  --color-link: #00f3ff;
-  --color-link-hover: #39ff14;
-}
-
-/* Sub-themes */
-[data-subtheme='math'] {
-  --color-primary: #0ea5e9;
-  --color-primary-rgb: 14, 165, 233;
-  --color-secondary: #38bdf8;
-  --color-accent: #818cf8;
-}
-
-[data-subtheme='pqc'] {
-  --color-primary: #ff00ff;
-  --color-primary-rgb: 255, 0, 255;
-  --color-secondary: #00f3ff;
-  --color-accent: #39ff14;
-}
-
 *,
 *::before,
 *::after {
@@ -143,51 +99,11 @@ a:hover {
   text-decoration: underline;
 }
 
-[data-theme='hacker'] a {
-  color: var(--color-link);
-  text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
-}
-
-[data-theme='hacker'] a:hover {
-  color: var(--color-link-hover);
-  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
-}
-
 [data-theme='classic'] body {
-  background-image: 
+  background-image:
     url('https://www.transparenttextures.com/patterns/old-map.png'),
     radial-gradient(circle at center, rgba(244, 236, 216, 0.8) 0%, rgba(210, 190, 150, 0.9) 100%);
   background-color: #f4ecd8;
-}
-
-[data-theme='hacker'] body {
-  background-image: 
-    linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-color: #0a0a0a;
-}
-
-[data-subtheme='math'] body {
-  background-image: 
-    linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-color: #050505;
-}
-
-[data-subtheme='pqc'] body {
-  background-image: 
-    linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(255, 0, 255, 0.05) 0%, transparent 70%);
-  background-size: 30px 30px, 30px 30px, 100% 100%;
-  background-color: #080508;
-}
-
-[data-theme='hacker'] .card {
-  border: 1px solid rgba(57, 255, 20, 0.2);
-  box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
 }
 
 [data-theme='classic'] .card {
@@ -235,12 +151,6 @@ a:hover {
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-[data-theme='hacker'] .navbar {
-  background: rgba(10, 10, 10, 0.8);
-  border-bottom: 1px solid var(--color-primary);
-  box-shadow: 0 0 20px rgba(57, 255, 20, 0.15);
-}
-
 [data-theme='classic'] .navbar {
   background: rgba(244, 236, 216, 0.95);
   border-bottom: 3px double var(--color-primary);
@@ -273,11 +183,6 @@ a:hover {
 [data-theme='classic'] .nav-brand {
   font-family: var(--font-classic);
   letter-spacing: 0.05em;
-}
-
-[data-theme='hacker'] .nav-brand {
-  font-family: var(--font-mono);
-  text-shadow: 0 0 8px var(--color-primary);
 }
 
 .logo-dot {
@@ -345,11 +250,6 @@ a:hover {
   background: rgba(var(--color-primary-rgb), 0.1);
 }
 
-[data-theme='hacker'] .nav-link:hover {
-  text-shadow: 0 0 8px var(--color-primary);
-  background: rgba(57, 255, 20, 0.1);
-}
-
 [data-theme='classic'] .nav-link {
   font-family: var(--font-classic);
   text-transform: uppercase;
@@ -360,11 +260,6 @@ a:hover {
 .nav-link.active {
   color: var(--color-primary);
   background: rgba(var(--color-primary-rgb), 0.15);
-}
-
-[data-theme='hacker'] .nav-link.active {
-  box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
-  border: 1px solid var(--color-primary);
 }
 
 [data-theme='classic'] .nav-link.active {
@@ -423,12 +318,6 @@ a:hover {
   background: rgba(var(--color-primary-rgb), 0.15);
 }
 
-[data-theme='hacker'] .nav-dropdown-menu {
-  background: rgba(10, 10, 10, 0.95);
-  border: 1px solid var(--color-primary);
-  box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
-}
-
 [data-theme='classic'] .nav-dropdown-menu {
   background: #f4ecd8;
   border: 2px solid var(--color-primary);
@@ -450,20 +339,6 @@ a:hover {
   transition: all 0.5s ease;
 }
 
-[data-theme='hacker'] .site-footer {
-  background: #000;
-  border-top: 1px solid var(--color-primary);
-  box-shadow: 0 -10px 30px rgba(57, 255, 20, 0.05);
-}
-
-[data-theme='hacker'] .site-footer a {
-  color: var(--color-link);
-}
-
-[data-theme='hacker'] .site-footer a:hover {
-  color: var(--color-link-hover);
-}
-
 [data-theme='classic'] .site-footer {
   background: #2c2c2c;
   border-top: 4px solid var(--color-primary);
@@ -482,18 +357,6 @@ a:hover {
   margin-bottom: var(--spacing-lg);
   position: relative;
   overflow: hidden;
-}
-
-[data-theme='hacker'] .card {
-  background: rgba(15, 15, 15, 0.9);
-  border: 1px solid rgba(57, 255, 20, 0.2);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-}
-
-[data-theme='hacker'] .card:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 30px rgba(57, 255, 20, 0.15);
-  transform: translateY(-4px);
 }
 
 [data-theme='classic'] .card {
@@ -529,21 +392,6 @@ a:hover {
   background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   color: white;
   box-shadow: 0 4px 15px rgba(var(--color-primary-rgb), 0.4);
-}
-
-[data-theme='hacker'] .btn-primary, [data-theme='hacker'] button.primary {
-  background: transparent;
-  border: 1px solid var(--color-primary);
-  color: var(--color-primary);
-  box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-[data-theme='hacker'] .btn-primary:hover, [data-theme='hacker'] button.primary:hover {
-  background: var(--color-primary);
-  color: black;
-  box-shadow: 0 0 25px var(--color-primary);
 }
 
 [data-theme='classic'] .btn-primary, [data-theme='classic'] button.primary {
@@ -597,23 +445,6 @@ textarea:hover {
 }
 
 /* Theme Specific Form Styles */
-[data-theme='hacker'] input,
-[data-theme='hacker'] select,
-[data-theme='hacker'] textarea {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(57, 255, 20, 0.3);
-  font-family: var(--font-mono);
-  color: var(--color-primary);
-}
-
-[data-theme='hacker'] input:focus,
-[data-theme='hacker'] select:focus,
-[data-theme='hacker'] textarea:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
-  background: rgba(0, 0, 0, 0.8);
-}
-
 [data-theme='classic'] input,
 [data-theme='classic'] select,
 [data-theme='classic'] textarea {
@@ -653,12 +484,6 @@ textarea:hover {
   font-style: italic;
 }
 
-[data-theme='hacker'] .page-header h1 {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  text-shadow: 0 0 20px var(--color-primary);
-}
-
 .eyebrow {
   font-family: var(--font-mono);
   font-weight: 700;
@@ -691,11 +516,6 @@ textarea:hover {
   margin-bottom: var(--spacing-xl);
 }
 
-[data-theme='hacker'] .tab-bar {
-  background: #111;
-  border: 1px solid #333;
-}
-
 [data-theme='classic'] .tab-bar {
   background: transparent;
   border-bottom: 2px solid var(--color-border);
@@ -717,12 +537,6 @@ textarea:hover {
   background: white;
   color: var(--color-primary);
   box-shadow: var(--shadow-md);
-}
-
-[data-theme='hacker'] .tab.active {
-  background: var(--color-primary);
-  color: black;
-  box-shadow: 0 0 15px var(--color-primary);
 }
 
 [data-theme='classic'] .tab {
@@ -781,22 +595,6 @@ textarea:hover {
   color: var(--color-text-main);
 }
 
-
-[data-theme='hacker'] .info-panel, 
-[data-theme='hacker'] .hint, 
-[data-theme='hacker'] .callout-info {
-  background: rgba(0, 243, 255, 0.1);
-  border-left-color: var(--color-secondary);
-  color: var(--color-secondary);
-}
-
-[data-theme='hacker'] .caution, 
-[data-theme='hacker'] .callout-warning {
-  background: rgba(255, 0, 255, 0.1);
-  border-left-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
 [data-theme='classic'] .info-panel,
 [data-theme='classic'] .hint,
 [data-theme='classic'] .caution {
@@ -816,12 +614,6 @@ pre, code {
 pre {
   padding: var(--spacing-md);
   overflow-x: auto;
-}
-
-[data-theme='hacker'] pre, [data-theme='hacker'] code {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-primary);
-  border: 1px solid rgba(57, 255, 20, 0.2);
 }
 
 [data-theme='classic'] pre, [data-theme='classic'] code {
@@ -845,15 +637,6 @@ th, td {
 th {
   background: rgba(0, 0, 0, 0.02);
   font-weight: 700;
-}
-
-[data-theme='hacker'] th {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-primary);
-}
-
-[data-theme='hacker'] td {
-  border-bottom-color: #222;
 }
 
 /* =========================================
@@ -911,12 +694,6 @@ th {
     padding: var(--spacing-md) var(--spacing-lg);
     border-bottom: 1px solid var(--color-border);
     border-radius: 0;
-  }
-
-  [data-theme='hacker'] .nav-dropdown-menu {
-    background: rgba(57, 255, 20, 0.05);
-    border: none;
-    box-shadow: none;
   }
 
   [data-theme='classic'] .nav-dropdown-menu {
@@ -1046,10 +823,6 @@ th {
 
 .tab.active .tab-desc {
   color: var(--color-primary);
-}
-
-[data-theme='hacker'] .tab.active .tab-desc {
-  color: #000;
 }
 
 /* Tab Bar Mobile */
@@ -1384,15 +1157,6 @@ details summary {
 
 .btn-secondary:hover {
   background: rgba(var(--color-primary-rgb), 0.1);
-}
-
-[data-theme='hacker'] .btn-secondary {
-  border-color: var(--color-secondary);
-  color: var(--color-secondary);
-}
-
-[data-theme='hacker'] .btn-secondary:hover {
-  background: rgba(0, 243, 255, 0.1);
 }
 
 /* Horizontal Rule */
