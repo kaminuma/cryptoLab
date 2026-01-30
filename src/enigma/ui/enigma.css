@@ -14,7 +14,6 @@
 }
 
 .enigma-container {
-    background-color: var(--enigma-bg);
     color: var(--enigma-text);
     font-family: 'Courier New', Courier, monospace;
     /* Typewriter feel */
@@ -23,7 +22,8 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    background-image: radial-gradient(circle at 50% 50%, #2a2a2a 0%, #1a1a1a 100%);
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .enigma-panel {
@@ -766,6 +766,8 @@
 .enigma-page {
     position: relative;
     min-height: 100vh;
+    background-color: var(--enigma-bg);
+    background-image: radial-gradient(circle at 50% 50%, #2a2a2a 0%, #1a1a1a 100%);
 }
 
 .enigma-back-btn {
