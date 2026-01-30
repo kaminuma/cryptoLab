@@ -14,14 +14,44 @@ const links = [
 const toolsLinks = [
   { to: '/tools/convert', label: 'Convert' },
   { to: '/tools/hash-cracker', label: 'Hash Cracker' },
+  { to: '/tools/xor', label: 'XOR' },
 ]
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isToolsOpen, setIsToolsOpen] = useState(false)
   const location = useLocation()
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
-  const closeMenu = () => setIsMenuOpen(false)
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+    if (isMenuOpen) {
+      setIsToolsOpen(false)
+    }
+  }
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+    setIsToolsOpen(false)
+  }
+
+  const toggleTools = (e: { preventDefault: () => void }) => {
+    // モバイルのみクリックでトグル
+    if (window.innerWidth <= 768) {
+      e.preventDefault()
+      setIsToolsOpen(!isToolsOpen)
+    }
+  }
+
+  // 画面リサイズ時にモバイルメニューを閉じる
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsMenuOpen(false)
+        setIsToolsOpen(false)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Auto-theme based on path if not in Labs
   useEffect(() => {
@@ -79,9 +109,15 @@ export default function NavBar() {
             </NavLink>
           ))}
 
-          <div className="nav-dropdown">
-            <span className="nav-link nav-dropdown-trigger">
-              Tools <span style={{ fontSize: '0.8em' }}>▼</span>
+          <div className={`nav-dropdown${isToolsOpen ? ' open' : ''}`}>
+            <span
+              className="nav-link nav-dropdown-trigger"
+              onClick={toggleTools}
+              onKeyDown={(e) => e.key === 'Enter' && toggleTools(e)}
+              role="button"
+              tabIndex={0}
+            >
+              Tools <span style={{ fontSize: '0.8em' }}>{isToolsOpen ? '▲' : '▼'}</span>
             </span>
             <div className="nav-dropdown-menu">
               {toolsLinks.map((link) => (

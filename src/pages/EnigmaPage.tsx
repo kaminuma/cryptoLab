@@ -13,11 +13,10 @@ const EnigmaPage: React.FC = () => {
     }, []);
 
     return (
-        <div className="page enigma-page" style={{ position: 'relative', minHeight: '100vh' }}>
+        <div className="page enigma-page">
             <Link
                 to="/labs"
-                className="btn btn-secondary"
-                style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100, padding: '8px 16px' }}
+                className="btn btn-secondary enigma-back-btn"
             >
                 ← Back to Labs
             </Link>
