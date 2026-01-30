@@ -6,11 +6,11 @@
 
 ## 最短セットアップ（5ステップ）
 
-1. `npm create vite@latest cryptolab -- --template react-ts`
-2. `cd cryptolab && npm i`
-3. `npm i echarts @noble/curves @noble/hashes`
+1. `bun create vite cryptolab --template react-ts`
+2. `cd cryptolab && bun install`
+3. `bun add echarts @noble/curves @noble/hashes`
 4. 下記の `src/` 構成（3画面＋lib）をざっと作る
-5. `npm run dev` で走らせながら画面ごとに機能追加
+5. `bun dev` で走らせながら画面ごとに機能追加
 
 ## 最小ディレクトリ
 
