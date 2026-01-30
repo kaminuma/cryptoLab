@@ -137,9 +137,17 @@ export default function ToolsXorConverterPage() {
     }
   }, [dataInput, dataFormat, keyInput, keyFormat, outputFormat])
 
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null)
+
   const copyToClipboard = async () => {
-    if (result.output) {
+    if (!result.output) return
+    try {
       await navigator.clipboard.writeText(result.output)
+      setCopyFeedback('コピーしました')
+      setTimeout(() => setCopyFeedback(null), 2000)
+    } catch {
+      setCopyFeedback('コピーに失敗しました（HTTPS環境が必要です）')
+      setTimeout(() => setCopyFeedback(null), 3000)
     }
   }
 
@@ -244,6 +252,7 @@ export default function ToolsXorConverterPage() {
           <button onClick={copyToClipboard} disabled={!result.output}>
             結果をコピー
           </button>
+          {copyFeedback && <span className="feedback info">{copyFeedback}</span>}
         </div>
       </section>
 

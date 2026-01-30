@@ -518,12 +518,6 @@
     }
 }
 
-/* Flex utilities */
-.flex-col {
-    display: flex;
-    flex-direction: column;
-}
-
 /* Input/Output side by side to stacked on mobile */
 @media (max-width: 768px) {
     .flex.gap-4 {

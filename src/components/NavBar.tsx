@@ -33,7 +33,7 @@ export default function NavBar() {
     setIsToolsOpen(false)
   }
 
-  const toggleTools = (e: React.MouseEvent) => {
+  const toggleTools = (e: { preventDefault: () => void }) => {
     // モバイルのみクリックでトグル
     if (window.innerWidth <= 768) {
       e.preventDefault()
@@ -113,7 +113,7 @@ export default function NavBar() {
             <span
               className="nav-link nav-dropdown-trigger"
               onClick={toggleTools}
-              onKeyDown={(e) => e.key === 'Enter' && toggleTools(e as unknown as React.MouseEvent)}
+              onKeyDown={(e) => e.key === 'Enter' && toggleTools(e)}
               role="button"
               tabIndex={0}
             >
