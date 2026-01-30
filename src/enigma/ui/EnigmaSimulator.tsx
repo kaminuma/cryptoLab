@@ -164,31 +164,22 @@ export const EnigmaSimulator: React.FC = () => {
         <div className="enigma-container">
             <EnigmaManual isOpen={isManualOpen} onClose={() => setIsManualOpen(false)} />
 
-            <div className="text-center relative">
-                <h1
-                    className="text-4xl font-bold mb-2 tracking-widest"
-                    style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}
-                >
-                    ENIGMA
-                </h1>
-                <div
-                    className="text-xs tracking-[0.5em]"
-                    style={{ color: '#b0b0b0', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
-                >
-                    CIPHER MACHINE SIMULATOR
+            <div className="enigma-header">
+                <div className="enigma-header-content">
+                    <h1 className="enigma-main-title">ENIGMA</h1>
+                    <div className="enigma-subtitle">CIPHER MACHINE SIMULATOR</div>
                 </div>
-
                 <button
                     onClick={() => setIsManualOpen(true)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs enigma-btn px-4 py-2 transition-all hover:scale-105"
+                    className="enigma-btn enigma-specs-btn"
                 >
                     仕様書 (Specs)
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto w-full">
+            <div className="enigma-main-grid">
                 {/* Left Column: Settings */}
-                <div className="flex flex-col gap-4">
+                <div className="enigma-settings-col">
                     <div className="enigma-panel">
                         <div className="enigma-title">Operation Mode</div>
                         <ToggleSwitch
@@ -196,15 +187,15 @@ export const EnigmaSimulator: React.FC = () => {
                             onChange={setIsRealismMode}
                         />
                     </div>
-                    <div className="enigma-panel px-4 pb-4 pt-3">
-                        <div className="text-xs leading-relaxed">
+                    <div className="enigma-panel enigma-mode-desc">
+                        <div className="enigma-mode-text">
                             {isRealismMode ? (
-                                <p className="text-gray-200">
-                                    <span className="text-indigo-400 font-bold">実機モード:</span> キーを打つたびにローターが回転します。実機の操作感を体験できます。（コピペ入力不可）
+                                <p>
+                                    <span className="enigma-mode-label realism">実機モード:</span> キーを打つたびにローターが回転します。実機の操作感を体験できます。（コピペ入力不可）
                                 </p>
                             ) : (
-                                <p className="text-gray-200">
-                                    <span className="text-enigma-accent font-bold">一括変換モード:</span> 長文をコピペして瞬時に変換できます。ローター設定は固定されます。
+                                <p>
+                                    <span className="enigma-mode-label batch">一括変換モード:</span> 長文をコピペして瞬時に変換できます。ローター設定は固定されます。
                                 </p>
                             )}
                         </div>
@@ -225,7 +216,7 @@ export const EnigmaSimulator: React.FC = () => {
                 </div>
 
                 {/* Middle Column: Keyboard & Lampboard */}
-                <div className="flex flex-col gap-4">
+                <div className="enigma-keyboard-col">
                     <Keyboard
                         activeLamp={activeLamp}
                         onKeyDown={handleKeyDown}
@@ -234,18 +225,20 @@ export const EnigmaSimulator: React.FC = () => {
                 </div>
 
                 {/* Right Column: IO & Plugboard */}
-                <div className="flex flex-col gap-4">
-                    <div className="flex gap-4">
+                <div className="enigma-io-col">
+                    <div className="enigma-io-wrapper">
                         {isRealismMode ? (
-                            <div className="w-full flex flex-col gap-2">
-                                <div className="bg-gray-900 p-4 rounded border border-gray-700 h-32 overflow-y-auto font-mono text-sm text-gray-300">
-                                    <div className="text-xs text-gray-500 mb-1">入力ログ (Log)</div>
-                                    {inputText || <span className="text-gray-600 italic">キーボードで入力してください...</span>}
+                            <div className="enigma-io-stack">
+                                <div className="enigma-log-area">
+                                    <div className="enigma-log-label">入力ログ (Log)</div>
+                                    <div className="enigma-log-content">
+                                        {inputText || <span className="enigma-log-placeholder">キーボードで入力してください...</span>}
+                                    </div>
                                 </div>
                                 <OutputArea value={outputText} label="出力 (Output)" placeholder="変換結果..." />
                             </div>
                         ) : (
-                            <>
+                            <div className="enigma-io-side-by-side">
                                 <InputArea
                                     value={inputText}
                                     onChange={setInputText}
@@ -253,7 +246,7 @@ export const EnigmaSimulator: React.FC = () => {
                                     placeholder="ここにメッセージを入力..."
                                 />
                                 <OutputArea value={outputText} label="出力 (Output)" placeholder="変換結果..." />
-                            </>
+                            </div>
                         )}
                     </div>
 
