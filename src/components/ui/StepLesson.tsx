@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, type ReactNode } from 'react'
+import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react'
 
 export type QuizOption = {
   label: string
@@ -76,6 +76,20 @@ export default function StepLesson({ title, steps, onComplete, lessonId }: StepL
   const [currentStep, setCurrentStep] = useState(saved?.currentStep ?? 0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(saved?.completedSteps ?? new Set())
   const [isCompleted, setIsCompleted] = useState(saved?.isCompleted ?? false)
+  const [tocOpen, setTocOpen] = useState(false)
+  const tocRef = useRef<HTMLDivElement>(null)
+
+  // Close TOC on outside click
+  useEffect(() => {
+    if (!tocOpen) return
+    const handler = (e: MouseEvent) => {
+      if (tocRef.current && !tocRef.current.contains(e.target as Node)) {
+        setTocOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [tocOpen])
 
   // Per-step quiz state is preserved across navigation
   const [stepStates, setStepStates] = useState<Map<number, PerStepState>>(saved?.stepStates ?? new Map())
@@ -132,15 +146,9 @@ export default function StepLesson({ title, steps, onComplete, lessonId }: StepL
   }, [currentState.quizState, currentStep, step.quiz, updateStepState])
 
   const handleStepClick = useCallback((index: number) => {
-    // Can navigate to: any completed step, current step, or next uncompleted step
-    const maxReachable = completedSteps.size > 0
-      ? Math.max(...Array.from(completedSteps)) + 1
-      : 0
-    const canReach = Math.max(maxReachable, currentStep)
-    if (index <= canReach) {
-      setCurrentStep(index)
-    }
-  }, [completedSteps, currentStep])
+    setCurrentStep(index)
+    setTocOpen(false)
+  }, [])
 
   const handleRestart = useCallback(() => {
     setCurrentStep(0)
@@ -205,20 +213,40 @@ export default function StepLesson({ title, steps, onComplete, lessonId }: StepL
         />
       </div>
 
-      {/* Step dots */}
-      <div className="step-lesson__dots">
-        {steps.map((stepItem, i) => (
-          <button
-            key={i}
-            className={`step-lesson__dot${
-              i === currentStep ? ' step-lesson__dot--active' : ''
-            }${completedSteps.has(i) ? ' step-lesson__dot--completed' : ''}`}
-            onClick={() => handleStepClick(i)}
-            title={stepItem.title}
-            aria-label={`ステップ ${i + 1}: ${stepItem.title}`}
-            aria-current={i === currentStep ? 'step' : undefined}
-          />
-        ))}
+      {/* Table of contents */}
+      <div className="step-lesson__toc" ref={tocRef}>
+        <button
+          className="step-lesson__toc-toggle"
+          onClick={() => setTocOpen(prev => !prev)}
+          aria-expanded={tocOpen}
+          aria-controls="step-toc-list"
+        >
+          <span className="step-lesson__toc-current">
+            <span className="step-lesson__toc-step-num">{currentStep + 1}.</span>
+            {step.title}
+          </span>
+          <span className={`step-lesson__toc-arrow${tocOpen ? ' step-lesson__toc-arrow--open' : ''}`}>
+            ▼
+          </span>
+        </button>
+        {tocOpen && (
+          <ul className="step-lesson__toc-list" id="step-toc-list" role="list">
+            {steps.map((stepItem, i) => (
+              <li key={i}>
+                <button
+                  className={`step-lesson__toc-item${
+                    i === currentStep ? ' step-lesson__toc-item--active' : ''
+                  }${completedSteps.has(i) ? ' step-lesson__toc-item--completed' : ''}`}
+                  onClick={() => handleStepClick(i)}
+                >
+                  <span className="step-lesson__toc-item-num">{i + 1}</span>
+                  <span className="step-lesson__toc-item-title">{stepItem.title}</span>
+                  {completedSteps.has(i) && <span className="step-lesson__toc-item-check">✓</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Step content */}
