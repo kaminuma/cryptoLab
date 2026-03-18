@@ -120,8 +120,8 @@ function InteractiveHashCrackerDemo() {
       } else {
         setResult('見つかりませんでした')
       }
-    } catch (error) {
-      console.error('Brute force error:', error)
+    } catch {
+      // silently ignore (e.g. abort)
     } finally {
       setIsRunning(false)
       abortControllerRef.current = null

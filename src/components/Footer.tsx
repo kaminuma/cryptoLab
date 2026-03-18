@@ -35,14 +35,6 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <span>© {year} CryptoLab</span>
-          <span className="footer-separator">·</span>
-          <a
-            href="https://github.com/kaminuma/cryptoLab"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GitHub
-          </a>
         </div>
       </div>
     </footer>
