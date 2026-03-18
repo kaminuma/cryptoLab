@@ -1,83 +1,46 @@
-# CryptoLab (React版)
+# CryptoLab
 
-**公開URL:** https://cryptolab-8xw.pages.dev/
+**https://cryptolab-8xw.pages.dev/**
 
-古典暗号から WebCrypto／PQC への流れをローカルで「触って理解する」ための最小実験アプリ。React + Vite + TypeScript で構築し、サイト公開を見据えたホーム／ラボ／解説ページを備えています。
+暗号技術を「触って理解する」インタラクティブ学習サイト。古典暗号からポスト量子暗号まで、ブラウザ上でデモを動かしながら学べます。
 
-## 最短セットアップ（5ステップ）
+## 学習コンテンツ
 
-1. `bun create vite cryptolab --template react-ts`
-2. `cd cryptolab && bun install`
-3. `bun add echarts @noble/curves @noble/hashes`
-4. 下記の `src/` 構成（3画面＋lib）をざっと作る
-5. `bun dev` で走らせながら画面ごとに機能追加
+| カテゴリ | 内容 |
+|---------|------|
+| 古典暗号 | シーザー、ヴィジュネル、アトバッシュ、転置暗号、エニグマシミュレータ |
+| 共通鍵暗号 | AES-GCM、AEAD、IV管理、パディングオラクル攻撃 |
+| 公開鍵暗号 | ECDH鍵交換、ECDSA署名、PKI |
+| RSA | 鍵生成、OAEP、PSS署名、前方秘匿性 |
+| ハッシュ | SHA-256内部構造、Merkle-Damgård構造、SHA-3比較 |
+| PQC | Shor/Groverアルゴリズム、格子暗号、Kyber/Dilithium |
 
-## 最小ディレクトリ
+## ツール
 
+- **進数変換** — 2進/10進/16進/Base64の相互変換
+- **ハッシュクラッカー** — ブルートフォースによるハッシュ解析デモ
+- **XOR暗号化** — XOR演算の可視化
+
+## 技術スタック
+
+- React 18 + TypeScript + Vite
+- WebCrypto API（AES-GCM / ECDH / RSA）
+- ECharts（頻度分析グラフ）
+- Cloudflare Pages
+
+## セットアップ
+
+```bash
+bun install
+bun dev
 ```
-src/
-├ App.tsx             # ルーティング & ナビゲーション
-├ main.tsx            # React 版エントリ
-├ pages/
-│ ├ Home.tsx          # ヒーロー・特徴・ロードマップ
-│ ├ Labs.tsx          # タブ切替: 古典 / 共通鍵 / 公開鍵
-│ ├ Classical.tsx     # シーザー＋ヴィジュネル＋頻度グラフ
-│ ├ Symmetric.tsx     # AES-GCM デモ
-│ ├ PublicKey.tsx     # ECDH→HKDF→AES デモ
-│ ├ RSA.tsx           # 2048-bit RSA 鍵生成デモ
-│ ├ Learn.tsx         # 理論解説と参考リンク
-│ └ PQC.tsx           # ポスト量子ロードマップ
-└ lib/
-  ├ classical/
-  │ ├ caesar.ts
-  │ └ vigenere.ts
-  └ crypto/
-    ├ webcrypto.ts
-    └ ecdh.ts
+
+## テスト
+
+```bash
+bun test
 ```
-
-## 主要機能
-
-- 古典: シーザー／ヴィジュネル／アトバッシュなど、カタログから選んで即デモ実行。
-- 共通鍵: Passphrase から SHA-256 でキー化 → AES-GCM 暗号／復号。IV・暗号文を Base64 表示。
-- 公開鍵: P-256 ECDH → HKDF → AES-GCM の一連デモ。共有秘密の一致表示、塩/info 設定、ログ表示。
-- RSA: ブラウザ内で 2048bit 級の RSA キーを生成し、p / q / N / d を確認（学習用途）。
-- サイト全体: Home / Learn / PQC ページでロードマップや参考リンクを提供し、外部公開に備えた情報設計を追加。
-
-## 提供済みスニペット
-
-`lib/` 以下に貼り付ければOK:
-
-- `lib/classical/caesar.ts`, `lib/classical/vigenere.ts`
-- `lib/crypto/webcrypto.ts`（AES-GCM/HKDF ラッパー）
-- `lib/crypto/ecdh.ts`（P-256 の ECDH デモ）
-
-## ガードレール
-
-- ECB は出さない（解説が必要なら赤字などで警告を添える）。
-- IV の再利用は禁止。生成して見せるだけ。
-- 長文やファイル暗号は対象外。短文デモに集中。
-- PQC（Kyber/Dilithium）は 3 画面完成後に追加（WASM 導入は後回し）。
-
-## 次にやること
-
-1. PQC タブの実装（Kyber/Dilithium 図解、WASM サンプル）。 
-2. RSA デモの生成時間短縮（Web Worker 化）と安全性ガイドの拡充。
-3. ナビ／ヒーローの英語版テキスト、OGP 画像、SEO メタ追加。
-4. デプロイ（Vercel/Netlify）用 CI 設定とパフォーマンス最適化（ECharts 遅延ロード等）。
-
-## Analytics & Fork Policy
-
-### Google Analytics
-
-**フォークする場合:**
-- `index.html` 内の GA タグを削除するか、ご自身の測定IDに書き換えてください
-- このIDのまま使用すると、元プロジェクトのアナリティクスにデータが送信されます
-
-### Fork について
-このプロジェクトをフォークする際は、以下をお願いします：
-- 可能であれば事前にご一報ください（任意ですが歓迎します）
-- 上記 GA IDの変更をお忘れなく
 
 ## ライセンス
-MIT License
+
+MIT
