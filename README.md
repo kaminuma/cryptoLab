@@ -79,7 +79,5 @@ src/
 - 可能であれば事前にご一報ください（任意ですが歓迎します）
 - 上記 GA IDの変更をお忘れなく
 
-**連絡先:** kaminuma.dev@gmail.com
-
 ## ライセンス
 MIT License

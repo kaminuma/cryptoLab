@@ -1,4 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
+import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
+import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 type NumberBase = 'auto' | 'decimal' | 'hex' | 'binary' | 'octal'
 
@@ -182,7 +185,40 @@ const hexToText = (value: string): string => {
   return new TextDecoder().decode(bytes)
 }
 
-export default function ToolsPage() {
+function WhatAreEncodings() {
+  return (
+    <>
+      <p>
+        エンコーディングとは、データを<strong>別の形式に変換</strong>するルールのことです。
+        暗号化とは異なり、秘密の鍵は不要で、誰でも元に戻せます。
+      </p>
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>暗号化 (Encryption)</h3>
+          <ul>
+            <li><strong>目的:</strong> データを秘密にする</li>
+            <li><strong>特徴:</strong> 鍵がないと元に戻せない</li>
+            <li><strong>例:</strong> AES, RSA</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>エンコーディング (Encoding)</h3>
+          <ul>
+            <li><strong>目的:</strong> データを扱いやすい形式に変換</li>
+            <li><strong>特徴:</strong> 誰でも元に戻せる（公開ルール）</li>
+            <li><strong>例:</strong> Base64, Hex, ASCII</li>
+          </ul>
+        </div>
+      </div>
+      <div className="step-lesson__callout">
+        <strong>重要:</strong> Base64やHexは「暗号化」ではありません。
+        CTFの問題では、エンコードされた文字列を正しくデコードすることが第一歩になります。
+      </div>
+    </>
+  )
+}
+
+function InteractiveConverterDemo() {
   const [numberInput, setNumberInput] = useState('70 76 65 71')
   const [numberBase, setNumberBase] = useState<NumberBase>('auto')
   const [textInput, setTextInput] = useState('FLAG{CRYPTO}')
@@ -190,11 +226,6 @@ export default function ToolsPage() {
   const [base64Cipher, setBase64Cipher] = useState('ZmxhZ3tjcnlwdG99')
   const [hexPlain, setHexPlain] = useState('cryptolab')
   const [hexInput, setHexInput] = useState('63727970746f6c6162')
-
-  useEffect(() => {
-    document.title = '変換ツール - CryptoLab'
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [])
 
   const numberConversion = useMemo<NumberConversion>(() => {
     if (!numberInput.trim()) {
@@ -267,54 +298,44 @@ export default function ToolsPage() {
   }, [hexInput])
 
   return (
-    <main className="page tools">
-      <header className="page-header">
-        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>[ UTILITY: DATA_CONVERTER ]</p>
-        <h1 style={{ letterSpacing: '-0.05em' }}>データ変換 & 解析ツール</h1>
-        <p className="lede">
-          暗号解読の第一歩は、データの姿を正しく捉えること。
-          Base64, Hex, ASCII などの主要なエンコーディングを自在に操り、隠されたメッセージを暴き出す。
-        </p>
-      </header>
+    <>
+      <p>各種エンコーディングを自在に変換してみましょう。入力を変えて結果を確認してください。</p>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>数列 → ASCII コンバータ</h2>
-          <p>スペースやカンマ区切りの数値を張り付けるだけで文字列に復元できます。表記の自動判定にも対応。</p>
-        </div>
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
 
-        <div className="control-group">
-          <label htmlFor="number-base">入力の基数</label>
-          <select
-            id="number-base"
-            className="text-input"
-            value={numberBase}
-            onChange={(event) => setNumberBase(event.target.value as NumberBase)}
-          >
-            {numberBaseOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <h3>数列 → ASCII コンバータ</h3>
+        <p>スペースやカンマ区切りの数値を張り付けるだけで文字列に復元できます。</p>
+
+        <label htmlFor="number-base">入力の基数</label>
+        <select
+          id="number-base"
+          value={numberBase}
+          onChange={(event) => setNumberBase(event.target.value as NumberBase)}
+        >
+          {numberBaseOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
 
         <label htmlFor="ascii-number-input">数列を貼り付け</label>
         <textarea
           id="ascii-number-input"
-          rows={4}
+          rows={3}
           placeholder="72 101 108 108 111 / 0x46 0x4C 0x41 0x47"
           value={numberInput}
           onChange={(event) => setNumberInput(event.target.value)}
         />
 
-        {numberConversion.error && <p className="feedback error">{numberConversion.error}</p>}
+        {numberConversion.error && <p className="step-lesson__demo-result">{numberConversion.error}</p>}
 
         <label htmlFor="ascii-number-output">復元テキスト</label>
-        <textarea id="ascii-number-output" rows={3} value={numberConversion.text} readOnly placeholder="結果がここに表示されます" />
+        <textarea id="ascii-number-output" rows={2} value={numberConversion.text} readOnly placeholder="結果がここに表示されます" />
 
-        {numberConversion.codes.length > 0 ? (
-          <div style={{ overflowX: 'auto', marginTop: '16px' }}>
+        {numberConversion.codes.length > 0 && (
+          <div className="step-lesson__table-wrap">
             <table>
               <thead>
                 <tr>
@@ -338,28 +359,26 @@ export default function ToolsPage() {
               </tbody>
             </table>
           </div>
-        ) : (
-          <p className="hint">数列を入力すると 10/16/2 進の対応表も表示されます。</p>
         )}
-      </section>
+      </div>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>文字コードインスペクタ</h2>
-          <p>平文を入力すると、各文字の 10 進 / 16 進 / 2 進表現を確認できます。</p>
-        </div>
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
+
+        <h3>文字コードインスペクタ</h3>
+        <p>平文を入力すると、各文字の 10 進 / 16 進 / 2 進表現を確認できます。</p>
 
         <label htmlFor="ascii-text-input">平文を入力</label>
         <textarea
           id="ascii-text-input"
-          rows={3}
+          rows={2}
           value={textInput}
           onChange={(event) => setTextInput(event.target.value)}
           placeholder="FLAG{EXAMPLE}"
         />
 
-        {asciiBreakdown.length > 0 ? (
-          <div style={{ overflowX: 'auto', marginTop: '16px' }}>
+        {asciiBreakdown.length > 0 && (
+          <div className="step-lesson__table-wrap">
             <table>
               <thead>
                 <tr>
@@ -381,70 +400,179 @@ export default function ToolsPage() {
               </tbody>
             </table>
           </div>
-        ) : (
-          <p className="hint">ASCII 文字列を入力するとコードポイントの一覧を表示します。</p>
         )}
-      </section>
+      </div>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>Base64 / Hex ツール</h2>
-          <p>よく使うエンコード・デコード処理を並列に表示し、試した値をそのまま共有できます。</p>
-        </div>
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
 
-        <div style={{ display: 'grid', gap: '24px', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-          <div>
-            <h3>テキスト → Base64</h3>
+        <h3>Base64 エンコード / デコード</h3>
+
+        <div className="step-lesson__comparison">
+          <div className="step-lesson__comparison-item">
+            <label>テキスト → Base64</label>
             <textarea
-              rows={3}
+              rows={2}
               value={base64Plain}
               onChange={(event) => setBase64Plain(event.target.value)}
               placeholder="flag{sample}"
             />
-            <label htmlFor="base64-encode-output">Base64</label>
-            <textarea id="base64-encode-output" rows={3} value={base64EncodeResult.value} readOnly placeholder="自動でエンコードされます" />
-            {base64EncodeResult.error && <p className="feedback error">{base64EncodeResult.error}</p>}
+            <label>Base64</label>
+            <textarea rows={2} value={base64EncodeResult.value} readOnly placeholder="自動でエンコードされます" />
+            {base64EncodeResult.error && <p className="step-lesson__demo-result">{base64EncodeResult.error}</p>}
           </div>
 
-          <div>
-            <h3>Base64 → テキスト</h3>
+          <div className="step-lesson__comparison-item">
+            <label>Base64 → テキスト</label>
             <textarea
-              rows={3}
+              rows={2}
               value={base64Cipher}
               onChange={(event) => setBase64Cipher(event.target.value)}
               placeholder="RkxBR3tjeWVAdHR9"
             />
-            <label htmlFor="base64-decode-output">結果</label>
-            <textarea id="base64-decode-output" rows={3} value={base64DecodeResult.value} readOnly placeholder="有効な Base64 を入力してください" />
-            {base64DecodeResult.error && <p className="feedback error">{base64DecodeResult.error}</p>}
+            <label>結果</label>
+            <textarea rows={2} value={base64DecodeResult.value} readOnly placeholder="有効な Base64 を入力してください" />
+            {base64DecodeResult.error && <p className="step-lesson__demo-result">{base64DecodeResult.error}</p>}
           </div>
         </div>
 
-        <hr />
+        <h3>Hex エンコード / デコード</h3>
 
-        <div style={{ display: 'grid', gap: '24px', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-          <div>
-            <h3>テキスト → 16 進</h3>
-            <textarea rows={3} value={hexPlain} onChange={(event) => setHexPlain(event.target.value)} placeholder="cryptolab" />
-            <label htmlFor="hex-encode-output">16 進</label>
-            <textarea id="hex-encode-output" rows={3} value={hexFromPlain.value} readOnly placeholder="自動で 16 進表記に変換されます" />
-            {hexFromPlain.error && <p className="feedback error">{hexFromPlain.error}</p>}
+        <div className="step-lesson__comparison">
+          <div className="step-lesson__comparison-item">
+            <label>テキスト → 16 進</label>
+            <textarea rows={2} value={hexPlain} onChange={(event) => setHexPlain(event.target.value)} placeholder="cryptolab" />
+            <label>16 進</label>
+            <textarea rows={2} value={hexFromPlain.value} readOnly placeholder="自動で 16 進表記に変換されます" />
+            {hexFromPlain.error && <p className="step-lesson__demo-result">{hexFromPlain.error}</p>}
           </div>
 
-          <div>
-            <h3>16 進 → テキスト</h3>
+          <div className="step-lesson__comparison-item">
+            <label>16 進 → テキスト</label>
             <textarea
-              rows={3}
+              rows={2}
               value={hexInput}
               onChange={(event) => setHexInput(event.target.value)}
               placeholder="666c6167203f"
             />
-            <label htmlFor="hex-decode-output">結果</label>
-            <textarea id="hex-decode-output" rows={3} value={hexDecoded.value} readOnly placeholder="有効な 16 進を入力してください" />
-            {hexDecoded.error && <p className="feedback error">{hexDecoded.error}</p>}
+            <label>結果</label>
+            <textarea rows={2} value={hexDecoded.value} readOnly placeholder="有効な 16 進を入力してください" />
+            {hexDecoded.error && <p className="step-lesson__demo-result">{hexDecoded.error}</p>}
           </div>
         </div>
-      </section>
+      </div>
+    </>
+  )
+}
+
+function EncodingComparisonTable() {
+  return (
+    <>
+      <p>主要なエンコーディング方式の特徴を比較してみましょう。</p>
+
+      <div className="step-lesson__visual">
+        <table>
+          <thead>
+            <tr>
+              <th>形式</th>
+              <th>文字セット</th>
+              <th>サイズ効率</th>
+              <th>主な用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ASCII</strong></td>
+              <td>0〜127（7ビット）</td>
+              <td>1バイト/文字</td>
+              <td>英数字テキスト</td>
+            </tr>
+            <tr>
+              <td><strong>Base64</strong></td>
+              <td>A-Z, a-z, 0-9, +, /</td>
+              <td>約133%に増加</td>
+              <td>メール添付、JWT、データURI</td>
+            </tr>
+            <tr>
+              <td><strong>Hex</strong></td>
+              <td>0-9, A-F</td>
+              <td>200%に増加</td>
+              <td>ハッシュ値表示、デバッグ</td>
+            </tr>
+            <tr>
+              <td><strong>UTF-8</strong></td>
+              <td>全Unicode文字</td>
+              <td>1〜4バイト/文字</td>
+              <td>Web標準、多言語テキスト</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>CTFでのポイント:</strong> 問題文やフラグがBase64やHexでエンコードされていることは非常に多いです。
+        見慣れない文字列を見たら、まずエンコーディングを疑いましょう。
+        Base64は末尾の <code>=</code> パディングが目印です。
+      </div>
+
+      <ul>
+        <li><strong>Base64の見分け方:</strong> 英数字 + <code>/</code> + <code>+</code>、末尾に <code>=</code> が付くことが多い</li>
+        <li><strong>Hexの見分け方:</strong> <code>0-9</code> と <code>a-f</code> のみで構成、<code>0x</code> プレフィクスが付くことも</li>
+        <li><strong>URLエンコードの見分け方:</strong> <code>%20</code> や <code>%3D</code> のようにパーセント記号が目立つ</li>
+      </ul>
+    </>
+  )
+}
+
+export default function ToolsPage() {
+  usePageMeta({ title: '変換ツール', description: '16進数・Base64・バイナリなど各種エンコーディングの変換ツール' })
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  const steps: LessonStep[] = [
+    {
+      title: 'エンコーディングとは？',
+      content: <WhatAreEncodings />,
+      quiz: {
+        question: 'エンコーディングと暗号化の最大の違いは？',
+        options: [
+          { label: 'エンコーディングのほうが処理速度が速い' },
+          { label: 'エンコーディングは鍵なしで誰でも元に戻せる', correct: true },
+          { label: 'エンコーディングは出力が固定長になる' },
+          { label: '暗号化はバイナリデータを扱えない' },
+        ],
+        explanation: '正解！エンコーディングは公開されたルールに従ってデータを変換するだけなので、鍵は不要で誰でもデコードできます。暗号化は鍵がなければ元に戻せません。',
+      },
+    },
+    {
+      title: 'インタラクティブ変換ツール',
+      content: <InteractiveConverterDemo />,
+    },
+    {
+      title: 'エンコーディング比較表',
+      content: <EncodingComparisonTable />,
+      quiz: {
+        question: 'Base64エンコードするとデータサイズはどうなる？',
+        options: [
+          { label: '元のサイズより小さくなる' },
+          { label: '元のサイズと同じ' },
+          { label: '元のサイズの約133%に増加する', correct: true },
+          { label: '元のサイズの約200%に増加する' },
+        ],
+        explanation: '正解！Base64は3バイトのデータを4文字（4バイト）に変換するため、約133%（4/3倍）にサイズが増加します。Hexは1バイトを2文字で表現するので200%になります。',
+      },
+    },
+  ]
+
+  return (
+    <main className="page tools">
+      <StepLesson
+        title="データ変換 & 解析ツール"
+        steps={steps}
+        lessonId="tools-convert"
+      />
     </main>
   )
 }

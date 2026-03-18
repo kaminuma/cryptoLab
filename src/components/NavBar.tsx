@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import './Navbar.css'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -112,6 +113,7 @@ export default function NavBar() {
               ))}
             </div>
           </div>
+
         </nav>
       </div>
     </header>

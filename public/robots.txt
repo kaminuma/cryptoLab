@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cryptolab-8xw.pages.dev/sitemap.xml

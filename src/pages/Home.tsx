@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { usePageMeta } from '../hooks/usePageMeta'
+import '../styles/pages/home.css'
 
 const highlights = [
   {
@@ -26,8 +28,9 @@ const steps = [
 ]
 
 export default function Home() {
+  usePageMeta({ title: '', description: '暗号技術をインタラクティブに学べるハンズオン学習プラットフォーム' })
+
   useEffect(() => {
-    document.title = 'CryptoLab - 暗号技術のハンズオン学習'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -56,6 +59,24 @@ export default function Home() {
           <Link to="/learn" className="btn btn-secondary" style={{ padding: '16px 40px', fontSize: '1.1rem' }}>
             知識を深める
           </Link>
+        </div>
+      </section>
+
+      <section className="usp-stats">
+        <div className="usp-stat">
+          <span className="usp-stat-number">10+</span>
+          <span className="usp-stat-label">レッスン</span>
+          <p className="usp-stat-desc">体系的な暗号技術カリキュラム</p>
+        </div>
+        <div className="usp-stat">
+          <span className="usp-stat-number">ブラウザ完結</span>
+          <span className="usp-stat-label"></span>
+          <p className="usp-stat-desc">インストール不要、WebCrypto APIで実行</p>
+        </div>
+        <div className="usp-stat">
+          <span className="usp-stat-number">古典〜PQC</span>
+          <span className="usp-stat-label"></span>
+          <p className="usp-stat-desc">古典暗号からポスト量子暗号まで網羅</p>
         </div>
       </section>
 
