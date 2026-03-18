@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   generateSimpleRSAKey,
   rsaEncrypt,
@@ -6,7 +6,8 @@ import {
   SMALL_PRIMES,
   type RSAKeyPair
 } from '@/lib/rsa'
-import { generatePrime, gcd, modInverse } from '@/utils/bigint'
+import type { RSAWorkerResponse } from '@/workers/rsaKeyGen.worker'
+import RSAKeyGenWorker from '@/workers/rsaKeyGen.worker?worker'
 
 type Status = 'idle' | 'generating' | 'completed' | 'error'
 
@@ -51,39 +52,70 @@ export default function RSAPage() {
     }
   }
 
-  // 2048ビット鍵生成
-  const generateLargeRSA = async () => {
-    try {
-      setStatus('generating')
-      setStatusMessage('素数 p を探索中...')
-      const half = bits / 2
-      let primeP = await generatePrime(half)
-      setStatusMessage('素数 q を探索中...')
-      let primeQ = await generatePrime(half)
-      while (primeP === primeQ) {
-        primeQ = await generatePrime(half)
-      }
+  // Web Worker参照
+  const workerRef = useRef<Worker | null>(null)
 
-      const modulus = primeP * primeQ
-      const phi = (primeP - 1n) * (primeQ - 1n)
-
-      if (gcd(eValue, phi) !== 1n) {
-        setStatusMessage('再生成します（e と φ(N) が互いに素ではありませんでした）...')
-        return generateLargeRSA()
-      }
-
-      const dValue = modInverse(eValue, phi)
-
-      setLargeP(primeP)
-      setLargeQ(primeQ)
-      setLargeN(modulus)
-      setLargeD(dValue)
-      setStatus('completed')
-      setStatusMessage('生成完了。以下の p, q, N, d は学習用サンプルです。')
-    } catch (error) {
-      setStatus('error')
-      setStatusMessage(error instanceof Error ? error.message : 'RSA キー生成中にエラーが発生しました。')
+  // コンポーネントアンマウント時にWorkerを終了
+  useEffect(() => {
+    return () => {
+      workerRef.current?.terminate()
     }
+  }, [])
+
+  // 2048ビット鍵生成（Web Worker使用）
+  const generateLargeRSA = () => {
+    // 前のWorkerがあれば終了
+    workerRef.current?.terminate()
+
+    setStatus('generating')
+    setStatusMessage('素数 p を探索中...')
+
+    const worker = new RSAKeyGenWorker()
+    workerRef.current = worker
+
+    let retryCount = 0
+    const MAX_RETRIES = 5
+
+    worker.onmessage = (event: MessageEvent<RSAWorkerResponse>) => {
+      const data = event.data
+      switch (data.type) {
+        case 'progress':
+          setStatusMessage(data.message)
+          break
+        case 'result':
+          setLargeP(BigInt(data.p))
+          setLargeQ(BigInt(data.q))
+          setLargeN(BigInt(data.n))
+          setLargeD(BigInt(data.d))
+          setStatus('completed')
+          setStatusMessage('生成完了。以下の p, q, N, d は学習用サンプルです。')
+          worker.terminate()
+          workerRef.current = null
+          break
+        case 'error':
+          if (data.message === 'retry' && retryCount < MAX_RETRIES) {
+            retryCount++
+            worker.postMessage({ type: 'generate', bits, e: eValue.toString() })
+          } else {
+            setStatus('error')
+            setStatusMessage(data.message === 'retry'
+              ? '鍵生成に失敗しました。再度お試しください。'
+              : data.message)
+            worker.terminate()
+            workerRef.current = null
+          }
+          break
+      }
+    }
+
+    worker.onerror = (event) => {
+      setStatus('error')
+      setStatusMessage('鍵生成中に予期しないエラーが発生しました。')
+      worker.terminate()
+      workerRef.current = null
+    }
+
+    worker.postMessage({ type: 'generate', bits, e: eValue.toString() })
   }
 
   // 暗号化

@@ -113,8 +113,9 @@ function padMessage(message: Uint8Array): { padded: Uint8Array; steps: SHA256Ste
 
   // パディング後のサイズを計算
   // (元のメッセージ + 1バイト(0x80) + kバイト(0x00...) + 8バイト(長さ)) が 512ビット(64バイト)の倍数
-  const k = (55 - msgLen) % 64; // 448 bits = 56 bytes (512 - 64)
-  const totalLen = msgLen + 1 + k + 8;
+  // パディング後の全長は64の倍数でなければならない
+  // メッセージ + 0x80(1バイト) + ゼロ埋め + 長さ(8バイト) = 64の倍数
+  const totalLen = Math.ceil((msgLen + 1 + 8) / 64) * 64;
 
   const padded = new Uint8Array(totalLen);
   padded.set(message, 0);
