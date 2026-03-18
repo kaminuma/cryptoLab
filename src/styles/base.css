@@ -33,7 +33,7 @@ a:hover {
 
 [data-theme='classic'] body {
   background-image:
-    url('https://www.transparenttextures.com/patterns/old-map.png'),
+    url('/textures/old-map.png'),
     radial-gradient(circle at center, rgba(244, 236, 216, 0.8) 0%, rgba(210, 190, 150, 0.9) 100%);
   background-color: #f4ecd8;
 }
