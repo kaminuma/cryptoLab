@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { EnigmaSimulator } from '../enigma/ui/EnigmaSimulator'
 
 function EnigmaHistory() {
@@ -106,8 +107,9 @@ function EnigmaDemo() {
 }
 
 export default function EnigmaPage() {
+  usePageMeta({ title: 'Enigma Simulator', description: 'エニグマ暗号機の高忠実度シミュレータで暗号化を体験する' })
+
   useEffect(() => {
-    document.title = 'Enigma Simulator - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
     document.documentElement.setAttribute('data-theme', 'classic')
     return () => {

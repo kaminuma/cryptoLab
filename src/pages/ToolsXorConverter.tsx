@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 type InputFormat = 'text' | 'hex' | 'base64'
 
@@ -370,8 +371,9 @@ function XorInCryptography() {
 }
 
 export default function ToolsXorConverterPage() {
+  usePageMeta({ title: 'XOR 暗号化ツール', description: 'XOR演算でデータを暗号化・復号するインタラクティブツール' })
+
   useEffect(() => {
-    document.title = 'XOR 暗号化ツール - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -413,6 +415,7 @@ export default function ToolsXorConverterPage() {
   return (
     <main className="page tools xor-converter">
       <StepLesson
+        lessonId="tools-xor"
         title="XOR 暗号化ツール"
         steps={steps}
       />

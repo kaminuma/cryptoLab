@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 /* =========================================
    Step 1: なぜ「量子」が暗号を脅かすのか
@@ -904,8 +905,9 @@ function MigrationBestPractices() {
    メインコンポーネント
    ========================================= */
 export default function PQC() {
+  usePageMeta({ title: 'ポスト量子暗号', description: '量子コンピュータの脅威と格子暗号による対策を学ぶ' })
+
   useEffect(() => {
-    document.title = 'ポスト量子暗号 (PQC) - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -1017,6 +1019,7 @@ export default function PQC() {
   return (
     <main className="page pqc">
       <StepLesson
+        lessonId="pqc"
         title="ポスト量子暗号 (PQC)"
         steps={steps}
       />

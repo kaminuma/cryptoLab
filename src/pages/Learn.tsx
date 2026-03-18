@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 /* =========================================
    Step 1: 暗号化とは何か — 手紙のたとえ
@@ -1004,8 +1005,9 @@ function PQCMigration() {
    メインコンポーネント
    ========================================= */
 export default function Learn() {
+  usePageMeta({ title: '暗号の基礎', description: '暗号技術の基礎概念をステップバイステップで学ぶ' })
+
   useEffect(() => {
-    document.title = '学習 - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -1157,6 +1159,7 @@ export default function Learn() {
   return (
     <main className="page learn">
       <StepLesson
+        lessonId="learn"
         title="暗号技術の体系的理解"
         steps={steps}
       />

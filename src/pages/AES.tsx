@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import {
   encrypt,
   decrypt,
@@ -933,8 +934,9 @@ function RealWorldAES() {
    メインコンポーネント
    ========================================= */
 export default function AESPage() {
+  usePageMeta({ title: 'AES暗号', description: 'AESの内部構造、S-Box、暗号利用モードを詳しく学ぶ' })
+
   useEffect(() => {
-    document.title = 'AES - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -1064,6 +1066,7 @@ export default function AESPage() {
   return (
     <main className="page aes">
       <StepLesson
+        lessonId="aes"
         title="AES 対称鍵暗号"
         steps={steps}
       />

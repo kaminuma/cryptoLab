@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import {
   generateSimpleRSAKey,
   rsaEncrypt,
@@ -975,8 +976,9 @@ function ChallengesAndLimitations() {
    Main Page Component
    ========================================= */
 export default function RSAPage() {
+  usePageMeta({ title: 'RSA暗号', description: 'RSA暗号の数学的基礎からOAEP、電子署名まで学ぶ' })
+
   useEffect(() => {
-    document.title = 'RSA - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -1096,6 +1098,7 @@ export default function RSAPage() {
   return (
     <main className="page rsa">
       <StepLesson
+        lessonId="rsa"
         title="RSA暗号"
         steps={steps}
       />

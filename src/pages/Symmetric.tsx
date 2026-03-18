@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { aesGcmDecrypt, aesGcmEncrypt } from '@/lib/crypto/webcrypto'
 import { base64ToBytes, bytesToBase64, bytesToUtf8, utf8ToBytes } from '@/utils/encoding'
 
@@ -711,8 +712,9 @@ function BigPicture() {
    メインコンポーネント
    ========================================= */
 export default function SymmetricPage() {
+  usePageMeta({ title: '共通鍵暗号', description: 'AES-GCMやAEADなど、共通鍵暗号の原理と実践を学ぶ' })
+
   useEffect(() => {
-    document.title = '共通鍵暗号 - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -824,6 +826,7 @@ export default function SymmetricPage() {
   return (
     <main className="page symmetric">
       <StepLesson
+        lessonId="symmetric"
         title="共通鍵暗号: 理論と実践"
         steps={steps}
       />

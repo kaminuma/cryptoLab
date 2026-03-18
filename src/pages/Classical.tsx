@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import * as echarts from 'echarts'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { caesarEncrypt, caesarDecrypt } from '@/lib/classical/caesar'
 import { vigenereEncrypt, vigenereDecrypt } from '@/lib/classical/vigenere'
 import { atbashTransform } from '@/lib/classical/atbash'
@@ -1339,8 +1340,9 @@ function BridgeToModern() {
 /* Main page component                                                 */
 /* ================================================================== */
 export default function ClassicalPage() {
+  usePageMeta({ title: '古典暗号', description: 'シーザー暗号からヴィジュネル暗号まで、古典暗号の仕組みと解読法を学ぶ' })
+
   useEffect(() => {
-    document.title = '古典暗号 - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -1489,6 +1491,7 @@ export default function ClassicalPage() {
   return (
     <main className="page classical">
       <StepLesson
+        lessonId="classical"
         title="古典暗号の解読と歴史"
         steps={steps}
       />

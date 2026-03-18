@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 type NumberBase = 'auto' | 'decimal' | 'hex' | 'binary' | 'octal'
 
@@ -524,8 +525,9 @@ function EncodingComparisonTable() {
 }
 
 export default function ToolsPage() {
+  usePageMeta({ title: '変換ツール', description: '16進数・Base64・バイナリなど各種エンコーディングの変換ツール' })
+
   useEffect(() => {
-    document.title = '変換ツール - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 

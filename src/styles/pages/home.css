@@ -1,0 +1,120 @@
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: var(--spacing-2xl) 0;
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--spacing-xl);
+}
+
+@media (max-width: 480px) {
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* USP Stats */
+.usp-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.usp-stat {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg) var(--spacing-md);
+  text-align: center;
+}
+
+.usp-stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.usp-stat-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-top: var(--spacing-xs);
+}
+
+.usp-stat-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: var(--spacing-sm) 0 0;
+}
+
+@media (max-width: 600px) {
+  .usp-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Roadmap Cards */
+.roadmap-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 600px) {
+  .roadmap-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.roadmap-cards article {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+}
+
+/* Timeline */
+.timeline {
+  margin: 0;
+  padding: 0;
+}
+
+.timeline > div {
+  display: flex;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.timeline dt {
+  font-weight: 700;
+  color: var(--color-primary);
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.timeline dd {
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .timeline > div {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+}

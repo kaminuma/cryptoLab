@@ -1,4 +1,5 @@
 import { type ComponentType, useEffect, useMemo, useState } from 'react'
+import { usePageMeta } from '../hooks/usePageMeta'
 import ClassicalPage from '@/pages/Classical'
 import SymmetricPage from '@/pages/Symmetric'
 import PublicKeyPage from '@/pages/PublicKey'
@@ -14,8 +15,9 @@ const tabs: Array<{ id: TabId; label: string; description: string; component: Co
 export default function Labs() {
   const [activeTab, setActiveTab] = useState<TabId>('classical')
 
+  usePageMeta({ title: 'ラボ', description: '古典暗号・共通鍵暗号・公開鍵暗号をハンズオンで体験する' })
+
   useEffect(() => {
-    document.title = 'ラボ - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 

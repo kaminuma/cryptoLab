@@ -19,6 +19,7 @@ type StepLessonProps = {
   title: string
   steps: LessonStep[]
   onComplete?: () => void
+  lessonId?: string
 }
 
 type PerStepState = {
@@ -26,13 +27,58 @@ type PerStepState = {
   selectedOption: number | null
 }
 
-export default function StepLesson({ title, steps, onComplete }: StepLessonProps) {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
-  const [isCompleted, setIsCompleted] = useState(false)
+function loadProgress(lessonId: string | undefined) {
+  if (!lessonId) return null
+  try {
+    const raw = localStorage.getItem(`cryptolab-progress-${lessonId}`)
+    if (!raw) return null
+    const data = JSON.parse(raw)
+    return {
+      currentStep: typeof data.currentStep === 'number' ? data.currentStep : 0,
+      completedSteps: new Set<number>(Array.isArray(data.completedSteps) ? data.completedSteps : []),
+      stepStates: new Map<number, PerStepState>(
+        data.stepStates && typeof data.stepStates === 'object'
+          ? Object.entries(data.stepStates).map(([k, v]) => [Number(k), v as PerStepState])
+          : []
+      ),
+      isCompleted: typeof data.isCompleted === 'boolean' ? data.isCompleted : false,
+    }
+  } catch {
+    return null
+  }
+}
+
+function saveProgress(
+  lessonId: string | undefined,
+  state: {
+    currentStep: number
+    completedSteps: Set<number>
+    stepStates: Map<number, PerStepState>
+    isCompleted: boolean
+  }
+) {
+  if (!lessonId) return
+  try {
+    const data = {
+      currentStep: state.currentStep,
+      completedSteps: Array.from(state.completedSteps),
+      stepStates: Object.fromEntries(state.stepStates),
+      isCompleted: state.isCompleted,
+    }
+    localStorage.setItem(`cryptolab-progress-${lessonId}`, JSON.stringify(data))
+  } catch {
+    // Storage full or unavailable — silently ignore
+  }
+}
+
+export default function StepLesson({ title, steps, onComplete, lessonId }: StepLessonProps) {
+  const saved = loadProgress(lessonId)
+  const [currentStep, setCurrentStep] = useState(saved?.currentStep ?? 0)
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(saved?.completedSteps ?? new Set())
+  const [isCompleted, setIsCompleted] = useState(saved?.isCompleted ?? false)
 
   // Per-step quiz state is preserved across navigation
-  const [stepStates, setStepStates] = useState<Map<number, PerStepState>>(new Map())
+  const [stepStates, setStepStates] = useState<Map<number, PerStepState>>(saved?.stepStates ?? new Map())
 
   const step = steps[currentStep]
   const isLastStep = currentStep === steps.length - 1
@@ -40,6 +86,11 @@ export default function StepLesson({ title, steps, onComplete }: StepLessonProps
   const hasQuiz = !!step.quiz
 
   const currentState = stepStates.get(currentStep) ?? { quizState: 'unanswered' as const, selectedOption: null }
+
+  // Persist progress to localStorage when state changes
+  useEffect(() => {
+    saveProgress(lessonId, { currentStep, completedSteps, stepStates, isCompleted })
+  }, [lessonId, currentStep, completedSteps, stepStates, isCompleted])
 
   // Scroll to top on step change
   useEffect(() => {
@@ -96,7 +147,14 @@ export default function StepLesson({ title, steps, onComplete }: StepLessonProps
     setCompletedSteps(new Set())
     setStepStates(new Map())
     setIsCompleted(false)
-  }, [])
+    if (lessonId) {
+      try {
+        localStorage.removeItem(`cryptolab-progress-${lessonId}`)
+      } catch {
+        // Silently ignore
+      }
+    }
+  }, [lessonId])
 
   const progress = ((completedSteps.size) / steps.length) * 100
 

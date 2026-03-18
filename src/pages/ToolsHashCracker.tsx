@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { bruteForceSHA1, estimateTime, CHARSETS, type BruteForceProgress } from '../lib/hash/bruteforce'
 
 function WhatIsHashCracking() {
@@ -300,8 +301,9 @@ function DefenseStrategies() {
 }
 
 export default function ToolsPage() {
+  usePageMeta({ title: 'ハッシュクラッカー', description: 'ブルートフォースでハッシュを解読する体験型ツール' })
+
   useEffect(() => {
-    document.title = 'ハッシュクラッカー - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -357,6 +359,7 @@ export default function ToolsPage() {
   return (
     <main className="page tools-cracker">
       <StepLesson
+        lessonId="tools-hash-cracker"
         title="ハッシュクラッキング・ラボ"
         steps={steps}
       />

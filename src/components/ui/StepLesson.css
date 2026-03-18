@@ -532,6 +532,7 @@
 .step-lesson__demo textarea,
 .step-lesson__demo select {
   width: 100%;
+  max-width: 100%;
   padding: 10px 14px;
   background: var(--color-bg-body);
   border: 1px solid var(--color-border);
@@ -540,6 +541,17 @@
   color: var(--color-text-main);
   font-family: var(--font-sans);
   transition: border-color 0.2s;
+}
+
+/* Allow explicit width overrides (e.g. .number-input) */
+.step-lesson__demo .number-input {
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.step-lesson__demo input[type="range"] {
+  flex: 1;
+  min-width: 0;
 }
 
 .step-lesson__demo input:focus,

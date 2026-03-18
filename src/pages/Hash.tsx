@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { sha256WithSteps, sha256WebCrypto, calculateAvalanche, type SHA256Result } from '../lib/hash/sha256'
 
 /* =========================================
@@ -670,8 +671,9 @@ function RealWorldUses() {
    メインコンポーネント
    ========================================= */
 export default function Hash() {
+  usePageMeta({ title: 'ハッシュ関数', description: 'SHA-256の内部構造からSHA-3まで、ハッシュ関数を深く理解する' })
+
   useEffect(() => {
-    document.title = 'ハッシュ関数 - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -791,6 +793,7 @@ export default function Hash() {
   return (
     <main className="page hash">
       <StepLesson
+        lessonId="hash"
         title="SHA-256 ハッシュ関数"
         steps={steps}
       />

@@ -1,0 +1,14 @@
+/* Footer */
+.site-footer {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: var(--spacing-2xl) var(--spacing-md);
+  margin-top: auto;
+  transition: all 0.5s ease;
+}
+
+[data-theme='classic'] .site-footer {
+  background: #2c2c2c;
+  border-top: 4px solid var(--color-primary);
+  font-family: var(--font-classic);
+}

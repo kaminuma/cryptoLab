@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
 import '../components/ui/StepLesson.css'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { ecdhDeriveSecret } from '@/lib/crypto/ecdh'
 import { aesGcmDecrypt, aesGcmEncrypt, hkdf } from '@/lib/crypto/webcrypto'
 import { base64ToBytes, bytesToBase64, bytesToUtf8, utf8ToBytes } from '@/utils/encoding'
@@ -910,8 +911,9 @@ function Summary() {
    ページ本体
    ========================================= */
 export default function PublicKeyPage() {
+  usePageMeta({ title: '公開鍵暗号', description: '楕円曲線暗号、ECDH鍵交換、PKIの仕組みを学ぶ' })
+
   useEffect(() => {
-    document.title = '公開鍵暗号 - CryptoLab'
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
@@ -1017,6 +1019,7 @@ export default function PublicKeyPage() {
   return (
     <main className="page public-key">
       <StepLesson
+        lessonId="public-key"
         title="公開鍵暗号 & 鍵交換"
         steps={steps}
       />
