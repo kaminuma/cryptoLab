@@ -40,7 +40,6 @@ export default function StepLesson({ title, steps, onComplete }: StepLessonProps
   const hasQuiz = !!step.quiz
 
   const currentState = stepStates.get(currentStep) ?? { quizState: 'unanswered' as const, selectedOption: null }
-  const canProceed = !hasQuiz || currentState.quizState === 'correct' || completedSteps.has(currentStep)
 
   // Scroll to top on step change
   useEffect(() => {
@@ -73,13 +72,13 @@ export default function StepLesson({ title, steps, onComplete }: StepLessonProps
   }, [isFirstStep])
 
   const handleQuizAnswer = useCallback((index: number) => {
-    if (currentState.quizState === 'correct' || completedSteps.has(currentStep)) return
+    if (currentState.quizState === 'correct') return
     const isCorrect = step.quiz?.options[index]?.correct ?? false
     updateStepState(currentStep, {
       selectedOption: index,
       quizState: isCorrect ? 'correct' : 'wrong',
     })
-  }, [currentState.quizState, completedSteps, currentStep, step.quiz, updateStepState])
+  }, [currentState.quizState, currentStep, step.quiz, updateStepState])
 
   const handleStepClick = useCallback((index: number) => {
     // Can navigate to: any completed step, current step, or next uncompleted step
@@ -88,13 +87,9 @@ export default function StepLesson({ title, steps, onComplete }: StepLessonProps
       : 0
     const canReach = Math.max(maxReachable, currentStep)
     if (index <= canReach) {
-      // Don't allow skipping past a quiz gate
-      if (index > currentStep && hasQuiz && currentState.quizState !== 'correct' && !completedSteps.has(currentStep)) {
-        return
-      }
       setCurrentStep(index)
     }
-  }, [completedSteps, currentStep, hasQuiz, currentState.quizState])
+  }, [completedSteps, currentStep])
 
   const handleRestart = useCallback(() => {
     setCurrentStep(0)
@@ -194,7 +189,7 @@ export default function StepLesson({ title, steps, onComplete }: StepLessonProps
                     key={i}
                     className={optionClass}
                     onClick={() => handleQuizAnswer(i)}
-                    disabled={currentState.quizState === 'correct' || completedSteps.has(currentStep)}
+                    disabled={currentState.quizState === 'correct'}
                     role="radio"
                     aria-checked={currentState.selectedOption === i}
                   >
@@ -229,7 +224,6 @@ export default function StepLesson({ title, steps, onComplete }: StepLessonProps
         <button
           className="step-lesson__nav-btn step-lesson__nav-btn--next"
           onClick={handleNext}
-          disabled={!canProceed}
         >
           {isLastStep ? '完了' : '次へ \u2192'}
         </button>
