@@ -1,34 +1,164 @@
 import { useState, useEffect } from 'react'
+import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
+import '../components/ui/StepLesson.css'
 import {
   encrypt,
   decrypt,
   generateRandomKey,
-  generateRandomIV,
   bytesToHex,
-  hexToBytes,
-  stringToBytes,
   type AESMode
 } from '@/lib/aes'
 
-export default function AESPage() {
+/* =========================================
+   Step 1: 対称暗号とAES概要
+   ========================================= */
+function SymmetricOverview() {
+  return (
+    <>
+      <p>
+        AES（Advanced Encryption Standard）は、<strong>同じ鍵</strong>で暗号化と復号を行う
+        <strong>対称鍵暗号</strong>の世界標準です。
+        2001年にNISTがDESの後継として標準化しました。
+      </p>
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>AES（共通鍵暗号）</h3>
+          <ul>
+            <li><strong>方式:</strong> 暗号化/復号で同じ鍵</li>
+            <li><strong>速度:</strong> 高速（AES-NI対応ならGbps級）</li>
+            <li><strong>課題:</strong> 鍵配送を別の仕組みで解決する必要あり</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>RSA / ECDH（公開鍵暗号）</h3>
+          <ul>
+            <li><strong>方式:</strong> 公開鍵で暗号化、秘密鍵で復号</li>
+            <li><strong>速度:</strong> 計算が重い</li>
+            <li><strong>利点:</strong> 鍵配送問題を解決できる</li>
+          </ul>
+        </div>
+      </div>
+      <div className="step-lesson__callout">
+        <strong>ブロックサイズ:</strong> 常に128ビット。
+        <strong>鍵長:</strong> 128 / 192 / 256ビット（それぞれ10 / 12 / 14ラウンド）。
+        鍵長で安全性と処理コストを調整します。設計者はJoan DaemenとVincent Rijmen。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 2: AES内部構造
+   ========================================= */
+function InternalStructure() {
+  return (
+    <>
+      <p>
+        AESは<strong>SPN構造</strong>（置換・転置ネットワーク）を採用しています。
+        各ラウンドで4つの操作を繰り返し、非線形性と拡散性を確保します。
+      </p>
+      <div className="step-lesson__visual">
+        <div className="step-lesson__visual-flow">
+          <div><code>平文ブロック (128bit)</code></div>
+          <div>↓ <strong>SubBytes</strong> — S-Boxで各バイトを非線形変換（GF(2&#8312;)上の逆数+アフィン変換）</div>
+          <div>↓ <strong>ShiftRows</strong> — 各行を左シフトして拡散</div>
+          <div>↓ <strong>MixColumns</strong> — 列をGF(2&#8312;)で混合、隣接バイトへ影響を伝播</div>
+          <div>↓ <strong>AddRoundKey</strong> — ラウンド鍵とXOR</div>
+          <div>↓ <em>（上記を10〜14ラウンド繰り返す）</em></div>
+          <div><code>暗号文ブロック (128bit)</code></div>
+        </div>
+      </div>
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>鍵スケジュール</h3>
+          <ul>
+            <li>マスター鍵からラウンド鍵を生成</li>
+            <li>Rcon（Round Constant）で各ラウンドを分岐</li>
+            <li>鍵派生が硬く、使い回しで弱点が出にくい</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>安全性</h3>
+          <ul>
+            <li>AES-128でも2&#185;&#178;&#8312;通り。総当たりは不可能</li>
+            <li>差分/線形解読は十分なラウンド数で防御済み</li>
+            <li>量子時代を見据えるならAES-256が無難</li>
+          </ul>
+        </div>
+      </div>
+      <div className="step-lesson__callout">
+        AES-NIのようなCPU命令セットを使うと、S-Boxをテーブル参照ではなく命令レベルで処理でき、
+        キャッシュ観測によるサイドチャネル攻撃を抑えつつ高速化できます。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 3: AESモード
+   ========================================= */
+function BlockModes() {
+  return (
+    <>
+      <p>
+        AESは128ビット単位でデータを処理するブロック暗号です。
+        長いメッセージを安全に暗号化するには<strong>モード</strong>の選択が決定的に重要です。
+      </p>
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>ECB（Electronic Codebook）</h3>
+          <ul>
+            <li>ブロックごとに独立して暗号化</li>
+            <li>同じ平文ブロック → 同じ暗号文</li>
+            <li>パターンが露出するため<strong>使用禁止</strong></li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>CBC（Cipher Block Chaining）</h3>
+          <ul>
+            <li>前の暗号文とXORしてから暗号化</li>
+            <li>IVをランダム生成するのが必須</li>
+            <li>パディング・オラクル攻撃に注意</li>
+          </ul>
+        </div>
+      </div>
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>CTR（Counter）</h3>
+          <ul>
+            <li>カウンタを暗号化してストリーム化</li>
+            <li>高速だがNonce再利用は厳禁</li>
+            <li>認証がないため単体では改ざん検知不可</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>GCM（Galois/Counter Mode）</h3>
+          <ul>
+            <li>CTR + GMAC で認証付き暗号（AEAD）</li>
+            <li>GHASHでタグを生成し改ざんを検知</li>
+            <li>TLS 1.3 の標準構成</li>
+          </ul>
+        </div>
+      </div>
+      <div className="step-lesson__callout">
+        実務ではECBは絶対に使わず、AES-GCM や ChaCha20-Poly1305 などの AEAD モードを選びましょう。
+        認証なしの CBC/CTR は改ざん攻撃に脆弱です。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 4: 暗号化/復号デモ
+   ========================================= */
+function EncryptDecryptDemo() {
   const [plaintext, setPlaintext] = useState('Hello, AES!')
   const [key, setKey] = useState<Uint8Array>(generateRandomKey(128))
   const [keySize, setKeySize] = useState<128 | 192 | 256>(128)
   const [mode, setMode] = useState<AESMode>('CBC')
   const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
   const [iv, setIv] = useState<Uint8Array | null>(null)
-  const [decrypted, setDecrypted] = useState<string>('')
-
-  // モード比較用の状態
-  const [compareText, setCompareText] = useState('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-  const [ecbResult, setEcbResult] = useState<string>('')
-  const [cbcResult, setCbcResult] = useState<string>('')
-  const [ctrResult, setCtrResult] = useState<string>('')
-
-  useEffect(() => {
-    document.title = 'AES - CryptoLab'
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [])
+  const [decrypted, setDecrypted] = useState('')
 
   const handleGenerateKey = () => {
     const newKey = generateRandomKey(keySize)
@@ -62,187 +192,75 @@ export default function AESPage() {
     }
   }
 
-  const handleCompare = () => {
-    try {
-      const compareKey = generateRandomKey(128)
-
-      // ECB
-      const ecbEncrypted = encrypt(compareText, compareKey, 'ECB')
-      setEcbResult(bytesToHex(ecbEncrypted.ciphertext))
-
-      // CBC
-      const cbcEncrypted = encrypt(compareText, compareKey, 'CBC')
-      setCbcResult(bytesToHex(cbcEncrypted.ciphertext))
-
-      // CTR
-      const ctrEncrypted = encrypt(compareText, compareKey, 'CTR')
-      setCtrResult(bytesToHex(ctrEncrypted.ciphertext))
-    } catch (error) {
-      alert(`エラー: ${error}`)
-    }
-  }
-
   return (
-    <main className="page aes">
-      <header className="page-header">
-        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>[ SYSTEM_CORE: AES_ENGINE ]</p>
-        <h1 style={{ letterSpacing: '-0.05em' }}>対称鍵暗号: AES の深淵</h1>
-        <p className="lede">
-          2001年にNISTが標準化した共通鍵暗号の本命。
-          SPN構造による攪乱と拡散のメカニズム、そして現代の通信を支える「モード」の重要性を解き明かす。
-        </p>
-      </header>
+    <>
+      <p>鍵長とモードを選んで暗号化/復号を実行し、IVやNonceがどう扱われるか確認しましょう。</p>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>1. AESの基本情報</h2>
-          <p>Advanced Encryption Standard（AES）はDESの後継として採用されたブロック暗号。16バイト単位でデータを処理し、IoTからクラウドまであらゆる現場で使われています。</p>
-        </div>
-        <ul>
-          <li><strong>標準化:</strong> 2001年にRijndaelがAESとして採択。設計者はJoan DaemenとVincent Rijmen。</li>
-          <li><strong>ブロックサイズ:</strong> 常に128ビット。サイズが固定されているので「モード」で複数ブロックへ拡張します。</li>
-          <li><strong>鍵長:</strong> 128/192/256bit（それぞれ10/12/14ラウンド）。鍵長で安全性と処理コストを調整。</li>
-          <li><strong>用途:</strong> TLS/SSH、VPN、ディスク暗号化、モバイルアプリのデータ保護など「高速に大量データを守る」場面の主役。</li>
-        </ul>
-        <div className="info-panel">
-          <h3>AES = 置換・転置ネットワーク</h3>
-          <p>
-            各ラウンドで<em>SubBytes / ShiftRows / MixColumns / AddRoundKey</em>の4操作を繰り返し、非線形性と拡散性を確保します。S-BoxはGF(2⁸)上の逆数演算とアフィン変換で構成され、ハードウェア実装もしやすい作りです。
-          </p>
-        </div>
-      </section>
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>2. 共通鍵暗号としての立ち位置</h2>
-          <p>AESは「同じ鍵」で暗号化/復号する対称方式。鍵配送問題がある代わりに圧倒的な速度を誇り、公開鍵暗号と組み合わせてハイブリッド構成を作ります。</p>
-        </div>
-        <div className="card-grid">
-          <div className="card">
-            <h3>AES（共通鍵）</h3>
-            <ul>
-              <li>暗号化/復号で同じ鍵を使用</li>
-              <li>CPU/ASICで高速（AES-NI対応ならGbps級）</li>
-              <li>鍵配送は別の仕組みで解決する必要あり</li>
-              <li>AES-GCM, ChaCha20-Poly1305 などAEADモードで改ざん検知も実現</li>
-            </ul>
-          </div>
-          <div className="card">
-            <h3>RSA / ECDH（公開鍵）</h3>
-            <ul>
-              <li>公開鍵で暗号化、秘密鍵で復号</li>
-              <li>鍵配送問題を解決できるが計算は重い</li>
-              <li>ECDHは鍵交換、RSAは暗号化と署名、ECDSA/Ed25519は署名専用</li>
-              <li>Shorのアルゴリズム（量子攻撃）の脅威を受ける</li>
-            </ul>
-          </div>
-        </div>
-        <p>現代のWeb/TLSでは公開鍵暗号でセッション鍵を共有し、共有済みの鍵でAES-GCMを回すハイブリッド構成が常識です。</p>
-        <ol>
-          <li>サーバー証明書（公開鍵）とECDHで「共通鍵」を共有</li>
-          <li>共有鍵からHKDFでAES-GCM用の鍵を導出</li>
-          <li>AESでWebページやAPIレスポンスを高速に暗号化</li>
-        </ol>
-        <p className="hint">ハイブリッド構成にすることで「公開鍵で安全に鍵を届ける」「AESで高速にデータを守る」を同時に満たせます。</p>
-      </section>
-
-      <section className="card">
-        <div className="card-header">
-          <h2>3. AESの内部構造と安全性メモ</h2>
-          <p>ブロック暗号のラウンド設計と鍵スケジュール、そして攻撃面をまとめておくと実装時のチェックリストになります。</p>
-        </div>
-        <div className="card-grid">
-          <div className="card">
-            <h3>ラウンド処理</h3>
-            <ol>
-              <li><strong>SubBytes:</strong> S-Boxで非線形変換。</li>
-              <li><strong>ShiftRows:</strong> 各行を左シフトして拡散。</li>
-              <li><strong>MixColumns:</strong> 列をGF(2⁸)で混合し、隣接バイトへ影響を伝播。</li>
-              <li><strong>AddRoundKey:</strong> そのラウンド専用の鍵とXOR。</li>
-            </ol>
-          </div>
-          <div className="card">
-            <h3>鍵スケジュール</h3>
-            <ul>
-              <li>マスター鍵からラウンド鍵を生成</li>
-              <li>Rcon（Round Constant）で各ラウンドを分岐</li>
-              <li>鍵長ごとに異なる回数の展開が必要</li>
-            </ul>
-            <p>鍵派生が硬いので、ラウンド鍵の使い回しで弱点が出にくい設計です。</p>
-          </div>
-        </div>
-        <div className="info-panel">
-          <h3>安全性の現在地</h3>
-          <ul>
-            <li><strong>総当たり:</strong> AES-128でも2¹²⁸通り。現実的に不可能。</li>
-            <li><strong>差分/線形解読:</strong> 十分なラウンド数で防御済み。</li>
-            <li><strong>関連鍵攻撃:</strong> AES-256は鍵スケジュールが複雑なぶん差分攻撃の研究がされており理論上の弱点が報告されているが、実用上は問題なし。</li>
-            <li><strong>量子計算:</strong> Groverアルゴリズムで探索が√NになるためAES-128は64bit安全性と見積もられる。長期用途はAES-256が無難。</li>
-            <li><strong>サイドチャネル:</strong> タイミング/電力解析を避けるためAES-NIなど定数時間実装を使う。</li>
-          </ul>
-        </div>
-        <p className="hint">
-          AES-NIのようなCPU命令セットを使うと、S-Boxをテーブル参照ではなく命令レベルで処理できるため、キャッシュ観測によるサイドチャネルを抑えつつ高速化できます。
-        </p>
-      </section>
-
-      <section className="card">
-        <div className="card-header">
-          <h2>4. ハンズオン: 鍵を選び AES を実行</h2>
-          <p>鍵長とブロックモードを選んで暗号化/復号を動かしながら、IVやNonceがどのように扱われるかを確認します。</p>
-        </div>
-
-        <label>鍵長</label>
-        <div>
-          {[128, 192, 256].map((size) => (
+        <label>鍵長:</label>
+        <div className="step-lesson__demo-radio-group">
+          {([128, 192, 256] as const).map((size) => (
             <label key={size}>
               <input
                 type="radio"
                 name="keySize"
                 value={size}
                 checked={keySize === size}
-                onChange={(event) => setKeySize(Number(event.target.value) as 128 | 192 | 256)}
+                onChange={(e) => setKeySize(Number(e.target.value) as 128 | 192 | 256)}
               />
-              AES-{size}
+              {' '}AES-{size}
             </label>
           ))}
         </div>
-        <button type="button" className="btn btn-secondary" onClick={handleGenerateKey}>
+
+        <button
+          type="button"
+          className="step-lesson__demo-btn step-lesson__demo-btn--secondary"
+          onClick={handleGenerateKey}
+        >
           ランダム鍵を再生成
         </button>
-        <label htmlFor="aes-key">現在の鍵（16進表記）</label>
-        <textarea id="aes-key" rows={3} readOnly value={bytesToHex(key)} />
 
-        <label htmlFor="aes-mode">ブロックモード</label>
+        <label>現在の鍵（16進表記）:</label>
+        <div className="step-lesson__demo-result">{bytesToHex(key)}</div>
+
+        <label>ブロックモード:</label>
         <select
-          id="aes-mode"
           value={mode}
-          onChange={(event) => setMode(event.target.value as AESMode)}
+          onChange={(e) => setMode(e.target.value as AESMode)}
         >
           <option value="CBC">CBC</option>
           <option value="CTR">CTR</option>
           <option value="ECB">ECB</option>
         </select>
+
         {mode === 'ECB' && (
-          <p className="hint">⚠️ ECBはパターンがそのまま漏れるので学習用途以外では使用禁止です。</p>
+          <div className="step-lesson__callout">
+            ECBはパターンがそのまま漏れるので学習用途以外では使用禁止です。
+          </div>
         )}
 
-        <label htmlFor="aes-plaintext">平文</label>
+        <label>平文:</label>
         <textarea
-          id="aes-plaintext"
-          rows={4}
+          rows={3}
           value={plaintext}
-          onChange={(event) => setPlaintext(event.target.value)}
+          onChange={(e) => setPlaintext(e.target.value)}
           placeholder="Hello, AES!"
         />
 
-        <div className="actions">
-          <button type="button" className="btn btn-primary" onClick={handleEncrypt}>
+        <div className="step-lesson__demo-actions">
+          <button
+            type="button"
+            className="step-lesson__demo-btn step-lesson__demo-btn--primary"
+            onClick={handleEncrypt}
+          >
             暗号化
           </button>
           <button
             type="button"
-            className="btn btn-secondary"
+            className="step-lesson__demo-btn step-lesson__demo-btn--secondary"
             onClick={handleDecrypt}
             disabled={!ciphertext}
           >
@@ -252,17 +270,12 @@ export default function AESPage() {
 
         {ciphertext && (
           <>
-            <label htmlFor="aes-ciphertext">暗号文（16進数）</label>
-            <textarea
-              id="aes-ciphertext"
-              rows={3}
-              value={bytesToHex(ciphertext)}
-              readOnly
-            />
+            <label>暗号文（16進数）:</label>
+            <div className="step-lesson__demo-result">{bytesToHex(ciphertext)}</div>
             {iv && (
               <>
-                <label htmlFor="aes-iv">{mode === 'CTR' ? 'Nonce' : 'IV'}</label>
-                <textarea id="aes-iv" rows={2} value={bytesToHex(iv)} readOnly />
+                <label>{mode === 'CTR' ? 'Nonce' : 'IV'}:</label>
+                <div className="step-lesson__demo-result">{bytesToHex(iv)}</div>
               </>
             )}
           </>
@@ -270,70 +283,239 @@ export default function AESPage() {
 
         {decrypted && (
           <>
-            <label htmlFor="aes-decrypted">復号結果</label>
-            <textarea id="aes-decrypted" rows={3} value={decrypted} readOnly />
-            {decrypted === plaintext && <p className="hint">✅ 入力と一致しました。</p>}
+            <label>復号結果:</label>
+            <div className="step-lesson__demo-result">{decrypted}</div>
+            {decrypted === plaintext && (
+              <div className="step-lesson__callout">入力と一致しました。正しく復号されています。</div>
+            )}
           </>
         )}
-      </section>
+      </div>
+    </>
+  )
+}
 
-      <section className="card">
-        <div className="card-header">
-          <h2>5. ブロックモードの違いを可視化</h2>
-          <p>128ビットごとに暗号化するAESは、そのままだと長いメッセージを守れません。モードをどう選ぶかで安全性が激変します。</p>
-        </div>
-        <ul>
-          <li><strong>ECB:</strong> ブロックごとに独立。パターンがそのまま露出するため禁止。</li>
-          <li><strong>CBC:</strong> 前の暗号文とXORしてから暗号化。IVを確実にランダム生成するのが鍵。パディングエラーをそのまま返すと「パディング・オラクル攻撃」の温床になるので、AEADかEncrypt-then-MACで保護するのが実務の定石。</li>
-          <li><strong>CTR:</strong> カウンタを暗号化してストリーム化。高速だがNonce再利用と認証欠如に注意。</li>
-          <li><strong>GCM:</strong> CTR + GMACで認証付き暗号 (AEAD)。GMACではGHASH（GF(2¹²⁸)上の多項式演算）を使ってタグを生成し、TLS 1.3などの標準構成になっている。</li>
-        </ul>
+/* =========================================
+   Step 5: モード比較（ECBの危険性を可視化）
+   ========================================= */
+function ModeComparisonDemo() {
+  const [compareText, setCompareText] = useState('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+  const [ecbResult, setEcbResult] = useState('')
+  const [cbcResult, setCbcResult] = useState('')
+  const [ctrResult, setCtrResult] = useState('')
 
-        <label htmlFor="compare-text">同じ文字列を各モードで暗号化</label>
+  const handleCompare = () => {
+    try {
+      const compareKey = generateRandomKey(128)
+      const ecbEncrypted = encrypt(compareText, compareKey, 'ECB')
+      setEcbResult(bytesToHex(ecbEncrypted.ciphertext))
+      const cbcEncrypted = encrypt(compareText, compareKey, 'CBC')
+      setCbcResult(bytesToHex(cbcEncrypted.ciphertext))
+      const ctrEncrypted = encrypt(compareText, compareKey, 'CTR')
+      setCtrResult(bytesToHex(ctrEncrypted.ciphertext))
+    } catch (error) {
+      alert(`エラー: ${error}`)
+    }
+  }
+
+  /* Split hex string into 32-char (16-byte = 1 block) chunks for visual comparison */
+  const splitBlocks = (hex: string) => {
+    const chunks: string[] = []
+    for (let i = 0; i < hex.length; i += 32) {
+      chunks.push(hex.slice(i, i + 32))
+    }
+    return chunks
+  }
+
+  return (
+    <>
+      <p>
+        同じ繰り返しパターンの平文を各モードで暗号化すると、ECBの弱点が一目瞭然です。
+        ECBでは<strong>同じ平文ブロックが同じ暗号文ブロック</strong>になりますが、CBC/CTRではすべてのブロックが異なります。
+      </p>
+
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
+
+        <label>繰り返しパターンの平文:</label>
         <input
-          id="compare-text"
           type="text"
           value={compareText}
-          onChange={(event) => setCompareText(event.target.value)}
+          onChange={(e) => setCompareText(e.target.value)}
           placeholder="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         />
-        <button type="button" className="btn btn-secondary" onClick={handleCompare}>
+
+        <button
+          type="button"
+          className="step-lesson__demo-btn step-lesson__demo-btn--primary"
+          onClick={handleCompare}
+        >
           各モードで暗号化
         </button>
 
         {ecbResult && (
-          <div className="card-grid">
-            <div className="card">
+          <div className="step-lesson__comparison">
+            <div className="step-lesson__comparison-item">
               <h3>ECB</h3>
-              <p className="hint">同じブロックが同じ暗号文になる。</p>
-              <textarea rows={3} value={ecbResult} readOnly />
+              <p><strong>同じブロックが同じ暗号文になる:</strong></p>
+              {splitBlocks(ecbResult).map((block, i) => (
+                <div key={i} className="step-lesson__demo-result">{block}</div>
+              ))}
             </div>
-            <div className="card">
+            <div className="step-lesson__comparison-item">
               <h3>CBC</h3>
-              <p className="hint">パターンが崩れ、チェインによって各ブロックが変化。</p>
-              <textarea rows={3} value={cbcResult} readOnly />
-            </div>
-            <div className="card">
-              <h3>CTR</h3>
-              <p className="hint">疑似ストリーム暗号。Nonceの再利用だけは厳禁。</p>
-              <textarea rows={3} value={ctrResult} readOnly />
+              <p><strong>チェインにより各ブロックが変化:</strong></p>
+              {splitBlocks(cbcResult).map((block, i) => (
+                <div key={i} className="step-lesson__demo-result">{block}</div>
+              ))}
             </div>
           </div>
         )}
-      </section>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>6. まとめと次の一歩</h2>
+        {ctrResult && (
+          <div className="step-lesson__comparison">
+            <div className="step-lesson__comparison-item">
+              <h3>CTR</h3>
+              <p><strong>疑似ストリーム暗号。Nonce再利用厳禁:</strong></p>
+              {splitBlocks(ctrResult).map((block, i) => (
+                <div key={i} className="step-lesson__demo-result">{block}</div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>注目:</strong> ECBの結果を見ると、同じ内容の平文ブロックがまったく同じ暗号文になっていることが分かります。
+        これは画像を暗号化した場合に輪郭が見えてしまう「ECBペンギン問題」として有名です。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 6: AESの実世界での利用
+   ========================================= */
+function RealWorldAES() {
+  return (
+    <>
+      <p>AESは現代のインターネットとデータ保護の基盤として、あらゆる場所で使われています。</p>
+      <ul>
+        <li>
+          <strong>TLS / HTTPS</strong> — Webブラウザとサーバーの通信を保護。
+          ECDHで共通鍵を共有 → HKDFでAES-GCM用の鍵を導出 → AESで高速に暗号化、というハイブリッド構成。
+        </li>
+        <li>
+          <strong>ディスク暗号化</strong> — FileVault（macOS）、BitLocker（Windows）、LUKS（Linux）が
+          AES-XTSモードでストレージ全体を保護。
+        </li>
+        <li>
+          <strong>VPN / SSH</strong> — トンネリングされた通信の中身をAES-GCMで暗号化。
+        </li>
+        <li>
+          <strong>モバイルアプリ</strong> — iOSのデータ保護API、AndroidのKeyStoreがAES-256を利用。
+        </li>
+      </ul>
+
+      <div className="step-lesson__visual">
+        <div className="step-lesson__visual-flow">
+          <div><strong>TLS 1.3 ハンドシェイク</strong></div>
+          <div>1. サーバー証明書（公開鍵）+ ECDHで「共通鍵」を共有</div>
+          <div>2. HKDFでAES-GCM用の鍵を導出</div>
+          <div>3. AES-GCMでWebページやAPIレスポンスを高速に暗号化</div>
         </div>
-        <ul>
-          <li>AESは共通鍵暗号の標準であり、公開鍵暗号と組み合わせて初めて実用になる。</li>
-          <li>内部構造はSPN方式。SubBytes/ShiftRows/MixColumns/AddRoundKeyを理解すると攻撃面のニュースが読みやすくなる。</li>
-          <li>ECBは歴史資料。CBC/CTR/GCMなどモードの選び方が安全性を左右する。</li>
-          <li>量子時代を見据えるならAES-256 + AEAD（GCMやChaCha20-Poly1305）を基準にする。</li>
-        </ul>
-        <p>次は共通鍵暗号ラボ（AES-GCMデモ）や公開鍵ラボ（ECDH→HKDF→AES）を触って、ハイブリッド構成全体を見るのがおすすめです。</p>
-      </section>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>量子時代への備え:</strong> Groverのアルゴリズムにより、AES-128は64ビット安全性に低下する見積もりです。
+        長期的な用途ではAES-256 + AEAD（GCM や ChaCha20-Poly1305）を基準にしましょう。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   メインコンポーネント
+   ========================================= */
+export default function AESPage() {
+  useEffect(() => {
+    document.title = 'AES - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  const steps: LessonStep[] = [
+    {
+      title: '対称鍵暗号とAES',
+      content: <SymmetricOverview />,
+      quiz: {
+        question: 'AES（共通鍵暗号）の最大の特徴は？',
+        options: [
+          { label: '公開鍵と秘密鍵のペアを使う' },
+          { label: '暗号化と復号で同じ鍵を使う', correct: true },
+          { label: 'ハッシュ関数の一種である' },
+          { label: '復号ができない一方向暗号である' },
+        ],
+        explanation: '正解！AESは共通鍵（対称鍵）暗号であり、暗号化と復号に同じ鍵を使います。公開鍵暗号と組み合わせたハイブリッド構成で鍵配送問題を解決するのが実務の定石です。',
+      },
+    },
+    {
+      title: 'AESの内部構造',
+      content: <InternalStructure />,
+      quiz: {
+        question: 'AESの1ラウンドに含まれない操作はどれ？',
+        options: [
+          { label: 'SubBytes（S-Boxによる非線形変換）' },
+          { label: 'ShiftRows（行の左シフト）' },
+          { label: 'FeistelNetwork（半分に分割して交差）', correct: true },
+          { label: 'AddRoundKey（ラウンド鍵とXOR）' },
+        ],
+        explanation: '正解！AESはSPN構造であり、Feistelネットワークは使いません。Feistel構造はDESなど別のブロック暗号で採用されている方式です。AESは SubBytes / ShiftRows / MixColumns / AddRoundKey の4操作を繰り返します。',
+      },
+    },
+    {
+      title: 'ブロックモード: ECB, CBC, CTR, GCM',
+      content: <BlockModes />,
+      quiz: {
+        question: 'ECBモードが危険な理由は？',
+        options: [
+          { label: '暗号化速度が遅すぎるから' },
+          { label: '鍵長が短くなるから' },
+          { label: '同じ平文ブロックが同じ暗号文になり、パターンが漏れるから', correct: true },
+          { label: 'IVが必要だが生成が難しいから' },
+        ],
+        explanation: '正解！ECBは各ブロックを独立に暗号化するため、同じ内容の平文ブロックはすべて同じ暗号文になります。これによりデータのパターン（画像の輪郭など）がそのまま露出してしまいます。',
+      },
+    },
+    {
+      title: 'ハンズオン: AES暗号化/復号',
+      content: <EncryptDecryptDemo />,
+    },
+    {
+      title: 'モード比較: ECBの弱点を見る',
+      content: <ModeComparisonDemo />,
+    },
+    {
+      title: 'AESの実世界での活用',
+      content: <RealWorldAES />,
+      quiz: {
+        question: 'TLS 1.3でAESはどのように使われている？',
+        options: [
+          { label: 'AESだけで鍵交換と暗号化の両方を行う' },
+          { label: 'ECDHで共通鍵を共有し、AES-GCMでデータを暗号化するハイブリッド構成', correct: true },
+          { label: 'AES-ECBモードでWebページを暗号化する' },
+          { label: 'AESの鍵をそのままパスワードとして送信する' },
+        ],
+        explanation: '正解！TLS 1.3ではECDH（公開鍵暗号）でセッション鍵を安全に共有し、その鍵からHKDFでAES-GCM用の鍵を導出してデータを暗号化するハイブリッド構成を採用しています。',
+      },
+    },
+  ]
+
+  return (
+    <main className="page aes">
+      <StepLesson
+        title="AES 対称鍵暗号"
+        steps={steps}
+      />
     </main>
   )
 }

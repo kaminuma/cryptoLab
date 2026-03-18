@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
+import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
+import '../components/ui/StepLesson.css'
 
 type InputFormat = 'text' | 'hex' | 'base64'
 
@@ -74,17 +76,51 @@ const formatOptions: Array<{ value: InputFormat; label: string }> = [
   { value: 'base64', label: 'Base64' },
 ]
 
-export default function ToolsXorConverterPage() {
+function WhatIsXor() {
+  return (
+    <>
+      <p>
+        XOR（排他的論理和）は、2つのビットを比較して<strong>異なれば1、同じなら0</strong>を返す論理演算です。
+        暗号の世界では最も基本的な演算のひとつです。
+      </p>
+
+      <div className="step-lesson__visual">
+        <table>
+          <thead>
+            <tr>
+              <th>A</th>
+              <th>B</th>
+              <th>A XOR B</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>0</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td></tr>
+            <tr><td>1</td><td>1</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>XOR の最も重要な性質は<strong>対称性</strong>です:</p>
+      <ul>
+        <li><code>A XOR K = C</code> （暗号化）</li>
+        <li><code>C XOR K = A</code> （復号）</li>
+      </ul>
+
+      <div className="step-lesson__callout">
+        つまり、同じ鍵で暗号化と復号ができます。これがXOR暗号の最大の特徴です。
+      </div>
+    </>
+  )
+}
+
+function InteractiveXorDemo() {
   const [dataInput, setDataInput] = useState('Hello, World!')
   const [dataFormat, setDataFormat] = useState<InputFormat>('text')
   const [keyInput, setKeyInput] = useState('KEY')
   const [keyFormat, setKeyFormat] = useState<InputFormat>('text')
   const [outputFormat, setOutputFormat] = useState<InputFormat>('hex')
-
-  useEffect(() => {
-    document.title = 'XOR 暗号化ツール - CryptoLab'
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [])
 
   const result = useMemo(() => {
     try {
@@ -152,69 +188,49 @@ export default function ToolsXorConverterPage() {
   }
 
   return (
-    <main className="page tools xor-converter">
-      <header className="page-header">
-        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>
-          [ UTILITY: XOR_CIPHER ]
-        </p>
-        <h1 style={{ letterSpacing: '-0.05em' }}>XOR 暗号化ツール</h1>
-        <p className="lede">
-          XOR（排他的論理和）は暗号の基本演算。同じ鍵で暗号化と復号が可能な対称暗号の原点を体験する。
-        </p>
-      </header>
+    <>
+      <p>データと鍵を XOR 演算します。同じ操作で暗号化も復号もできます。</p>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>XOR 暗号化 / 復号</h2>
-          <p>
-            データと鍵を XOR 演算します。同じ操作で暗号化も復号もできます。
-            鍵はデータより短い場合、繰り返し適用されます。
-          </p>
-        </div>
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
 
-        <div style={{ display: 'grid', gap: '24px', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-          <div>
-            <div className="control-group">
-              <label htmlFor="data-format">データの形式</label>
-              <select
-                id="data-format"
-                className="text-input"
-                value={dataFormat}
-                onChange={(e) => setDataFormat(e.target.value as InputFormat)}
-              >
-                {formatOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
+        <div className="step-lesson__comparison">
+          <div className="step-lesson__comparison-item">
+            <label htmlFor="data-format">データの形式</label>
+            <select
+              id="data-format"
+              value={dataFormat}
+              onChange={(e) => setDataFormat(e.target.value as InputFormat)}
+            >
+              {formatOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
             <label htmlFor="data-input">データ（平文 or 暗号文）</label>
             <textarea
               id="data-input"
-              rows={4}
+              rows={3}
               value={dataInput}
               onChange={(e) => setDataInput(e.target.value)}
               placeholder="暗号化または復号したいデータ"
             />
           </div>
 
-          <div>
-            <div className="control-group">
-              <label htmlFor="key-format">鍵の形式</label>
-              <select
-                id="key-format"
-                className="text-input"
-                value={keyFormat}
-                onChange={(e) => setKeyFormat(e.target.value as InputFormat)}
-              >
-                {formatOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
+          <div className="step-lesson__comparison-item">
+            <label htmlFor="key-format">鍵の形式</label>
+            <select
+              id="key-format"
+              value={keyFormat}
+              onChange={(e) => setKeyFormat(e.target.value as InputFormat)}
+            >
+              {formatOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
             <label htmlFor="key-input">鍵（Key）</label>
             <textarea
               id="key-input"
-              rows={4}
+              rows={3}
               value={keyInput}
               onChange={(e) => setKeyInput(e.target.value)}
               placeholder="XOR に使う鍵"
@@ -222,48 +238,45 @@ export default function ToolsXorConverterPage() {
           </div>
         </div>
 
-        <hr />
-
-        <div className="control-group">
-          <label htmlFor="output-format">出力形式</label>
-          <select
-            id="output-format"
-            className="text-input"
-            value={outputFormat}
-            onChange={(e) => setOutputFormat(e.target.value as InputFormat)}
-          >
-            {formatOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </div>
+        <label htmlFor="output-format">出力形式</label>
+        <select
+          id="output-format"
+          value={outputFormat}
+          onChange={(e) => setOutputFormat(e.target.value as InputFormat)}
+        >
+          {formatOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
 
         <label htmlFor="xor-output">XOR 結果</label>
         <textarea
           id="xor-output"
-          rows={4}
+          rows={3}
           value={result.output}
           readOnly
           placeholder="結果がここに表示されます"
         />
-        {result.error && <p className="feedback error">{result.error}</p>}
+        {result.error && <p className="step-lesson__demo-result">{result.error}</p>}
 
-        <div className="actions">
-          <button onClick={copyToClipboard} disabled={!result.output}>
+        <div>
+          <button
+            onClick={copyToClipboard}
+            disabled={!result.output}
+            className="step-lesson__demo-btn step-lesson__demo-btn--secondary"
+          >
             結果をコピー
           </button>
-          {copyFeedback && <span className="feedback info">{copyFeedback}</span>}
+          {copyFeedback && <span className="step-lesson__demo-result">{copyFeedback}</span>}
         </div>
-      </section>
+      </div>
 
       {result.breakdown.length > 0 && (
-        <section className="card">
-          <div className="card-header">
-            <h2>XOR 演算の内訳</h2>
-            <p>各バイトがどのように XOR されたかを確認できます。</p>
-          </div>
+        <div className="step-lesson__demo">
+          <span className="step-lesson__demo-label">XOR 演算の内訳</span>
+          <p>各バイトがどのように XOR されたかを確認できます。</p>
 
-          <div style={{ overflowX: 'auto' }}>
+          <div className="step-lesson__table-wrap">
             <table>
               <thead>
                 <tr>
@@ -282,17 +295,17 @@ export default function ToolsXorConverterPage() {
                     <td>{row.index}</td>
                     <td>
                       <code>{row.dataChar}</code>{' '}
-                      <span style={{ color: 'var(--color-text-muted)' }}>({row.dataByte})</span>
+                      ({row.dataByte})
                     </td>
                     <td><code>{row.dataByte.toString(2).padStart(8, '0')}</code></td>
                     <td>
                       <code>{row.keyChar}</code>{' '}
-                      <span style={{ color: 'var(--color-text-muted)' }}>({row.keyByte})</span>
+                      ({row.keyByte})
                     </td>
                     <td><code>{row.keyByte.toString(2).padStart(8, '0')}</code></td>
                     <td>
                       <code>{row.resultChar}</code>{' '}
-                      <span style={{ color: 'var(--color-text-muted)' }}>({row.resultByte})</span>
+                      ({row.resultByte})
                     </td>
                     <td><code>{row.resultByte.toString(2).padStart(8, '0')}</code></td>
                   </tr>
@@ -300,23 +313,109 @@ export default function ToolsXorConverterPage() {
               </tbody>
             </table>
             {result.breakdown.length > 50 && (
-              <p className="hint">最初の 50 バイトのみ表示しています。</p>
+              <p>最初の 50 バイトのみ表示しています。</p>
             )}
           </div>
-        </section>
-      )}
-
-      <section className="card">
-        <div className="card-header">
-          <h2>XOR 暗号の特徴</h2>
         </div>
-        <ul style={{ lineHeight: 1.8 }}>
-          <li><strong>対称性:</strong> 同じ鍵で暗号化と復号ができる（A ⊕ K ⊕ K = A）</li>
-          <li><strong>可逆性:</strong> 元のデータを完全に復元可能</li>
-          <li><strong>単純さ:</strong> ビット単位の排他的論理和のみで実装可能</li>
-          <li><strong>注意点:</strong> 鍵の再利用は危険。OTP（One-Time Pad）でない限り、統計的攻撃に脆弱</li>
-        </ul>
-      </section>
+      )}
+    </>
+  )
+}
+
+function XorInCryptography() {
+  return (
+    <>
+      <p>XOR は現代の暗号技術のあらゆる場所で使われています。</p>
+      <ul>
+        <li>
+          <strong>ワンタイムパッド (OTP):</strong> 鍵がデータと同じ長さで、完全にランダムで、一度しか使わない場合、
+          XOR暗号は<strong>理論上解読不可能</strong>です（シャノンの定理）。
+        </li>
+        <li>
+          <strong>ストリーム暗号:</strong> RC4やChaCha20などは、擬似乱数ストリームとデータをXORします。
+        </li>
+        <li>
+          <strong>ブロック暗号のモード:</strong> AESのCBCモードやCTRモードでは、XORが中核的な役割を果たします。
+        </li>
+        <li>
+          <strong>ハッシュ関数:</strong> SHA-256の圧縮関数でもXOR演算が多用されています。
+        </li>
+      </ul>
+
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>XOR暗号の強み</h3>
+          <ul>
+            <li>実装が極めてシンプル</li>
+            <li>暗号化と復号が同一操作</li>
+            <li>OTPなら情報理論的に安全</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>XOR暗号の弱点</h3>
+          <ul>
+            <li>鍵の再利用は致命的（<code>C1 XOR C2 = P1 XOR P2</code>）</li>
+            <li>短い鍵の繰り返しは統計的攻撃に脆弱</li>
+            <li>鍵配送問題が残る</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>CTFでのポイント:</strong> XOR暗号の問題では、既知平文攻撃（Known Plaintext Attack）が有効です。
+        平文の一部が分かっていれば、<code>P XOR C = K</code> で鍵を特定できます。
+      </div>
+    </>
+  )
+}
+
+export default function ToolsXorConverterPage() {
+  useEffect(() => {
+    document.title = 'XOR 暗号化ツール - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  const steps: LessonStep[] = [
+    {
+      title: 'XOR（排他的論理和）とは？',
+      content: <WhatIsXor />,
+      quiz: {
+        question: 'XOR の最も重要な性質は？',
+        options: [
+          { label: '計算が高速であること' },
+          { label: '出力が常に入力より大きくなること' },
+          { label: '同じ鍵で暗号化と復号ができる（対称性）', correct: true },
+          { label: '出力が固定長になること' },
+        ],
+        explanation: '正解！A XOR K = C のとき、C XOR K = A が成り立ちます。この対称性により、同じ鍵と同じ操作で暗号化と復号の両方が可能になります。',
+      },
+    },
+    {
+      title: 'XOR 暗号化ツール',
+      content: <InteractiveXorDemo />,
+    },
+    {
+      title: '暗号技術におけるXOR',
+      content: <XorInCryptography />,
+      quiz: {
+        question: 'ワンタイムパッド（OTP）が解読不可能になる条件は？',
+        options: [
+          { label: '鍵を3回以上繰り返し使用すること' },
+          { label: 'AES暗号と組み合わせること' },
+          { label: '鍵がデータと同じ長さで、完全にランダムで、一度しか使わないこと', correct: true },
+          { label: '鍵をハッシュ化してから使用すること' },
+        ],
+        explanation: '正解！この3つの条件（同じ長さ、完全ランダム、使い捨て）を全て満たすとき、ワンタイムパッドは情報理論的に安全、つまり理論上解読不可能になります。',
+      },
+    },
+  ]
+
+  return (
+    <main className="page tools xor-converter">
+      <StepLesson
+        title="XOR 暗号化ツール"
+        steps={steps}
+      />
     </main>
   )
 }

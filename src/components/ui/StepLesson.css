@@ -1,0 +1,575 @@
+/* =========================================
+   StepLesson — Brilliant-style step UI
+   1画面1概念、プログレスバー、ミニクイズ
+   ========================================= */
+
+.step-lesson {
+  max-width: 680px;
+  margin: 0 auto;
+  min-height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.step-lesson__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+}
+
+.step-lesson__title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.step-lesson__counter {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-subtle);
+}
+
+/* Progress bar */
+.step-lesson__progress-track {
+  width: 100%;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.step-lesson__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Step dots */
+.step-lesson__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: var(--spacing-lg) 0 var(--spacing-md);
+}
+
+.step-lesson__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.step-lesson__dot:hover {
+  border-color: var(--color-primary);
+}
+
+.step-lesson__dot--active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  transform: scale(1.3);
+}
+
+.step-lesson__dot--completed {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+/* Body — the main content area */
+.step-lesson__body {
+  flex: 1;
+  padding: var(--spacing-lg) 0;
+  animation: step-fade-in 0.35s ease;
+}
+
+@keyframes step-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-lesson__step-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text-main);
+}
+
+[data-theme='classic'] .step-lesson__step-title {
+  font-family: var(--font-classic);
+}
+
+.step-lesson__content {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
+.step-lesson__content p {
+  margin-bottom: var(--spacing-md);
+}
+
+.step-lesson__content ul,
+.step-lesson__content ol {
+  padding-left: 24px;
+  margin-bottom: var(--spacing-md);
+}
+
+.step-lesson__content li {
+  margin-bottom: var(--spacing-xs);
+}
+
+.step-lesson__content strong {
+  color: var(--color-text-main);
+  font-weight: 700;
+}
+
+.step-lesson__content code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+}
+
+/* Inline visual blocks within steps */
+.step-lesson__visual {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+}
+
+.step-lesson__comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+}
+
+@media (max-width: 600px) {
+  .step-lesson__comparison {
+    grid-template-columns: 1fr;
+  }
+}
+
+.step-lesson__comparison-item {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+}
+
+.step-lesson__comparison-item h3 {
+  font-size: 1rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-main);
+}
+
+.step-lesson__comparison-item ul {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.step-lesson__comparison-item li {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+/* Callout inside step */
+.step-lesson__callout {
+  background: rgba(14, 165, 233, 0.08);
+  border-left: 3px solid #0ea5e9;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+  font-size: 0.95rem;
+}
+
+.step-lesson__callout strong {
+  color: var(--color-text-main);
+}
+
+/* Big number / stat */
+.step-lesson__big-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  text-align: center;
+  margin: var(--spacing-lg) 0 var(--spacing-sm);
+  font-family: var(--font-mono);
+}
+
+.step-lesson__big-label {
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: 0.9rem;
+}
+
+/* =========================================
+   Quiz Section
+   ========================================= */
+
+.step-lesson__quiz {
+  margin-top: var(--spacing-2xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.step-lesson__quiz-question {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: var(--spacing-lg);
+}
+
+.step-lesson__quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.step-lesson__quiz-option {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--color-text-main);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+
+.step-lesson__quiz-option:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.05);
+}
+
+.step-lesson__quiz-option--correct {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.step-lesson__quiz-option--wrong {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.step-lesson__quiz-option:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.step-lesson__quiz-feedback {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  animation: step-fade-in 0.3s ease;
+}
+
+.step-lesson__quiz-feedback--correct {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #16a34a;
+}
+
+.step-lesson__quiz-feedback--wrong {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #dc2626;
+}
+
+/* =========================================
+   Navigation Buttons
+   ========================================= */
+
+.step-lesson__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xl) 0 var(--spacing-2xl);
+  border-top: 1px solid var(--color-border);
+  margin-top: auto;
+}
+
+.step-lesson__nav-btn {
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: var(--font-sans);
+}
+
+.step-lesson__nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.step-lesson__nav-btn--prev {
+  background: transparent;
+  border: 2px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.step-lesson__nav-btn--prev:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.step-lesson__nav-btn--next {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
+}
+
+.step-lesson__nav-btn--next:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(var(--color-primary-rgb), 0.4);
+  transform: translateY(-1px);
+}
+
+.step-lesson__nav-btn--next:disabled {
+  box-shadow: none;
+}
+
+[data-theme='classic'] .step-lesson__nav-btn--next {
+  background: var(--color-primary);
+  border-radius: 0;
+  box-shadow: 3px 3px 0px var(--color-text-main);
+}
+
+/* =========================================
+   Demo Action Buttons (inside step content)
+   ========================================= */
+
+.step-lesson__demo-btn {
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: var(--font-sans);
+}
+
+.step-lesson__demo-btn--primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
+}
+
+.step-lesson__demo-btn--primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(var(--color-primary-rgb), 0.4);
+  transform: translateY(-1px);
+}
+
+.step-lesson__demo-btn--secondary {
+  background: transparent;
+  border: 2px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.step-lesson__demo-btn--secondary:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.step-lesson__demo-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+[data-theme='classic'] .step-lesson__demo-btn--primary {
+  background: var(--color-primary);
+  border-radius: 0;
+  box-shadow: 3px 3px 0px var(--color-text-main);
+}
+
+/* =========================================
+   Interactive Demo block (inside a step)
+   ========================================= */
+
+.step-lesson__demo {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-lg) 0;
+}
+
+.step-lesson__demo-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: rgba(var(--color-primary-rgb), 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: var(--spacing-md);
+  display: inline-block;
+}
+
+.step-lesson__demo label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-main);
+  font-size: 0.9rem;
+}
+
+.step-lesson__demo-result {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  word-break: break-all;
+  padding: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: var(--radius-sm);
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-main);
+}
+
+/* =========================================
+   Completion Screen
+   ========================================= */
+
+.step-lesson__complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  text-align: center;
+  padding: var(--spacing-2xl) 0;
+}
+
+.step-lesson__complete-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-xl);
+  animation: step-scale-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes step-scale-in {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.step-lesson__complete-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-main);
+}
+
+.step-lesson__complete-stats {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-xl);
+}
+
+/* =========================================
+   Focus States (Accessibility)
+   ========================================= */
+
+.step-lesson__dot:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.step-lesson__quiz-option:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.step-lesson__nav-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* =========================================
+   Input Styling inside demos
+   ========================================= */
+
+.step-lesson__demo input[type="text"],
+.step-lesson__demo input[type="number"],
+.step-lesson__demo textarea,
+.step-lesson__demo select {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--color-bg-body);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+  transition: border-color 0.2s;
+}
+
+.step-lesson__demo input:focus,
+.step-lesson__demo textarea:focus,
+.step-lesson__demo select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .step-lesson {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .step-lesson__step-title {
+    font-size: 1.35rem;
+  }
+
+  .step-lesson__content {
+    font-size: 1rem;
+  }
+
+  .step-lesson__nav-btn {
+    padding: 10px 20px;
+    font-size: 0.875rem;
+  }
+
+  .step-lesson__big-number {
+    font-size: 2rem;
+  }
+}

@@ -1,21 +1,8 @@
 import { useEffect, useState } from 'react'
+import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
+import '../components/ui/StepLesson.css'
 import { aesGcmDecrypt, aesGcmEncrypt } from '@/lib/crypto/webcrypto'
 import { base64ToBytes, bytesToBase64, bytesToUtf8, utf8ToBytes } from '@/utils/encoding'
-
-const info = {
-  title: 'AES-GCM とは？',
-  summary:
-    '共通鍵暗号 AES (Advanced Encryption Standard) の認証付き暗号モード。暗号化と同時に改ざん検知タグを生成します。',
-  details:
-    'GCM (Galois/Counter Mode) は高速かつ並列性が高く、TLS や WebCrypto で標準的に利用されるモードです。安全性を保つには「IV を絶対に再利用しない」ことが重要です。本デモでは暗号化実行時に 96bit のランダム IV を自動生成し、Base64 で表示・コピーできるようにしています。',
-  points: [
-    'Passphrase から SHA-256 で 256bit のキーを作成（デモ用簡易 PBKDF）。',
-    '暗号結果は Base64 の IV + Ciphertext として保存。',
-    '復号時は同じ Passphrase と IV/Ciphertext を入力すると平文が復元できます。',
-  ],
-}
-
-const defaultText = 'AES-GCM は IV の再利用が禁止。毎回ランダム生成しましょう。'
 
 const deriveKey = async (passphrase: string) => {
   const material = utf8ToBytes(passphrase)
@@ -29,13 +16,74 @@ const validatePassphrase = (value: string) => {
   }
 }
 
-export default function SymmetricPage() {
-  const [plaintext, setPlaintext] = useState(defaultText)
+function WhatIsSymmetric() {
+  return (
+    <>
+      <p>
+        共通鍵暗号（対称暗号）は、<strong>暗号化と復号に同じ鍵を使う</strong>最も基本的な暗号方式です。
+      </p>
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>暗号化</h3>
+          <ul>
+            <li><strong>入力:</strong> 平文 + 共通鍵</li>
+            <li><strong>出力:</strong> 暗号文</li>
+            <li><strong>目的:</strong> データを読めなくする</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>復号</h3>
+          <ul>
+            <li><strong>入力:</strong> 暗号文 + 同じ共通鍵</li>
+            <li><strong>出力:</strong> 元の平文</li>
+            <li><strong>目的:</strong> データを元に戻す</li>
+          </ul>
+        </div>
+      </div>
+      <div className="step-lesson__visual">
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', lineHeight: '2.2', textAlign: 'left', display: 'inline-block' }}>
+          <div>Alice: 平文 + 鍵K → 暗号文</div>
+          <div>　　　　　↓ （暗号文を送信）</div>
+          <div>Bob: 　暗号文 + 鍵K → 平文</div>
+        </div>
+      </div>
+      <div className="step-lesson__callout">
+        AES（Advanced Encryption Standard）は現在最も広く使われている共通鍵暗号です。
+        2001年にNISTが標準化し、鍵長は128/192/256ビットから選べます。
+      </div>
+    </>
+  )
+}
 
-  useEffect(() => {
-    document.title = '共通鍵暗号 - CryptoLab'
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [])
+function KeyExchangeProblem() {
+  return (
+    <>
+      <p>
+        共通鍵暗号には根本的な課題があります。それは<strong>「鍵をどうやって安全に共有するか」</strong>という問題です。
+      </p>
+      <div className="step-lesson__visual">
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', lineHeight: '2.2', textAlign: 'left', display: 'inline-block' }}>
+          <div>Alice ────── 鍵K ──────→ Bob</div>
+          <div>　　　　　　↑</div>
+          <div>　　　　盗聴者Eve</div>
+          <div>　　　（鍵Kを傍受！）</div>
+        </div>
+      </div>
+      <p>
+        暗号文を送る前に、まず鍵を安全に届ける必要があります。しかし安全な通信路がないからこそ暗号が必要なのです。
+        これを<strong>鍵配送問題</strong>（Key Distribution Problem）といいます。
+      </p>
+      <div className="step-lesson__callout">
+        <strong>解決策:</strong> この問題は公開鍵暗号（Diffie-Hellman鍵交換やRSA）の発明により解決されました。
+        現代のTLSでは、公開鍵暗号で共通鍵を安全に共有し、実際のデータ暗号化には高速な共通鍵暗号（AES）を使います。
+      </div>
+    </>
+  )
+}
+
+function InteractiveDemo() {
+  const defaultText = 'AES-GCM は IV の再利用が禁止。毎回ランダム生成しましょう。'
+  const [plaintext, setPlaintext] = useState(defaultText)
   const [passphrase, setPassphrase] = useState('cryptolab-demo')
   const [ivBase64, setIvBase64] = useState('')
   const [cipherBase64, setCipherBase64] = useState('')
@@ -93,107 +141,199 @@ export default function SymmetricPage() {
   }
 
   return (
-    <main className="page symmetric">
-      <header className="page-header">
-        <p className="eyebrow" style={{ color: 'var(--color-primary)', textShadow: '0 0 10px var(--color-primary)' }}>[ SYSTEM STATUS: SECURE ]</p>
-        <h1 style={{ letterSpacing: '-0.05em' }}>現代共通鍵暗号: AES-GCM</h1>
-        <p className="lede">
-          現代のインターネット通信を支える最強の盾。
-          WebCrypto API を直接叩き、ミリ秒単位で実行される暗号化シーケンスを観測せよ。
-        </p>
-      </header>
+    <>
+      <p>
+        WebCrypto APIを使ってAES-GCMの暗号化・復号を体験しましょう。
+        パスフレーズを変えたり、暗号文を一部変更して復号してみてください。
+      </p>
 
-      <section className="card">
-        <div className="card-header">
-          <h2>入力とパラメータ</h2>
-          <p>Passphrase と平文を準備し、暗号化条件を決めます。</p>
-        </div>
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
 
-        <label htmlFor="passphrase">パスフレーズ</label>
+        <label htmlFor="sym-passphrase">パスフレーズ</label>
         <input
-          id="passphrase"
-          className="text-input"
+          id="sym-passphrase"
           type="text"
           placeholder="cryptolab-demo"
           value={passphrase}
-          onChange={(event) => setPassphrase(event.target.value)}
+          onChange={(e) => setPassphrase(e.target.value)}
         />
-        <p className="hint">※ デモのため SHA-256 でそのまま鍵導出しています。</p>
 
-        <label htmlFor="plaintext">平文テキスト</label>
+        <label htmlFor="sym-plaintext">平文テキスト</label>
         <textarea
-          id="plaintext"
-          rows={4}
+          id="sym-plaintext"
+          rows={3}
           value={plaintext}
-          onChange={(event) => setPlaintext(event.target.value)}
+          onChange={(e) => setPlaintext(e.target.value)}
           placeholder="ここに暗号化したいテキストを入力"
         />
 
-        <div className="info-panel">
-          <h3>{info.title}</h3>
-          <p>{info.summary}</p>
-          <p className="details">{info.details}</p>
-          <ul>
-            {info.points.map((point) => (
-              <li key={point}>{point}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="card">
-        <div className="card-header">
-          <h2>暗号化と復号</h2>
-          <p>IV は毎回ランダム生成し、暗号文とセットで管理します。</p>
-        </div>
-
-        <div className="actions">
-          <button className="primary" type="button" onClick={handleEncrypt} disabled={isProcessing}>
+        <div className="step-lesson__demo-actions">
+          <button
+            type="button"
+            onClick={handleEncrypt}
+            disabled={isProcessing}
+            className="step-lesson__demo-btn step-lesson__demo-btn--primary"
+          >
             暗号化
           </button>
-          <button className="secondary" type="button" onClick={handleDecrypt} disabled={isProcessing}>
+          <button
+            type="button"
+            onClick={handleDecrypt}
+            disabled={isProcessing}
+            className="step-lesson__demo-btn step-lesson__demo-btn--secondary"
+          >
             復号
           </button>
         </div>
 
-        {feedback && <p className={`feedback ${feedbackType}`}>{feedback}</p>}
+        {feedback && (
+          <div className={`step-lesson__quiz-feedback ${
+            feedbackType === 'error' ? 'step-lesson__quiz-feedback--wrong' : 'step-lesson__quiz-feedback--correct'
+          }`}>
+            {feedback}
+          </div>
+        )}
 
-        <label htmlFor="iv">IV（Base64）</label>
+        <label>IV（Base64）</label>
         <textarea
-          id="iv"
           rows={2}
           value={ivBase64}
-          onChange={(event) => setIvBase64(event.target.value)}
+          onChange={(e) => setIvBase64(e.target.value)}
           placeholder="暗号化で生成された IV を貼り付け"
         />
 
-        <label htmlFor="cipher">暗号文（Base64）</label>
+        <label>暗号文（Base64）</label>
         <textarea
-          id="cipher"
-          rows={4}
+          rows={3}
           value={cipherBase64}
-          onChange={(event) => setCipherBase64(event.target.value)}
+          onChange={(e) => setCipherBase64(e.target.value)}
           placeholder="暗号化で生成された Base64 を貼り付け"
         />
 
-        <label htmlFor="plaintext-result">復号結果</label>
-        <textarea
-          id="plaintext-result"
-          rows={4}
-          value={decryptedText}
-          placeholder="復号結果がここに表示されます"
-          readOnly
-        />
-      </section>
+        <label>復号結果</label>
+        <div className="step-lesson__demo-result">
+          {decryptedText || '（復号結果がここに表示されます）'}
+        </div>
+      </div>
 
-      <section className="card caution">
-        <h2>注意</h2>
-        <ul>
-          <li>この画面は学習用です。実運用では PBKDF2/Argon2 など正式な KDF と鍵保護を併用してください。</li>
-          <li>IV を再利用すると AES-GCM の安全性が失われます。毎回生成し、暗号文とセットで伝達してください。</li>
-          <li>デモで入力したテキストはブラウザ内に留まり、外部サーバーへは送信されません。</li>
-        </ul>
-      </section>
+      <div className="step-lesson__callout">
+        <strong>注意:</strong> このデモではSHA-256でパスフレーズから直接鍵を導出しています。
+        実運用ではPBKDF2やArgon2などの正式なKDFを使ってください。
+      </div>
+    </>
+  )
+}
+
+function SymmetricInPractice() {
+  return (
+    <>
+      <p>共通鍵暗号は現代のセキュリティ基盤のあらゆる場所で使われています。</p>
+      <ul>
+        <li>
+          <strong>HTTPS/TLS通信</strong> — Webブラウザとサーバー間の通信は、
+          鍵交換後にAES-GCMで暗号化されます。
+        </li>
+        <li>
+          <strong>ディスク暗号化</strong> — FileVault（macOS）やBitLocker（Windows）は
+          AESでストレージ全体を暗号化します。
+        </li>
+        <li>
+          <strong>メッセージアプリ</strong> — Signal、WhatsAppなどのエンドツーエンド暗号化は、
+          鍵交換後にAESで各メッセージを暗号化します。
+        </li>
+        <li>
+          <strong>VPN</strong> — WireGuardやIPsecはAESやChaCha20で
+          トンネル内のデータを暗号化します。
+        </li>
+      </ul>
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>AES-GCM の利点</h3>
+          <ul>
+            <li>暗号化と認証を同時に行う</li>
+            <li>ハードウェア支援（AES-NI）で高速</li>
+            <li>並列処理が可能</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>AES-GCM の注意点</h3>
+          <ul>
+            <li>IVを絶対に再利用しない</li>
+            <li>鍵の安全な管理が必須</li>
+            <li>大量データにはチャンク処理が必要</li>
+          </ul>
+        </div>
+      </div>
+      <div className="step-lesson__callout">
+        <strong>重要:</strong> AES-GCMではIV（初期化ベクトル）を再利用すると、
+        暗号文から鍵が復元される致命的な脆弱性が生じます。毎回ランダムに生成し、暗号文とセットで管理しましょう。
+      </div>
+    </>
+  )
+}
+
+export default function SymmetricPage() {
+  useEffect(() => {
+    document.title = '共通鍵暗号 - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  const steps: LessonStep[] = [
+    {
+      title: '共通鍵暗号とは？',
+      content: <WhatIsSymmetric />,
+      quiz: {
+        question: '共通鍵暗号の最大の特徴は？',
+        options: [
+          { label: '暗号化と復号に異なる鍵を使う' },
+          { label: '暗号化と復号に同じ鍵を使う', correct: true },
+          { label: '鍵なしで暗号化できる' },
+          { label: '暗号化はできるが復号はできない' },
+        ],
+        explanation: '正解！共通鍵暗号（対称暗号）は、送信者と受信者が同じ鍵を共有し、その鍵で暗号化と復号の両方を行います。',
+      },
+    },
+    {
+      title: '鍵配送問題',
+      content: <KeyExchangeProblem />,
+      quiz: {
+        question: '鍵配送問題とは何か？',
+        options: [
+          { label: '鍵のサイズが大きすぎて送れない問題' },
+          { label: '鍵の生成に時間がかかりすぎる問題' },
+          { label: '安全な通信路なしに共通鍵を安全に共有できない問題', correct: true },
+          { label: '鍵が一定期間で失効してしまう問題' },
+        ],
+        explanation: '正解！暗号通信のために鍵が必要だが、鍵を安全に送るための安全な通信路がない — これが鍵配送問題です。公開鍵暗号の発明により解決されました。',
+      },
+    },
+    {
+      title: 'AES-GCM を試してみよう',
+      content: <InteractiveDemo />,
+    },
+    {
+      title: '共通鍵暗号の実用例',
+      content: <SymmetricInPractice />,
+      quiz: {
+        question: 'AES-GCMでIVを再利用すると何が起きる？',
+        options: [
+          { label: '暗号化速度が低下する' },
+          { label: '暗号文のサイズが大きくなる' },
+          { label: '暗号文から鍵が復元される脆弱性が生じる', correct: true },
+          { label: '特に問題はない' },
+        ],
+        explanation: '正解！AES-GCMではIVの再利用は致命的です。同じ鍵とIVの組み合わせを使うと、暗号文のXORから平文の情報が漏洩し、認証タグの偽造も可能になります。',
+      },
+    },
+  ]
+
+  return (
+    <main className="page symmetric">
+      <StepLesson
+        title="共通鍵暗号: AES-GCM"
+        steps={steps}
+      />
     </main>
   )
 }

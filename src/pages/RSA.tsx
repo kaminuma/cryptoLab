@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import StepLesson, { type LessonStep } from '../components/ui/StepLesson'
+import '../components/ui/StepLesson.css'
 import {
   generateSimpleRSAKey,
   rsaEncrypt,
@@ -16,31 +18,146 @@ const formatBigInt = (value: bigint, group = 64) => {
   return text.replace(new RegExp(`.{1,${group}}`, 'g'), '$&\n').trim()
 }
 
-export default function RSAPage() {
-  // 小さい数でのデモ用
+/* =========================================
+   Step 1: 公開鍵暗号とは
+   ========================================= */
+function PublicKeyCryptography() {
+  return (
+    <>
+      <p>
+        従来の暗号（共通鍵暗号）では、暗号化と復号に<strong>同じ鍵</strong>を使います。
+        これは「鍵をどうやって安全に共有するか」という問題（鍵配送問題）を抱えていました。
+      </p>
+      <p>
+        1977年、Ron Rivest、Adi Shamir、Leonard Adlemanの3人が発明したRSAは、
+        <strong>異なる鍵</strong>を使う画期的な暗号方式です。
+      </p>
+
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>公開鍵（Public Key）</h3>
+          <ul>
+            <li><strong>誰でも知ってOK</strong></li>
+            <li>暗号化に使用</li>
+            <li>メッセージの検証に使用</li>
+            <li>公開ディレクトリに登録可能</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>秘密鍵（Private Key）</h3>
+          <ul>
+            <li><strong>本人だけが知っている</strong></li>
+            <li>復号に使用</li>
+            <li>署名の生成に使用</li>
+            <li>絶対に秘密にする</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>RSAの革新性：</strong>
+        公開鍵で暗号化したデータは、対応する秘密鍵でしか復号できません。
+        つまり、鍵を安全に配送する必要がなくなりました。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 2: RSAの数学的基礎
+   ========================================= */
+function MathFoundations() {
+  return (
+    <>
+      <p>RSAの安全性は、いくつかの数学的概念に基づいています。</p>
+
+      <ol>
+        <li>
+          <strong>素数（Prime Number）</strong> — 1とその数自身以外に約数を持たない自然数。
+          RSAでは2つの大きな素数p, qを選び、その積 n = p x q を公開鍵の一部にします。
+        </li>
+        <li>
+          <strong>モジュラ演算（剰余演算）</strong> — 割り算の余りを扱う演算。
+          <code>17 mod 5 = 2</code> のように表記します。
+        </li>
+        <li>
+          <strong>オイラーのφ関数</strong> — φ(n)は、n以下の正の整数のうちnと互いに素であるものの個数。
+          p, qが異なる素数のとき <strong>φ(p x q) = (p - 1) x (q - 1)</strong> です。
+        </li>
+        <li>
+          <strong>モジュラ逆元</strong> — a x d ≡ 1 (mod n) を満たす数dのこと。
+          RSAでは秘密指数dがこれにあたります。
+        </li>
+      </ol>
+
+      <div className="step-lesson__visual">
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', lineHeight: '2', textAlign: 'left', display: 'inline-block' }}>
+          <div>例: p = 61, q = 53</div>
+          <div>n = 61 x 53 = 3233</div>
+          <div>φ(n) = 60 x 52 = 3120</div>
+          <div>e = 17 (gcd(17, 3120) = 1)</div>
+          <div>d = 2753 (17 x 2753 mod 3120 = 1)</div>
+        </div>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>nからp, qを求める（素因数分解）のが非常に困難</strong>であることが、RSAの安全性の根拠です。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 3: RSA鍵生成アルゴリズム
+   ========================================= */
+function KeyGenAlgorithm() {
+  return (
+    <>
+      <p>RSAは鍵生成、暗号化、復号の3つのステップから成り立っています。</p>
+
+      <div className="step-lesson__visual">
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', lineHeight: '2.2', textAlign: 'left', display: 'inline-block' }}>
+          <div>1. 大きな素数 p, q を選ぶ</div>
+          <div>2. n = p x q を計算</div>
+          <div>3. φ(n) = (p-1)(q-1) を計算</div>
+          <div>4. gcd(e, φ(n)) = 1 となる e を選ぶ</div>
+          <div>5. e x d ≡ 1 (mod φ(n)) となる d を計算</div>
+          <div style={{ marginTop: 'var(--spacing-md)' }}>
+            公開鍵: (e, n) / 秘密鍵: (d, n)
+          </div>
+        </div>
+      </div>
+
+      <p>
+        暗号化は <code>c = m^e mod n</code>、復号は <code>m = c^d mod n</code> で行います。
+      </p>
+
+      <div className="step-lesson__callout">
+        <strong>なぜ正しく復号できるのか？</strong>{' '}
+        e x d ≡ 1 (mod φ(n)) という関係と、オイラーの定理により、
+        (m<sup>e</sup>)<sup>d</sup> = m<sup>ed</sup> ≡ m (mod n) が成り立ちます。
+        つまり「eで累乗してdで累乗すると元に戻る」のです。
+      </div>
+
+      <p>
+        公開指数eには慣例的に <strong>65537</strong>（2<sup>16</sup> + 1）がよく使われます。
+        バイナリ表現でビットが2つしか立たないため、暗号化の計算が高速です。
+      </p>
+    </>
+  )
+}
+
+/* =========================================
+   Step 4: 小さい数でのインタラクティブデモ
+   ========================================= */
+function SmallNumberDemo() {
   const [selectedP, setSelectedP] = useState<bigint>(61n)
   const [selectedQ, setSelectedQ] = useState<bigint>(53n)
   const [simpleKeys, setSimpleKeys] = useState<RSAKeyPair | null>(null)
-  const [message, setMessage] = useState<bigint>(65n) // 'A'のASCIIコード
+  const [message, setMessage] = useState<bigint>(65n)
   const [encrypted, setEncrypted] = useState<bigint | null>(null)
   const [decrypted, setDecrypted] = useState<bigint | null>(null)
 
-  // 2048ビット鍵生成用
-  const [status, setStatus] = useState<Status>('idle')
-  const [statusMessage, setStatusMessage] = useState('「2048ビット鍵を生成」を押すと、ブラウザ内で素数を探索します。')
-  const [bits] = useState(2048)
-  const [largeP, setLargeP] = useState<bigint | null>(null)
-  const [largeQ, setLargeQ] = useState<bigint | null>(null)
-  const [largeN, setLargeN] = useState<bigint | null>(null)
-  const [largeD, setLargeD] = useState<bigint | null>(null)
-  const [eValue] = useState(65537n)
-
-  useEffect(() => {
-    document.title = 'RSA - CryptoLab'
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [])
-
-  // 小さい数での鍵生成
   const generateKeys = () => {
     try {
       const keys = generateSimpleRSAKey(selectedP, selectedQ)
@@ -52,19 +169,213 @@ export default function RSAPage() {
     }
   }
 
-  // Web Worker参照
+  const encrypt = () => {
+    if (!simpleKeys) return
+    try {
+      const c = rsaEncrypt(message, simpleKeys.publicKey)
+      setEncrypted(c)
+      setDecrypted(null)
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '暗号化エラー')
+    }
+  }
+
+  const decrypt = () => {
+    if (!simpleKeys || encrypted === null) return
+    try {
+      const m = rsaDecrypt(encrypted, simpleKeys.privateKey)
+      setDecrypted(m)
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '復号エラー')
+    }
+  }
+
+  return (
+    <>
+      <p>実際にRSAの計算を確認できるよう、小さい素数を使って鍵を生成してみましょう。</p>
+
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
+
+        <label>素数 p を選択:</label>
+        <select
+          value={selectedP.toString()}
+          onChange={(e) => { setSelectedP(BigInt(e.target.value)); setSimpleKeys(null); setEncrypted(null); setDecrypted(null) }}
+        >
+          {SMALL_PRIMES.map(p => (
+            <option key={p.toString()} value={p.toString()}>{p.toString()}</option>
+          ))}
+        </select>
+
+        <div style={{ marginTop: 'var(--spacing-md)' }}>
+          <label>素数 q を選択:</label>
+          <select
+            value={selectedQ.toString()}
+            onChange={(e) => { setSelectedQ(BigInt(e.target.value)); setSimpleKeys(null); setEncrypted(null); setDecrypted(null) }}
+          >
+            {SMALL_PRIMES.map(q => (
+              <option key={q.toString()} value={q.toString()}>{q.toString()}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ marginTop: 'var(--spacing-lg)' }}>
+          <button onClick={generateKeys} className="primary" style={{ width: '100%' }}>
+            鍵を生成
+          </button>
+        </div>
+
+        {simpleKeys && (
+          <div style={{ marginTop: 'var(--spacing-lg)' }}>
+            <div className="step-lesson__demo-result">
+              <div>p = {simpleKeys.p.toString()}, q = {simpleKeys.q.toString()}</div>
+              <div>n = p x q = {simpleKeys.publicKey.n.toString()}</div>
+              <div>φ(n) = (p-1)(q-1) = {simpleKeys.phi.toString()}</div>
+              <div style={{ marginTop: 'var(--spacing-sm)', color: 'var(--color-primary)' }}>
+                公開鍵: (e = {simpleKeys.publicKey.e.toString()}, n = {simpleKeys.publicKey.n.toString()})
+              </div>
+              <div style={{ color: 'var(--color-accent)' }}>
+                秘密鍵: (d = {simpleKeys.privateKey.d.toString()}, n = {simpleKeys.privateKey.n.toString()})
+              </div>
+              <div style={{ marginTop: 'var(--spacing-sm)', color: 'var(--color-primary)' }}>
+                検証: e x d mod φ(n) = {((simpleKeys.publicKey.e * simpleKeys.privateKey.d) % simpleKeys.phi).toString()} ≡ 1
+              </div>
+            </div>
+
+            <div style={{ marginTop: 'var(--spacing-lg)' }}>
+              <label>メッセージ（数値）:</label>
+              <input
+                type="number"
+                value={message.toString()}
+                onChange={(e) => {
+                  const val = BigInt(e.target.value || '0')
+                  if (val < simpleKeys.publicKey.n) {
+                    setMessage(val)
+                  } else {
+                    alert(`メッセージは n (${simpleKeys.publicKey.n}) より小さい値にしてください`)
+                  }
+                }}
+              />
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
+                0 から {(simpleKeys.publicKey.n - 1n).toString()} までの整数を入力
+              </div>
+            </div>
+
+            <div style={{ marginTop: 'var(--spacing-md)' }}>
+              <button onClick={encrypt} className="primary" style={{ width: '100%' }}>
+                暗号化（公開鍵で暗号化）
+              </button>
+            </div>
+
+            {encrypted !== null && (
+              <div style={{ marginTop: 'var(--spacing-md)' }}>
+                <div className="step-lesson__demo-result">
+                  c = m<sup>e</sup> mod n
+                  = {message.toString()}<sup>{simpleKeys.publicKey.e.toString()}</sup> mod {simpleKeys.publicKey.n.toString()}
+                  = <strong>{encrypted.toString()}</strong>
+                </div>
+
+                <div style={{ marginTop: 'var(--spacing-md)' }}>
+                  <button onClick={decrypt} className="primary" style={{ width: '100%' }}>
+                    復号（秘密鍵で復号）
+                  </button>
+                </div>
+
+                {decrypted !== null && (
+                  <div className="step-lesson__demo-result" style={{ marginTop: 'var(--spacing-md)' }}>
+                    m = c<sup>d</sup> mod n
+                    = {encrypted.toString()}<sup>{simpleKeys.privateKey.d.toString()}</sup> mod {simpleKeys.privateKey.n.toString()}
+                    = <strong>{decrypted.toString()}</strong>
+                    <div style={{ marginTop: 'var(--spacing-sm)', color: 'var(--color-primary)' }}>
+                      元のメッセージ {message.toString()} が正しく復元されました
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>理解のポイント：</strong>
+        公開鍵(e, n)で暗号化したものは、秘密鍵(d, n)でしか復号できません。
+        実用では、パディングスキーム（OAEP等）を使って安全性を高めます。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 5: なぜRSAは安全なのか
+   ========================================= */
+function WhySecure() {
+  return (
+    <>
+      <p>
+        RSAの安全性は、<strong>「大きな合成数の素因数分解が非常に困難である」</strong>という
+        計算量的困難性に基づいています。
+      </p>
+
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>攻撃者が知っている情報</h3>
+          <ul>
+            <li>公開鍵 (e, n)</li>
+            <li>暗号文 c</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>攻撃者の目的</h3>
+          <ul>
+            <li>秘密鍵 d を求めたい</li>
+            <li>d にはφ(n) が必要</li>
+            <li>φ(n) には p, q が必要</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="step-lesson__visual">
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', lineHeight: '2', textAlign: 'left', display: 'inline-block' }}>
+          <div>小さい数: 簡単</div>
+          <div>  15 = 3 x 5</div>
+          <div>  3233 = 53 x 61</div>
+          <div style={{ marginTop: 'var(--spacing-sm)' }}>大きい数: 非常に困難</div>
+          <div>  2048ビット（約617桁）の素因数分解:</div>
+          <div>  現在のコンピュータでは数千年~数百万年</div>
+        </div>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>注意：</strong>
+        量子コンピュータが実用化されると、Shorのアルゴリズムにより素因数分解が多項式時間で解けるようになります。
+        そのため、量子耐性暗号（Post-Quantum Cryptography）への移行が進められています。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 6: 実用的な2048ビット鍵生成
+   ========================================= */
+function LargeKeyGenDemo() {
+  const [status, setStatus] = useState<Status>('idle')
+  const [statusMessage, setStatusMessage] = useState('「2048ビット鍵を生成」を押すと、ブラウザ内で素数を探索します。')
+  const [bits] = useState(2048)
+  const [largeP, setLargeP] = useState<bigint | null>(null)
+  const [largeQ, setLargeQ] = useState<bigint | null>(null)
+  const [largeN, setLargeN] = useState<bigint | null>(null)
+  const [largeD, setLargeD] = useState<bigint | null>(null)
+  const [eValue] = useState(65537n)
   const workerRef = useRef<Worker | null>(null)
 
-  // コンポーネントアンマウント時にWorkerを終了
   useEffect(() => {
     return () => {
       workerRef.current?.terminate()
     }
   }, [])
 
-  // 2048ビット鍵生成（Web Worker使用）
   const generateLargeRSA = () => {
-    // 前のWorkerがあれば終了
     workerRef.current?.terminate()
 
     setStatus('generating')
@@ -108,7 +419,7 @@ export default function RSAPage() {
       }
     }
 
-    worker.onerror = (event) => {
+    worker.onerror = () => {
       setStatus('error')
       setStatusMessage('鍵生成中に予期しないエラーが発生しました。')
       worker.terminate()
@@ -118,934 +429,28 @@ export default function RSAPage() {
     worker.postMessage({ type: 'generate', bits, e: eValue.toString() })
   }
 
-  // 暗号化
-  const encrypt = () => {
-    if (!simpleKeys) return
-    try {
-      const c = rsaEncrypt(message, simpleKeys.publicKey)
-      setEncrypted(c)
-      setDecrypted(null)
-    } catch (error) {
-      alert(error instanceof Error ? error.message : '暗号化エラー')
-    }
-  }
-
-  // 復号
-  const decrypt = () => {
-    if (!simpleKeys || encrypted === null) return
-    try {
-      const m = rsaDecrypt(encrypted, simpleKeys.privateKey)
-      setDecrypted(m)
-    } catch (error) {
-      alert(error instanceof Error ? error.message : '復号エラー')
-    }
-  }
-
   return (
-    <main className="page rsa">
-      <header className="page-header">
-        <p className="eyebrow" style={{ color: 'var(--color-primary)' }}>[ PROTOCOL: ASYMMETRIC_RSA ]</p>
-        <h1>RSA暗号: 素数と信頼の数学</h1>
-        <p className="lede">
-          巨大な素数の積が織りなす、現代暗号の金字塔。
-          公開鍵暗号の仕組みから、素因数分解の困難性が支える安全性の根拠までを解剖する。
-        </p>
-      </header>
+    <>
+      <p>
+        ここまで小さい数でRSAの仕組みを学びました。
+        実際に使われる規模の2048ビット鍵を生成してみましょう。
+        ブラウザ内で素数を探索するため、数十秒かかる場合があります。
+      </p>
 
-      {/* 公開鍵暗号とは */}
-      <section className="card">
-        <h2 style={{ color: 'var(--color-primary)' }}>公開鍵暗号とは</h2>
+      <div className="step-lesson__demo">
+        <span className="step-lesson__demo-label">INTERACTIVE</span>
 
-        <div style={{ lineHeight: '1.8', marginBottom: '20px' }}>
-          <p style={{ marginBottom: '12px' }}>
-            従来の暗号（共通鍵暗号）では、暗号化と復号に<strong>同じ鍵</strong>を使います。
-            これは「鍵をどうやって安全に共有するか」という問題（鍵配送問題）を抱えていました。
-          </p>
-          <p style={{ marginBottom: '12px' }}>
-            1977年、Ron Rivest、Adi Shamir、Leonard Adlemanの3人が発明したRSAは、
-            <strong>異なる鍵</strong>を使う画期的な暗号方式です：
-          </p>
+        <div className="step-lesson__demo-result">
+          公開指数 e = 65537{'\n'}
+          素数 p, q = それぞれ {bits / 2} ビット{'\n'}
+          法 N = p x q = {bits} ビット
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-          <div className="callout">
-            <h3 style={{ color: 'var(--color-primary)', marginBottom: '8px' }}>公開鍵（Public Key）</h3>
-            <ul style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
-              <li>誰でも知ってOK</li>
-              <li>暗号化に使用</li>
-              <li>メッセージの検証に使用</li>
-              <li>公開ディレクトリに登録可能</li>
-            </ul>
-          </div>
-
-          <div className="callout">
-            <h3 style={{ color: 'var(--color-accent)', marginBottom: '8px' }}>秘密鍵（Private Key）</h3>
-            <ul style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
-              <li>本人だけが知っている</li>
-              <li>復号に使用</li>
-              <li>署名の生成に使用</li>
-              <li>絶対に秘密にする</li>
-            </ul>
-          </div>
+        <div style={{ marginTop: 'var(--spacing-md)', fontSize: '0.9rem', color: 'var(--color-text-subtle)' }}>
+          {statusMessage}
         </div>
 
-        <div className="callout callout-info">
-          <strong style={{ color: 'var(--color-primary)' }}>RSAの革新性：</strong>
-          <p style={{ marginTop: '8px', lineHeight: '1.8' }}>
-            公開鍵で暗号化したデータは、対応する秘密鍵でしか復号できません。
-            つまり、鍵を安全に配送する必要がなくなりました。公開鍵は自由に配布でき、
-            秘密鍵は各自が厳重に保管すればよいのです。
-          </p>
-        </div>
-      </section>
-
-      {/* 数学的基礎 */}
-      <section className="card">
-        <h2 style={{ color: 'var(--color-primary)' }}>数学的基礎</h2>
-        <p style={{ marginBottom: '20px' }}>
-          RSAの安全性は、いくつかの数学的概念に基づいています。順番に見ていきましょう。
-        </p>
-
-        {/* 素数 */}
-        <div className="callout">
-          <h3 style={{ fontSize: '18px', color: 'var(--color-primary)', marginBottom: '12px' }}>1. 素数（Prime Number）</h3>
-          <div style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              素数とは、<strong>1とその数自身以外に約数を持たない自然数</strong>のことです。
-            </p>
-            <div className="callout" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              marginBottom: '12px'
-            }}>
-              例: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, ...
-            </div>
-            <p style={{ marginBottom: '8px' }}><strong>RSAにおける素数の重要性：</strong></p>
-            <ul style={{ paddingLeft: '20px' }}>
-              <li>2つの大きな素数p, qを選ぶ</li>
-              <li>その積 n = p × q が公開鍵の一部になる</li>
-              <li>nは公開されるが、pとqは秘密にする</li>
-              <li><strong>nからp, qを求める（素因数分解）のが非常に困難</strong>であることがRSAの安全性の根拠</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* モジュラ演算 */}
-        <div className="callout">
-          <h3 style={{ fontSize: '18px', color: 'var(--color-primary)', marginBottom: '12px' }}>2. モジュラ演算（剰余演算）</h3>
-          <div style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              モジュラ演算は、割り算の<strong>余り</strong>を扱う演算です。
-              「a mod n」は「aをnで割った余り」を意味します。
-            </p>
-            <div className="callout" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              marginBottom: '12px'
-            }}>
-              <div>17 mod 5 = 2 （17 ÷ 5 = 3 余り 2）</div>
-              <div>23 mod 7 = 2 （23 ÷ 7 = 3 余り 2）</div>
-              <div>100 mod 12 = 4 （100 ÷ 12 = 8 余り 4）</div>
-            </div>
-            <p style={{ marginBottom: '8px' }}><strong>合同式の表記：</strong></p>
-            <div className="callout" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              marginBottom: '12px'
-            }}>
-              17 ≡ 2 (mod 5)
-            </div>
-            <p>
-              これは「17と2は、5を法として合同である」と読みます。
-              つまり、17と2をそれぞれ5で割った余りが等しいという意味です。
-            </p>
-          </div>
-        </div>
-
-        {/* オイラーのφ関数 */}
-        <div className="callout">
-          <h3 style={{ fontSize: '18px', color: 'var(--color-primary)', marginBottom: '12px' }}>3. オイラーのφ関数</h3>
-          <div style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              φ(n)（ファイn）は、<strong>n以下の正の整数のうち、nと互いに素であるものの個数</strong>を表します。
-            </p>
-            <div className="callout" style={{
-              padding: '12px',
-              marginBottom: '12px'
-            }}>
-              <div style={{ marginBottom: '8px' }}>
-                <strong>例1：</strong> φ(12) = 4
-              </div>
-              <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)' }}>
-                12と互いに素な数: 1, 5, 7, 11（4個）
-              </div>
-            </div>
-            <p style={{ marginBottom: '8px' }}><strong>重要な性質：</strong></p>
-            <ul style={{ paddingLeft: '20px', marginBottom: '12px' }}>
-              <li>pが素数のとき: φ(p) = p - 1</li>
-              <li>p, qが異なる素数のとき: <strong>φ(p × q) = (p - 1) × (q - 1)</strong></li>
-            </ul>
-            <div className="callout callout-info">
-              <strong style={{ color: 'var(--color-primary)' }}>RSAでの使用：</strong>
-              <p style={{ marginTop: '8px' }}>
-                n = p × q のとき、φ(n) = (p - 1)(q - 1) を計算します。
-                この値は秘密鍵の計算に使われますが、pとqを知らないとφ(n)も計算できません。
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* 互いに素とGCD */}
-        <div className="callout">
-          <h3 style={{ fontSize: '18px', color: 'var(--color-primary)', marginBottom: '12px' }}>4. 互いに素と最大公約数（GCD）</h3>
-          <div style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              2つの整数が<strong>互いに素</strong>であるとは、それらの<strong>最大公約数が1</strong>であることを意味します。
-            </p>
-            <div className="callout" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              marginBottom: '12px'
-            }}>
-              <div>gcd(15, 28) = 1 → 15と28は互いに素</div>
-              <div>gcd(12, 18) = 6 → 12と18は互いに素ではない</div>
-            </div>
-            <p style={{ marginBottom: '8px' }}><strong>ユークリッドの互除法：</strong></p>
-            <p style={{ marginBottom: '12px' }}>
-              GCDを効率的に計算するアルゴリズムです。
-            </p>
-            <div className="callout" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              fontSize: '14px',
-              marginBottom: '12px'
-            }}>
-              <div>gcd(48, 18):</div>
-              <div style={{ paddingLeft: '20px' }}>48 = 18 × 2 + 12</div>
-              <div style={{ paddingLeft: '20px' }}>18 = 12 × 1 + 6</div>
-              <div style={{ paddingLeft: '20px' }}>12 = 6 × 2 + 0</div>
-              <div style={{ paddingLeft: '20px', marginTop: '8px' }}>答え: gcd(48, 18) = 6</div>
-            </div>
-            <div className="callout callout-info">
-              <strong style={{ color: 'var(--color-primary)' }}>RSAでの使用：</strong>
-              <p style={{ marginTop: '8px' }}>
-                公開指数eは、φ(n)と互いに素である必要があります。
-                つまり gcd(e, φ(n)) = 1 でなければなりません。
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* モジュラ逆元 */}
-        <div className="callout">
-          <h3 style={{ fontSize: '18px', color: 'var(--color-primary)', marginBottom: '12px' }}>5. モジュラ逆元</h3>
-          <div style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              aのモジュラ逆元とは、<strong>a × d ≡ 1 (mod n)</strong> を満たす数dのことです。
-            </p>
-            <div className="callout" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              marginBottom: '12px'
-            }}>
-              <div>例: 3 × 7 ≡ 21 ≡ 1 (mod 10)</div>
-              <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                → 7は3のmod 10における逆元
-              </div>
-            </div>
-            <p style={{ marginBottom: '8px' }}><strong>拡張ユークリッドの互除法：</strong></p>
-            <p style={{ marginBottom: '12px' }}>
-              モジュラ逆元を効率的に計算するアルゴリズムです。
-              ユークリッドの互除法を拡張したもので、GCDだけでなく、
-              ax + by = gcd(a,b) を満たすx, yも求められます。
-            </p>
-            <div className="callout callout-info">
-              <strong style={{ color: 'var(--color-primary)' }}>RSAでの使用：</strong>
-              <p style={{ marginTop: '8px' }}>
-                秘密指数dは、公開指数eのmod φ(n)における逆元です。<br />
-                つまり: <strong>e × d ≡ 1 (mod φ(n))</strong><br />
-                これがRSAの暗号化と復号が正しく動作する数学的な根拠です。
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* RSAアルゴリズムの流れ */}
-      <section className="card" style={{ borderLeft: '4px solid var(--color-secondary)' }}>
-        <h2 style={{ color: 'var(--color-secondary)' }}>RSAアルゴリズムの流れ</h2>
-        <p style={{ marginBottom: '20px' }}>
-          RSAは鍵生成、暗号化、復号の3つのステップから成り立っています。
-        </p>
-
-        {/* 鍵生成 */}
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '20px', color: 'var(--color-primary)', marginBottom: '12px' }}>
-            ステップ1: 鍵生成（Key Generation）
-          </h3>
-          <div className="callout">
-            <ol style={{ paddingLeft: '20px', color: 'var(--color-text-muted)', lineHeight: '2' }}>
-              <li>
-                <strong>2つの大きな素数p, qを選ぶ</strong>
-                <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                  実用的には1024ビット以上（現在は2048ビット以上が推奨）
-                </div>
-              </li>
-              <li>
-                <strong>n = p × q を計算</strong>
-                <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                  これが公開鍵・秘密鍵の両方で使われる「法（modulus）」
-                </div>
-              </li>
-              <li>
-                <strong>φ(n) = (p - 1) × (q - 1) を計算</strong>
-                <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                  オイラーのφ関数の値。秘密の値として扱う
-                </div>
-              </li>
-              <li>
-                <strong>公開指数eを選ぶ</strong>
-                <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                  1 &lt; e &lt; φ(n) かつ gcd(e, φ(n)) = 1 を満たす数<br />
-                  慣例的に e = 65537 がよく使われる
-                </div>
-              </li>
-              <li>
-                <strong>秘密指数dを計算</strong>
-                <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                  e × d ≡ 1 (mod φ(n)) を満たすd（eのモジュラ逆元）<br />
-                  拡張ユークリッドの互除法で計算
-                </div>
-              </li>
-            </ol>
-            <div className="callout">
-              <strong>結果：</strong><br />
-              公開鍵: (e, n)<br />
-              秘密鍵: (d, n)<br />
-              <span style={{ fontSize: '14px', color: 'var(--color-text-subtle)' }}>※ p, q, φ(n) は秘密にして破棄</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 暗号化 */}
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '20px', color: 'var(--color-primary)', marginBottom: '12px' }}>
-            ステップ2: 暗号化（Encryption）
-          </h3>
-          <div className="callout">
-            <p style={{ color: 'var(--color-text-muted)', lineHeight: '1.8', marginBottom: '12px' }}>
-              送信者は受信者の<strong>公開鍵 (e, n)</strong> を使って平文mを暗号化します。
-            </p>
-            <div className="callout callout-info" style={{
-              padding: '16px',
-              fontFamily: 'monospace',
-              fontSize: '18px',
-              textAlign: 'center',
-              marginBottom: '12px'
-            }}>
-              c = m<sup>e</sup> mod n
-            </div>
-            <ul style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
-              <li>m: 平文（メッセージ）。0 ≤ m &lt; n の整数</li>
-              <li>c: 暗号文</li>
-              <li>モジュラ累乗を使って計算</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* 復号 */}
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '20px', color: 'var(--color-primary)', marginBottom: '12px' }}>
-            ステップ3: 復号（Decryption）
-          </h3>
-          <div className="callout">
-            <p style={{ lineHeight: '1.8', marginBottom: '12px' }}>
-              受信者は自分の<strong>秘密鍵 (d, n)</strong> を使って暗号文cを復号します。
-            </p>
-            <div className="callout callout-info" style={{
-              padding: '16px',
-              fontFamily: 'monospace',
-              fontSize: '18px',
-              textAlign: 'center',
-              marginBottom: '12px'
-            }}>
-              m = c<sup>d</sup> mod n
-            </div>
-            <p style={{ lineHeight: '1.8' }}>
-              この計算により、元の平文mが復元されます。
-            </p>
-          </div>
-        </div>
-
-        {/* なぜ復号できるか */}
-        <div className="callout callout-success">
-          <h4 style={{ color: 'var(--color-primary)', marginBottom: '12px' }}>なぜ正しく復号できるのか？</h4>
-          <p style={{ lineHeight: '1.8', marginBottom: '12px' }}>
-            暗号化してから復号すると：
-          </p>
-          <div className="callout" style={{
-            padding: '12px',
-            fontFamily: 'monospace',
-            fontSize: '14px',
-            marginBottom: '12px'
-          }}>
-            c<sup>d</sup> = (m<sup>e</sup>)<sup>d</sup> = m<sup>ed</sup> ≡ m (mod n)
-          </div>
-          <p style={{ lineHeight: '1.8' }}>
-            これが成り立つのは、<strong>e × d ≡ 1 (mod φ(n))</strong> という関係と、
-            <strong>フェルマーの小定理・オイラーの定理</strong>によります。
-            数学的な証明は深いですが、要するに「eで累乗してdで累乗すると元に戻る」という性質があるのです。
-          </p>
-        </div>
-      </section>
-
-      {/* なぜ安全なのか */}
-      <section className="card">
-        <h2 style={{ color: 'var(--color-primary)' }}>なぜ安全なのか？</h2>
-
-        <div style={{ lineHeight: '1.8', marginBottom: '20px' }}>
-          <p style={{ marginBottom: '12px' }}>
-            RSAの安全性は、<strong>「大きな合成数の素因数分解が非常に困難である」</strong>という
-            計算量的困難性に基づいています。
-          </p>
-        </div>
-
-        <div className="callout callout-warning" style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '18px', color: 'var(--color-accent)', marginBottom: '12px' }}>
-            攻撃者の視点
-          </h3>
-          <ul style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
-            <li>
-              <strong>公開されている情報：</strong>
-              <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                公開鍵 (e, n)、暗号文 c
-              </div>
-            </li>
-            <li>
-              <strong>攻撃者の目的：</strong>
-              <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                秘密鍵 d を求めて暗号文を復号したい
-              </div>
-            </li>
-            <li>
-              <strong>問題：</strong>
-              <div style={{ paddingLeft: '20px', fontSize: '14px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                d を計算するには φ(n) が必要<br />
-                φ(n) を計算するには p と q が必要<br />
-                しかし、<strong>n から p, q を求める（素因数分解）のが非常に難しい</strong>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <div className="callout" style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '18px', color: 'var(--color-primary)', marginBottom: '12px' }}>
-            素因数分解の困難性
-          </h3>
-          <div style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              小さい数の場合は簡単です：
-            </p>
-            <div className="callout callout-info" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              fontSize: '14px',
-              marginBottom: '12px'
-            }}>
-              15 = 3 × 5<br />
-              143 = 11 × 13<br />
-              3233 = 53 × 61
-            </div>
-            <p style={{ marginBottom: '12px' }}>
-              しかし、数が大きくなると指数関数的に困難になります：
-            </p>
-            <div className="callout callout-warning" style={{
-              padding: '12px',
-              fontSize: '14px',
-              marginBottom: '12px'
-            }}>
-              <strong>2048ビットの数（約617桁）の素因数分解：</strong><br />
-              現在のコンピュータでは実質的に不可能（数千年～数百万年かかる）
-            </div>
-            <p>
-              これがRSAの安全性の根拠です。公開鍵は誰でも知ることができますが、
-              そこから秘密鍵を計算することは現実的には不可能なのです。
-            </p>
-          </div>
-        </div>
-
-        <div className="callout callout-warning">
-          <strong style={{ color: 'var(--color-accent)' }}>⚠️ 注意：</strong>
-          <p style={{ marginTop: '8px', lineHeight: '1.8' }}>
-            量子コンピュータが実用化されると、Shorのアルゴリズムにより
-            素因数分解が多項式時間で解けるようになります。
-            そのため、量子耐性暗号（Post-Quantum Cryptography）への移行が進められています。
-          </p>
-        </div>
-      </section>
-
-      {/* 小さい数での体験デモ */}
-      <section className="card">
-        <h2 style={{ color: 'var(--color-primary)' }}>小さい数で体験してみよう</h2>
-        <p style={{ marginBottom: '20px' }}>
-          実際にRSAの計算を確認できるよう、小さい素数を使って鍵を生成してみましょう。
-        </p>
-
-        <div className="callout" style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '18px', marginBottom: '16px', color: 'var(--color-accent)' }}>素数の選択</h3>
-
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-              素数 p を選択:
-            </label>
-            <select
-              value={selectedP.toString()}
-              onChange={(e) => setSelectedP(BigInt(e.target.value))}
-              style={{
-                maxWidth: '200px',
-                padding: '8px',
-                fontSize: '14px'
-              }}
-              className="text-input"
-            >
-              {SMALL_PRIMES.map(p => (
-                <option key={p.toString()} value={p.toString()}>{p.toString()}</option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-              素数 q を選択:
-            </label>
-            <select
-              value={selectedQ.toString()}
-              onChange={(e) => setSelectedQ(BigInt(e.target.value))}
-              style={{
-                maxWidth: '200px',
-                padding: '8px',
-                fontSize: '14px'
-              }}
-              className="text-input"
-            >
-              {SMALL_PRIMES.map(q => (
-                <option key={q.toString()} value={q.toString()}>{q.toString()}</option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            onClick={generateKeys}
-            className="primary"
-            style={{ width: '100%' }}
-          >
-            鍵を生成
-          </button>
-        </div>
-
-        {simpleKeys && (
-          <div className="callout">
-            <h3 style={{ fontSize: '18px', marginBottom: '16px', color: 'var(--color-accent)' }}>生成結果</h3>
-
-            <div className="callout callout-info" style={{
-              padding: '12px',
-              fontFamily: 'monospace',
-              fontSize: '14px',
-              lineHeight: '2',
-              marginBottom: '16px'
-            }}>
-              <div><strong>選択した素数:</strong></div>
-              <div>p = {simpleKeys.p.toString()}</div>
-              <div>q = {simpleKeys.q.toString()}</div>
-              <div style={{ marginTop: '8px' }}><strong>計算結果:</strong></div>
-              <div>n = p × q = {simpleKeys.publicKey.n.toString()}</div>
-              <div>φ(n) = (p-1) × (q-1) = {simpleKeys.phi.toString()}</div>
-              <div style={{ marginTop: '8px' }}><strong>鍵:</strong></div>
-              <div style={{ color: 'var(--color-primary)' }}>
-                公開鍵: (e = {simpleKeys.publicKey.e.toString()}, n = {simpleKeys.publicKey.n.toString()})
-              </div>
-              <div style={{ color: 'var(--color-accent)' }}>
-                秘密鍵: (d = {simpleKeys.privateKey.d.toString()}, n = {simpleKeys.privateKey.n.toString()})
-              </div>
-            </div>
-
-            <div className="callout callout-success">
-              <strong style={{ color: 'var(--color-primary)' }}>検証:</strong>
-              <div style={{ marginTop: '8px', fontFamily: 'monospace', fontSize: '14px' }}>
-                e × d mod φ(n) = {simpleKeys.publicKey.e.toString()} × {simpleKeys.privateKey.d.toString()} mod {simpleKeys.phi.toString()}
-                {' = '}
-                {((simpleKeys.publicKey.e * simpleKeys.privateKey.d) % simpleKeys.phi).toString()}
-                {' ≡ 1 ✓'}
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* 暗号化・復号デモ */}
-      {simpleKeys && (
-        <section className="card">
-          <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>
-            暗号化・復号を試してみよう
-          </h2>
-          <p style={{ color: 'var(--color-text-subtle)', marginBottom: '20px' }}>
-            生成した鍵を使って、実際に暗号化と復号を体験できます。
-          </p>
-
-              <div className="callout">
-            <h3 style={{ fontSize: '18px', marginBottom: '16px', color: 'var(--color-accent)' }}>平文の入力</h3>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                メッセージ（数値）:
-              </label>
-              <input
-                type="number"
-                value={message.toString()}
-                onChange={(e) => {
-                  const val = BigInt(e.target.value || '0')
-                  if (val < simpleKeys.publicKey.n) {
-                    setMessage(val)
-                  } else {
-                    alert(`メッセージは n (${simpleKeys.publicKey.n}) より小さい値にしてください`)
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  fontSize: '14px'
-                }}
-                className="text-input"
-              />
-              <div style={{ fontSize: '12px', color: 'var(--color-text-subtle)', marginTop: '4px' }}>
-                0 から {(simpleKeys.publicKey.n - 1n).toString()} までの整数を入力
-              </div>
-            </div>
-
-            <button
-              onClick={encrypt}
-              className="primary"
-              style={{ width: '100%', marginBottom: '16px' }}
-            >
-              暗号化（公開鍵で暗号化）
-            </button>
-
-            {encrypted !== null && (
-              <>
-                <div className="callout callout-info" style={{
-                  padding: '12px',
-                  fontFamily: 'monospace',
-                  fontSize: '14px',
-                  marginBottom: '16px'
-                }}>
-                  <strong>暗号化の計算:</strong><br />
-                  c = m<sup>e</sup> mod n<br />
-                  c = {message.toString()}<sup>{simpleKeys.publicKey.e.toString()}</sup> mod {simpleKeys.publicKey.n.toString()}<br />
-                  <strong style={{ color: 'var(--color-accent)' }}>c = {encrypted.toString()}</strong>
-                </div>
-
-                <button
-                  onClick={decrypt}
-                  className="primary"
-                  style={{
-                    width: '100%',
-                    background: 'var(--color-accent)',
-                    color: '#fff'
-                  }}
-                >
-                  復号（秘密鍵で復号）
-                </button>
-
-                {decrypted !== null && (
-                  <div className="callout callout-success" style={{
-                    fontFamily: 'monospace',
-                    fontSize: '14px',
-                    marginTop: '16px'
-                  }}>
-                    <strong>復号の計算:</strong><br />
-                    m = c<sup>d</sup> mod n<br />
-                    m = {encrypted.toString()}<sup>{simpleKeys.privateKey.d.toString()}</sup> mod {simpleKeys.privateKey.n.toString()}<br />
-                    <strong style={{ color: 'var(--color-success)' }}>m = {decrypted.toString()}</strong>
-                    <div style={{ marginTop: '8px', color: '#10b981' }}>
-                      ✓ 元のメッセージ {message.toString()} が正しく復元されました！
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          <div style={{
-            padding: '16px',
-            background: 'rgba(236, 72, 153, 0.1)',
-            borderRadius: '4px',
-            border: '1px solid #ec4899'
-          }}>
-            <strong style={{ color: 'var(--color-primary)' }}>理解のポイント：</strong>
-            <ul style={{ paddingLeft: '20px', lineHeight: '1.8', marginTop: '8px' }}>
-              <li>公開鍵(e, n)で暗号化したものは、秘密鍵(d, n)でしか復号できない</li>
-              <li>同じメッセージでも毎回同じ暗号文になる（決定的暗号化）</li>
-              <li>実用では、パディングスキーム（OAEP等）を使って安全性を高める</li>
-            </ul>
-          </div>
-        </section>
-      )}
-
-      {/* 実装コード */}
-      <section className="card">
-        <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>
-          実装コード
-        </h2>
-        <p style={{ color: 'var(--color-text-subtle)', marginBottom: '20px' }}>
-          このデモで使用している主要な関数の実装です。
-        </p>
-
-        <details style={{ marginBottom: '16px' }}>
-          <summary style={{
-            padding: '12px',
-            cursor: 'pointer',
-            fontWeight: '500'
-          }}
-          className="callout">
-            モジュラ累乗（Modular Exponentiation）
-          </summary>
-          <div className="callout" style={{ borderTop: 'none', borderRadius: '0 0 12px 12px', marginTop: '-16px' }}>
-            <pre>
-              {`export function modPow(base: bigint, exp: bigint, modulus: bigint): bigint {
-  if (modulus === 1n) return 0n
-
-  let result = 1n
-  base = base % modulus
-
-  while (exp > 0n) {
-    if (exp % 2n === 1n) {
-      result = (result * base) % modulus
-    }
-    exp = exp / 2n
-    base = (base * base) % modulus
-  }
-
-  return result
-}`}
-            </pre>
-            <p style={{ marginTop: '12px', color: 'var(--color-text-subtle)', fontSize: '14px', lineHeight: '1.8' }}>
-              base<sup>exp</sup> mod modulus を効率的に計算します。
-              指数を2進数展開して、平方を繰り返すことで計算量を O(log exp) に抑えています。
-            </p>
-          </div>
-        </details>
-
-        <details style={{ marginBottom: '16px' }}>
-          <summary style={{
-            padding: '12px',
-            cursor: 'pointer',
-            fontWeight: '500'
-          }}
-          className="callout">
-            モジュラ逆元（Modular Inverse）
-          </summary>
-          <div className="callout" style={{ borderTop: 'none', borderRadius: '0 0 12px 12px', marginTop: '-16px' }}>
-            <pre>
-              {`function modInverse(a: bigint, m: bigint): bigint {
-  const m0 = m
-  let x0 = 0n
-  let x1 = 1n
-
-  if (m === 1n) return 0n
-
-  while (a > 1n) {
-    const q = a / m
-    let t = m
-
-    m = a % m
-    a = t
-    t = x0
-
-    x0 = x1 - q * x0
-    x1 = t
-  }
-
-  if (x1 < 0n) x1 += m0
-
-  return x1
-}`}
-            </pre>
-            <p style={{ marginTop: '12px', color: 'var(--color-text-subtle)', fontSize: '14px', lineHeight: '1.8' }}>
-              拡張ユークリッドの互除法を使って、a × x ≡ 1 (mod m) を満たす x を計算します。
-              RSAでは、秘密指数 d の計算に使用されます。
-            </p>
-          </div>
-        </details>
-
-        <details style={{ marginBottom: '16px' }}>
-          <summary style={{
-            padding: '12px',
-            cursor: 'pointer',
-            fontWeight: '500'
-          }}
-          className="callout">
-            鍵生成（Key Generation）
-          </summary>
-          <div className="callout" style={{ borderTop: 'none', borderRadius: '0 0 12px 12px', marginTop: '-16px' }}>
-            <pre>
-              {`export function generateSimpleRSAKey(
-  p: bigint,
-  q: bigint,
-  e: bigint = 65537n
-): RSAKeyPair {
-  // n = p × q
-  const n = p * q
-
-  // φ(n) = (p-1) × (q-1)
-  const phi = (p - 1n) * (q - 1n)
-
-  // eとφ(n)が互いに素かチェック
-  if (gcd(e, phi) !== 1n) {
-    throw new Error('e and φ(n) must be coprime')
-  }
-
-  // 秘密指数d = e^(-1) mod φ(n)
-  const d = modInverse(e, phi)
-
-  return {
-    publicKey: { e, n },
-    privateKey: { d, n },
-    p,
-    q,
-    phi
-  }
-}`}
-            </pre>
-            <p style={{ marginTop: '12px', color: 'var(--color-text-subtle)', fontSize: '14px', lineHeight: '1.8' }}>
-              素数 p, q から RSA 鍵ペアを生成します。
-              公開指数 e のデフォルト値として 65537 を使用しています（2<sup>16</sup> + 1 で、暗号化が高速）。
-            </p>
-          </div>
-        </details>
-
-        <details>
-          <summary style={{
-            padding: '12px',
-            cursor: 'pointer',
-            fontWeight: '500'
-          }}
-          className="callout">
-            暗号化・復号（Encrypt / Decrypt）
-          </summary>
-          <div className="callout" style={{ borderTop: 'none', borderRadius: '0 0 12px 12px', marginTop: '-16px' }}>
-            <pre style={{
-              background: '#1e293b',
-              color: '#e2e8f0',
-              padding: '16px',
-              borderRadius: '4px',
-              overflow: 'auto',
-              fontSize: '13px',
-              lineHeight: '1.6'
-            }}><code>{`// RSA暗号化: c = m^e mod n
- export function rsaEncrypt(
-   message: bigint,
-   publicKey: { e: bigint, n: bigint }
- ) {
-   return power(message, publicKey.e, publicKey.n)
- }
-
- // RSA復号: m = c^d mod n
- export function rsaDecrypt(
-   ciphertext: bigint,
-   privateKey: { d: bigint, n: bigint }
- ) {
-   return power(ciphertext, privateKey.d, privateKey.n)
- }`}</code></pre>
-            <p style={{ marginTop: '12px', fontSize: '14px', lineHeight: '1.8' }}>
-              暗号化は公開鍵を使い、復号は秘密鍵を使います。
-              どちらもモジュラ累乗により計算されます。
-            </p>
-          </div>
-        </details>
-      </section>
-
-      {/* 現代における課題 */}
-      <section className="card">
-        <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>
-          現代における課題と移行
-        </h2>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '18px', color: 'var(--color-accent)', marginBottom: '12px' }}>
-            量子コンピュータの脅威
-          </h3>
-          <div className="callout" style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              1994年、Peter Shorが<strong>Shorのアルゴリズム</strong>を発表しました。
-              これは量子コンピュータ上で素因数分解を<strong>多項式時間</strong>で解くアルゴリズムです。
-            </p>
-            <p style={{ marginBottom: '12px' }}>
-              十分に大きな量子コンピュータが実現すれば、RSAの安全性は崩壊します。
-              現在の暗号通信の多くがRSAや楕円曲線暗号（ECDSA等）に依存しているため、
-              これは深刻な問題です。
-            </p>
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '18px', color: 'var(--color-accent)', marginBottom: '12px' }}>
-            Post-Quantum Cryptography（耐量子計算機暗号）
-          </h3>
-          <div className="callout" style={{ lineHeight: '1.8' }}>
-            <p style={{ marginBottom: '12px' }}>
-              NISTは2024年に、量子コンピュータに耐性のある暗号アルゴリズムの標準化を発表しました：
-            </p>
-            <ul style={{ paddingLeft: '20px', marginBottom: '12px' }}>
-              <li><strong>CRYSTALS-Kyber</strong>（鍵カプセル化）</li>
-              <li><strong>CRYSTALS-Dilithium</strong>（デジタル署名）</li>
-              <li><strong>FALCON</strong>（デジタル署名）</li>
-              <li><strong>SPHINCS+</strong>（デジタル署名）</li>
-            </ul>
-            <p>
-              これらは格子暗号やハッシュベース署名など、
-              量子コンピュータでも解くことが困難と考えられる数学的問題に基づいています。
-            </p>
-          </div>
-        </div>
-
-        <div className="callout callout-warning">
-          <strong style={{ color: 'var(--color-accent)' }}>今後の展望：</strong>
-          <p style={{ marginTop: '8px', lineHeight: '1.8' }}>
-            RSAは40年以上にわたり活躍してきましたが、今後数年～数十年で
-            耐量子計算機暗号への移行が進むと考えられています。
-            しかし、RSAから学んだ公開鍵暗号の概念や数学的基礎は、
-            現代暗号を理解する上で今も非常に重要です。
-          </p>
-        </div>
-      </section>
-
-      {/* 2048ビット鍵生成 */}
-      <section className="card">
-        <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>
-          実用的な2048ビット鍵生成
-        </h2>
-        <p style={{ color: 'var(--color-text-subtle)', marginBottom: '20px' }}>
-          ここまで小さい数でRSAの仕組みを学びました。最後に、実際に使われる規模の2048ビット鍵を生成してみましょう。
-          ブラウザ内で素数を探索するため、数十秒かかる場合があります。
-        </p>
-
-        <div className="callout" style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '18px', marginBottom: '12px', color: 'var(--color-primary)' }}>
-            パラメータ
-          </h3>
-          <div className="callout callout-info" style={{
-            padding: '12px',
-            fontFamily: 'monospace',
-            fontSize: '14px',
-            marginBottom: '16px'
-          }}>
-            公開指数 e = 65537<br />
-            素数 p, q = それぞれ {bits / 2} ビット<br />
-            法 N = p × q = {bits} ビット
-          </div>
-
-          <p style={{ color: 'var(--color-text-subtle)', marginBottom: '16px' }}>{statusMessage}</p>
-
+        <div style={{ marginTop: 'var(--spacing-md)' }}>
           <button
             onClick={generateLargeRSA}
             disabled={status === 'generating'}
@@ -1054,165 +459,216 @@ export default function RSAPage() {
           >
             {status === 'generating' ? '生成中...' : '2048ビット鍵を生成'}
           </button>
-
-          {status === 'generating' && (
-            <p style={{ marginTop: '12px', fontSize: '14px', color: 'var(--color-text-subtle)', textAlign: 'center' }}>
-              ※ 数十秒かかる場合があります（ブラウザで素数を探索中）
-            </p>
-          )}
         </div>
 
-        {(largeP !== null || largeQ !== null || largeN !== null || largeD !== null) && (
-          <div className="callout">
-            <h3 style={{ fontSize: '18px', marginBottom: '16px', color: 'var(--color-primary)' }}>
-              生成結果（16進数）
-            </h3>
-            <p style={{ fontSize: '14px', color: 'var(--color-accent)', marginBottom: '16px' }}>
-              ⚠️ 学習用途のみ。実運用では使用しないでください。
-            </p>
+        {status === 'generating' && (
+          <div style={{ marginTop: 'var(--spacing-sm)', fontSize: '0.85rem', color: 'var(--color-text-subtle)', textAlign: 'center' }}>
+            数十秒かかる場合があります（ブラウザで素数を探索中）
+          </div>
+        )}
 
+        {(largeP !== null || largeQ !== null || largeN !== null || largeD !== null) && (
+          <div style={{ marginTop: 'var(--spacing-lg)' }}>
             {largeP !== null && (
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontWeight: '500',
-                  fontSize: '14px'
-                }}>
-                  p（1024-bit prime）
-                </label>
+              <div style={{ marginBottom: 'var(--spacing-md)' }}>
+                <label>p（1024-bit prime）</label>
                 <textarea
                   readOnly
                   value={formatBigInt(largeP)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    lineHeight: '1.6',
-                    resize: 'vertical',
-                    minHeight: '120px'
-                  }}
-                  className="text-input"
+                  rows={5}
+                  style={{ resize: 'vertical' }}
                 />
               </div>
             )}
 
             {largeQ !== null && (
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontWeight: '500',
-                  fontSize: '14px'
-                }}>
-                  q（1024-bit prime）
-                </label>
+              <div style={{ marginBottom: 'var(--spacing-md)' }}>
+                <label>q（1024-bit prime）</label>
                 <textarea
                   readOnly
                   value={formatBigInt(largeQ)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    lineHeight: '1.6',
-                    resize: 'vertical',
-                    minHeight: '120px'
-                  }}
-                  className="text-input"
+                  rows={5}
+                  style={{ resize: 'vertical' }}
                 />
               </div>
             )}
 
             {largeN !== null && (
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontWeight: '500',
-                  fontSize: '14px'
-                }}>
-                  N = p × q（2048-bit modulus）
-                </label>
+              <div style={{ marginBottom: 'var(--spacing-md)' }}>
+                <label>N = p x q（2048-bit modulus）</label>
                 <textarea
                   readOnly
                   value={formatBigInt(largeN)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    lineHeight: '1.6',
-                    resize: 'vertical',
-                    minHeight: '160px'
-                  }}
-                  className="text-input"
+                  rows={7}
+                  style={{ resize: 'vertical' }}
                 />
               </div>
             )}
 
             {largeD !== null && (
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontWeight: '500',
-                  fontSize: '14px'
-                }}>
-                  d（秘密指数）
-                </label>
+              <div style={{ marginBottom: 'var(--spacing-md)' }}>
+                <label>d（秘密指数）</label>
                 <textarea
                   readOnly
                   value={formatBigInt(largeD)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    lineHeight: '1.6',
-                    resize: 'vertical',
-                    minHeight: '160px'
-                  }}
-                  className="text-input"
+                  rows={7}
+                  style={{ resize: 'vertical' }}
                 />
               </div>
             )}
-
-            <div className="callout callout-warning" style={{ marginTop: '16px' }}>
-              <strong style={{ color: 'var(--color-accent)' }}>注意事項：</strong>
-              <ul style={{ paddingLeft: '20px', lineHeight: '1.8', marginTop: '8px' }}>
-                <li>このデモは学習・検証用途に限定されています</li>
-                <li>実運用の鍵生成には必ず信頼できるライブラリと安全な乱数源を使用してください</li>
-                <li>ブラウザで生成した p, q を第三者へ送ると秘密鍵が再現できます</li>
-              </ul>
-            </div>
           </div>
         )}
-      </section>
+      </div>
 
-      {/* まとめ */}
-      <section className="card" style={{ padding: '24px' }}>
-        <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>まとめ</h2>
-        <div style={{ lineHeight: '1.8' }}>
-          <p style={{ marginBottom: '12px' }}>
-            RSA暗号は、数学の美しさと実用性を兼ね備えた画期的な発明でした。
-          </p>
-          <ul style={{ paddingLeft: '20px', marginBottom: '12px' }}>
-            <li>素数、モジュラ演算、オイラーのφ関数といった数学的基礎</li>
-            <li>公開鍵と秘密鍵という非対称な鍵ペア</li>
-            <li>素因数分解の困難性に基づく安全性</li>
-            <li>TLS、SSH、S/MIME、コード署名など幅広い応用</li>
+      <div className="step-lesson__callout">
+        <strong>注意事項：</strong>
+        このデモは学習・検証用途に限定されています。
+        実運用の鍵生成には必ず信頼できるライブラリと安全な乱数源を使用してください。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 7: RSAの課題と限界
+   ========================================= */
+function ChallengesAndLimitations() {
+  return (
+    <>
+      <p>RSAは40年以上にわたり活躍してきましたが、いくつかの課題を抱えています。</p>
+
+      <ol>
+        <li>
+          <strong>量子コンピュータの脅威</strong> — 1994年、Peter Shorが発表した
+          Shorのアルゴリズムは、量子コンピュータ上で素因数分解を多項式時間で解きます。
+          十分に大きな量子コンピュータが実現すれば、RSAの安全性は崩壊します。
+        </li>
+        <li>
+          <strong>鍵サイズの増大</strong> — 安全性を保つため、鍵サイズは年々大きくなっています。
+          現在は2048ビット以上が推奨され、処理コストも増加しています。
+        </li>
+        <li>
+          <strong>パフォーマンス</strong> — RSAは共通鍵暗号（AES等）と比べて非常に遅いため、
+          実用ではハイブリッド暗号（RSAで鍵交換、AESでデータ暗号化）が使われます。
+        </li>
+      </ol>
+
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>Post-Quantum 暗号</h3>
+          <ul>
+            <li><strong>CRYSTALS-Kyber</strong>（鍵カプセル化）</li>
+            <li><strong>CRYSTALS-Dilithium</strong>（署名）</li>
+            <li><strong>FALCON</strong>（署名）</li>
+            <li><strong>SPHINCS+</strong>（署名）</li>
           </ul>
-          <p style={{ marginBottom: '12px' }}>
-            量子コンピュータの脅威により、今後は新しい暗号方式への移行が進みますが、
-            RSAから学ぶことは今も多く残されています。
-          </p>
-          <p>
-            このページで、RSAの仕組みと背景にある数学を少しでも理解していただければ幸いです。
-          </p>
         </div>
-      </section>
+        <div className="step-lesson__comparison-item">
+          <h3>基盤となる数学</h3>
+          <ul>
+            <li>格子暗号</li>
+            <li>ハッシュベース署名</li>
+            <li>符号ベース暗号</li>
+            <li>多変量暗号</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>今後の展望：</strong>
+        RSAから学んだ公開鍵暗号の概念や数学的基礎は、現代暗号を理解する上で今も非常に重要です。
+        NISTは2024年に量子耐性暗号の標準化を発表し、移行が本格的に進んでいます。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Main Page Component
+   ========================================= */
+export default function RSAPage() {
+  useEffect(() => {
+    document.title = 'RSA - CryptoLab'
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  const steps: LessonStep[] = [
+    {
+      title: '公開鍵暗号とは',
+      content: <PublicKeyCryptography />,
+      quiz: {
+        question: '公開鍵暗号の最大の利点は何か？',
+        options: [
+          { label: '暗号化の処理速度が速い' },
+          { label: '鍵を安全に配送する必要がない', correct: true },
+          { label: '暗号文のサイズが小さくなる' },
+          { label: '量子コンピュータに耐性がある' },
+        ],
+        explanation: '正解！公開鍵暗号では、公開鍵は自由に配布でき、秘密鍵は各自が保管すればよいため、鍵配送問題が解決されます。',
+      },
+    },
+    {
+      title: 'RSAの数学的基礎',
+      content: <MathFoundations />,
+      quiz: {
+        question: 'RSAにおいてφ(n) = (p-1)(q-1) が重要な理由は？',
+        options: [
+          { label: '暗号文のサイズを決定するため' },
+          { label: '素因数分解の難易度を上げるため' },
+          { label: '秘密指数dの計算に必要だから', correct: true },
+          { label: '公開鍵のビット数を決めるため' },
+        ],
+        explanation: '正解！秘密指数dは e x d ≡ 1 (mod φ(n)) を満たす値として計算されます。φ(n)を知らないとdを求めることができません。',
+      },
+    },
+    {
+      title: 'RSA鍵生成アルゴリズム',
+      content: <KeyGenAlgorithm />,
+    },
+    {
+      title: '小さい数で体験してみよう',
+      content: <SmallNumberDemo />,
+    },
+    {
+      title: 'なぜRSAは安全なのか',
+      content: <WhySecure />,
+      quiz: {
+        question: 'RSAの安全性を破るために攻撃者がまず行うべきことは？',
+        options: [
+          { label: '公開指数eを推測する' },
+          { label: 'nを素因数分解してp, qを求める', correct: true },
+          { label: '暗号文cを大量に収集する' },
+          { label: '公開鍵を変更する' },
+        ],
+        explanation: '正解！秘密鍵dを求めるにはφ(n)が必要で、φ(n)を計算するにはnの素因数p, qを知る必要があります。2048ビットのnの素因数分解は現在のコンピュータでは実質的に不可能です。',
+      },
+    },
+    {
+      title: '実用的な2048ビット鍵生成',
+      content: <LargeKeyGenDemo />,
+    },
+    {
+      title: 'RSAの課題と限界',
+      content: <ChallengesAndLimitations />,
+      quiz: {
+        question: '量子コンピュータがRSAにとって脅威となる理由は？',
+        options: [
+          { label: '量子コンピュータは暗号化の処理が速いから' },
+          { label: '量子コンピュータは乱数を予測できるから' },
+          { label: 'Shorのアルゴリズムで素因数分解が効率的に解けるようになるから', correct: true },
+          { label: '量子コンピュータは秘密鍵を直接読み取れるから' },
+        ],
+        explanation: '正解！Shorのアルゴリズムは量子コンピュータ上で素因数分解を多項式時間で解くことができます。RSAの安全性は素因数分解の困難性に依存しているため、これが破られるとRSAは安全ではなくなります。',
+      },
+    },
+  ]
+
+  return (
+    <main className="page rsa">
+      <StepLesson
+        title="RSA暗号"
+        steps={steps}
+      />
     </main>
   )
 }
