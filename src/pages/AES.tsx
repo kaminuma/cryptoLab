@@ -519,7 +519,7 @@ function AESGCMUsage() {
     <>
       <p>
         AES-GCMは<strong>AEAD（Authenticated Encryption with Associated Data）</strong>の代表格です。
-        Symmetric.tsxページではGHASHの数学（GF(2<sup>128</sup>)上の多項式演算）を詳しく解説しています。
+        共通鍵暗号ページではGHASHの数学（GF(2<sup>128</sup>)上の多項式演算）を詳しく解説しています。
         ここでは<strong>AES-GCMを正しく使うための実践知識</strong>に焦点を当てます。
       </p>
 
@@ -606,6 +606,7 @@ function EncryptDecryptDemo() {
   const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
   const [iv, setIv] = useState<Uint8Array | null>(null)
   const [decrypted, setDecrypted] = useState('')
+  const [error, setError] = useState('')
 
   const handleGenerateKey = () => {
     const newKey = generateRandomKey(keySize)
@@ -617,25 +618,27 @@ function EncryptDecryptDemo() {
 
   const handleEncrypt = () => {
     try {
+      setError('')
       const result = encrypt(plaintext, key, mode)
       setCiphertext(result.ciphertext)
       setIv(result.iv || null)
       setDecrypted('')
     } catch (error) {
-      alert(`暗号化エラー: ${error}`)
+      setError(`暗号化エラー: ${error}`)
     }
   }
 
   const handleDecrypt = () => {
     if (!ciphertext) {
-      alert('まず暗号化を実行してください')
+      setError('まず暗号化を実行してください')
       return
     }
     try {
+      setError('')
       const result = decrypt(ciphertext, key, mode, iv || undefined)
       setDecrypted(result)
     } catch (error) {
-      alert(`復号エラー: ${error}`)
+      setError(`復号エラー: ${error}`)
     }
   }
 
@@ -731,6 +734,8 @@ function EncryptDecryptDemo() {
           </>
         )}
 
+        {error && <p className="step-lesson__demo-result" style={{ color: 'var(--color-danger)' }}>{error}</p>}
+
         {decrypted && (
           <>
             <label>復号結果:</label>
@@ -754,9 +759,11 @@ function ModeComparisonDemo() {
   const [ecbResult, setEcbResult] = useState('')
   const [cbcResult, setCbcResult] = useState('')
   const [ctrResult, setCtrResult] = useState('')
+  const [error, setError] = useState('')
 
   const handleCompare = () => {
     try {
+      setError('')
       const compareKey = generateRandomKey(128)
       const ecbEncrypted = encrypt(compareText, compareKey, 'ECB')
       setEcbResult(bytesToHex(ecbEncrypted.ciphertext))
@@ -765,7 +772,7 @@ function ModeComparisonDemo() {
       const ctrEncrypted = encrypt(compareText, compareKey, 'CTR')
       setCtrResult(bytesToHex(ctrEncrypted.ciphertext))
     } catch (error) {
-      alert(`エラー: ${error}`)
+      setError(`エラー: ${error}`)
     }
   }
 
@@ -803,6 +810,8 @@ function ModeComparisonDemo() {
         >
           各モードで暗号化
         </button>
+
+        {error && <p className="step-lesson__demo-result" style={{ color: 'var(--color-danger)' }}>{error}</p>}
 
         {ecbResult && (
           <div className="step-lesson__comparison">

@@ -267,36 +267,40 @@ function SmallNumberDemo() {
   const [message, setMessage] = useState<bigint>(65n)
   const [encrypted, setEncrypted] = useState<bigint | null>(null)
   const [decrypted, setDecrypted] = useState<bigint | null>(null)
+  const [error, setError] = useState('')
 
   const generateKeys = () => {
     try {
+      setError('')
       const keys = generateSimpleRSAKey(selectedP, selectedQ)
       setSimpleKeys(keys)
       setEncrypted(null)
       setDecrypted(null)
     } catch (error) {
-      alert(error instanceof Error ? error.message : '鍵生成エラー')
+      setError(error instanceof Error ? error.message : '鍵生成エラー')
     }
   }
 
   const encrypt = () => {
     if (!simpleKeys) return
     try {
+      setError('')
       const c = rsaEncrypt(message, simpleKeys.publicKey)
       setEncrypted(c)
       setDecrypted(null)
     } catch (error) {
-      alert(error instanceof Error ? error.message : '暗号化エラー')
+      setError(error instanceof Error ? error.message : '暗号化エラー')
     }
   }
 
   const decrypt = () => {
     if (!simpleKeys || encrypted === null) return
     try {
+      setError('')
       const m = rsaDecrypt(encrypted, simpleKeys.privateKey)
       setDecrypted(m)
     } catch (error) {
-      alert(error instanceof Error ? error.message : '復号エラー')
+      setError(error instanceof Error ? error.message : '復号エラー')
     }
   }
 
@@ -338,6 +342,8 @@ function SmallNumberDemo() {
           </button>
         </div>
 
+        {error && <p className="step-lesson__demo-result" style={{ color: 'var(--color-danger)' }}>{error}</p>}
+
         {simpleKeys && (
           <div style={{ marginTop: 'var(--spacing-lg)' }}>
             <div className="step-lesson__demo-result">
@@ -364,8 +370,11 @@ function SmallNumberDemo() {
                   const val = BigInt(e.target.value || '0')
                   if (val < simpleKeys.publicKey.n) {
                     setMessage(val)
+                    setError('')
                   } else {
-                    alert(`メッセージは n (${simpleKeys.publicKey.n}) より小さい値にしてください`)
+                    const clipped = simpleKeys.publicKey.n - 1n
+                    setMessage(clipped)
+                    setError(`メッセージは n (${simpleKeys.publicKey.n}) より小さい値にしてください。${clipped} にクリップしました。`)
                   }
                 }}
               />

@@ -217,7 +217,7 @@ function WhatIsAEAD() {
 
       <div className="step-lesson__callout">
         <strong>ここがポイント:</strong>
-        2024年現在、新規実装で暗号化のみ（CBC, CTR単体）を使う理由はありません。
+        現在、新規実装で暗号化のみ（CBC, CTR単体）を使う理由はありません。
         必ず AES-GCM か ChaCha20-Poly1305 などの AEAD を使いましょう。
         「暗号化 = 安全」ではなく、<strong>「認証付き暗号化 = 安全」</strong>です。
       </div>

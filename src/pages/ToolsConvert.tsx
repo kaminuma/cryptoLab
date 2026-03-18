@@ -571,6 +571,7 @@ export default function ToolsPage() {
       <StepLesson
         title="データ変換 & 解析ツール"
         steps={steps}
+        lessonId="tools-convert"
       />
     </main>
   )
