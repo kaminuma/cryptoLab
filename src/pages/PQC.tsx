@@ -4,7 +4,61 @@ import '../components/ui/StepLesson.css'
 import { usePageMeta } from '../hooks/usePageMeta'
 
 /* =========================================
-   Step 1: なぜ「量子」が暗号を脅かすのか
+   Step 1: ポスト量子暗号とは — 次世代の鎧
+   ========================================= */
+function WhatIsPQC() {
+  return (
+    <>
+      <p>
+        城壁を想像してください。何百年も敵の攻撃を防いできた堅牢な城壁です。
+        ところがある日、城壁を一瞬で崩壊させる<strong>新兵器</strong>が開発されようとしている
+        という情報が入ります。あなたならどうしますか？
+        — 新兵器が完成する前に、<strong>それに耐えうる新しい鎧</strong>を準備するはずです。
+      </p>
+      <p>
+        ポスト量子暗号（Post-Quantum Cryptography, PQC）とは、
+        <strong>量子コンピュータという「新兵器」が実用化されても破られない暗号技術</strong>のことです。
+        現在のRSAやECDHは、量子コンピュータによって理論上破られることが分かっています。
+        PQCは、その脅威に先手を打つための「次世代の鎧」です。
+      </p>
+
+      <div className="step-lesson__callout">
+        <strong>用語: ポスト量子暗号（PQC）</strong><br />
+        量子コンピュータでも効率的に解けない数学的問題に基づく暗号方式の総称。
+        「量子暗号」（量子力学を使って通信する技術）とは別物です。
+        PQCは従来のコンピュータ上で動作します。
+      </div>
+
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>現在の暗号（RSA, ECDH等）</h3>
+          <ul>
+            <li><strong>安全性の根拠:</strong> 素因数分解・離散対数の困難さ</li>
+            <li><strong>古典コンピュータ:</strong> 安全</li>
+            <li><strong>量子コンピュータ:</strong> 破られる</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>ポスト量子暗号（PQC）</h3>
+          <ul>
+            <li><strong>安全性の根拠:</strong> 格子問題・ハッシュ・符号理論等</li>
+            <li><strong>古典コンピュータ:</strong> 安全</li>
+            <li><strong>量子コンピュータ:</strong> 安全（と考えられている）</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>
+        このページでは、量子コンピュータがなぜ脅威なのかを理解した上で、
+        PQCの基盤となる格子暗号の仕組み、NISTの標準化プロセス、
+        そして実際の移行戦略まで、段階的に学んでいきます。
+      </p>
+    </>
+  )
+}
+
+/* =========================================
+   Step 2: なぜ「量子」が暗号を脅かすのか
    たとえ話から入り、全体の見取り図を提示
    ========================================= */
 function WhyQuantumThreatens() {
@@ -912,6 +966,20 @@ export default function PQC() {
   }, [])
 
   const steps: LessonStep[] = [
+    {
+      title: 'ポスト量子暗号とは — 次世代の鎧',
+      content: <WhatIsPQC />,
+      quiz: {
+        question: 'ポスト量子暗号（PQC）について正しい説明はどれ？',
+        options: [
+          { label: '量子力学を使って通信を暗号化する技術' },
+          { label: '量子コンピュータ上でのみ動作する暗号' },
+          { label: '量子コンピュータでも破られない数学的問題に基づく暗号', correct: true },
+          { label: '量子コンピュータの発明後に使われなくなる暗号' },
+        ],
+        explanation: 'PQCは従来のコンピュータ上で動作しますが、量子コンピュータでも効率的に解けない数学的問題（格子問題等）を安全性の根拠にしています。「量子暗号」（量子鍵配送など）とは異なる概念です。',
+      },
+    },
     {
       title: 'なぜ「量子」が暗号を脅かすのか',
       content: <WhyQuantumThreatens />,
