@@ -29,6 +29,7 @@ export default function Footer() {
             <Link to="/rsa">RSA暗号</Link>
             <Link to="/pqc">ポスト量子暗号</Link>
             <Link to="/hmac">HMAC</Link>
+            <Link to="/signature">デジタル署名</Link>
             <Link to="/tools/xor">XORツール</Link>
             <Link to="/tools/hash-cracker">ハッシュクラッカー</Link>
           </div>
