@@ -177,7 +177,140 @@ function EllipticCurveIntuition() {
 }
 
 /* =========================================
-   Step 3: DH → ECDH の橋渡し
+   Step 3: 古典的DH鍵交換デモ（小さい数で体験）
+   ========================================= */
+function ClassicDHDemo() {
+  const [p] = useState(23)
+  const [g] = useState(5)
+  const [aliceSecret, setAliceSecret] = useState(6)
+  const [bobSecret, setBobSecret] = useState(15)
+
+  const modPow = (base: number, exp: number, mod: number): number => {
+    let result = 1
+    base = base % mod
+    while (exp > 0) {
+      if (exp % 2 === 1) result = (result * base) % mod
+      exp = Math.floor(exp / 2)
+      base = (base * base) % mod
+    }
+    return result
+  }
+
+  const alicePub = modPow(g, aliceSecret, p)
+  const bobPub = modPow(g, bobSecret, p)
+  const sharedAlice = modPow(bobPub, aliceSecret, p)
+  const sharedBob = modPow(alicePub, bobSecret, p)
+
+  return (
+    <>
+      <p>
+        Diffie-Hellman鍵交換を<strong>小さい数</strong>で実際に計算してみましょう。
+        AliceとBobが、盗聴されている通信路上で共通の秘密を作る過程を追います。
+      </p>
+
+      <div className="step-lesson__demo-box">
+        <div style={{ marginBottom: '1rem' }}>
+          <strong>公開パラメータ（誰でも知っている）:</strong>
+          <div className="step-lesson__mono" style={{ fontSize: '0.9rem' }}>
+            素数 p = {p}, 生成元 g = {g}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+          <div>
+            <label className="step-lesson__label">Alice の秘密鍵 a</label>
+            <input
+              type="range"
+              min={2}
+              max={p - 2}
+              value={aliceSecret}
+              onChange={e => setAliceSecret(Number(e.target.value))}
+              style={{ width: '100%' }}
+            />
+            <div className="step-lesson__mono" style={{ textAlign: 'center' }}>{aliceSecret}</div>
+          </div>
+          <div>
+            <label className="step-lesson__label">Bob の秘密鍵 b</label>
+            <input
+              type="range"
+              min={2}
+              max={p - 2}
+              value={bobSecret}
+              onChange={e => setBobSecret(Number(e.target.value))}
+              style={{ width: '100%' }}
+            />
+            <div className="step-lesson__mono" style={{ textAlign: 'center' }}>{bobSecret}</div>
+          </div>
+        </div>
+
+        <div className="step-lesson__table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Alice</th>
+                <th>Bob</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. 秘密鍵を選ぶ</strong></td>
+                <td>a = {aliceSecret}</td>
+                <td>b = {bobSecret}</td>
+              </tr>
+              <tr>
+                <td><strong>2. 公開値を計算</strong></td>
+                <td>A = {g}^{aliceSecret} mod {p} = <strong>{alicePub}</strong></td>
+                <td>B = {g}^{bobSecret} mod {p} = <strong>{bobPub}</strong></td>
+              </tr>
+              <tr>
+                <td><strong>3. 公開値を交換</strong></td>
+                <td>Bobから B = {bobPub} を受信</td>
+                <td>Aliceから A = {alicePub} を受信</td>
+              </tr>
+              <tr>
+                <td><strong>4. 共有秘密を計算</strong></td>
+                <td>{bobPub}^{aliceSecret} mod {p} = <strong>{sharedAlice}</strong></td>
+                <td>{alicePub}^{bobSecret} mod {p} = <strong>{sharedBob}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{
+          padding: '0.75rem 1rem',
+          borderRadius: '8px',
+          background: sharedAlice === sharedBob
+            ? 'var(--sl-color-success-bg, #c6f6d5)'
+            : 'var(--sl-color-danger-bg, #fed7d7)',
+          color: sharedAlice === sharedBob
+            ? 'var(--sl-color-success, #22543d)'
+            : 'var(--sl-color-danger, #822727)',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginTop: '0.75rem',
+        }}>
+          共有秘密: {sharedAlice}（両者が同じ値を得た！）
+        </div>
+
+        <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--sl-color-muted)' }}>
+          盗聴者は p={p}, g={g}, A={alicePub}, B={bobPub} を知っていますが、
+          a={aliceSecret} や b={bobSecret} を知らないため共有秘密 {sharedAlice} を計算できません。
+          スライダーを動かして、秘密鍵を変えると共有秘密がどう変わるか観察してみましょう。
+        </p>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>実際の鍵サイズ:</strong> この例では p=23（5ビット）ですが、
+        実用では2048ビット以上の素数を使います。
+        離散対数問題（g^a mod p から a を逆算する）の困難性が安全性の根拠です。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 4: DH → ECDH の橋渡し
    古典DH → 楕円曲線への写像 → ECDHプロトコル
    ========================================= */
 function DHToECDH() {
@@ -944,6 +1077,20 @@ export default function PublicKeyPage() {
           { label: '点の加算が不可能であること' },
         ],
         explanation: '正解！点GとスカラーnからQ = n・Gを計算するのは簡単ですが、GとQからnを逆算すること（ECDLP）は計算上不可能です。この非対称性が安全性の基盤です。',
+      },
+    },
+    {
+      title: '古典的DH鍵交換 — 小さい数で体験',
+      content: <ClassicDHDemo />,
+      quiz: {
+        question: 'DH鍵交換で盗聴者が共有秘密を計算できない理由は？',
+        options: [
+          { label: '通信が暗号化されているから' },
+          { label: '公開値A, Bから秘密鍵a, bを逆算する（離散対数問題）が計算上困難だから', correct: true },
+          { label: '素数pが秘密だから' },
+          { label: '公開値が毎回変わるから' },
+        ],
+        explanation: '盗聴者はp, g, A=g^a mod p, B=g^b mod p を知っていますが、AからaやBからbを求めるには離散対数問題を解く必要があり、pが十分大きければ計算上不可能です。',
       },
     },
     {

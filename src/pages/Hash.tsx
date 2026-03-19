@@ -668,6 +668,238 @@ function RealWorldUses() {
 }
 
 /* =========================================
+   Step 11: 鍵導出関数 — パスワードから鍵を作る
+   ========================================= */
+function KDFExplain() {
+  return (
+    <>
+      <p>
+        パスワードは人間が覚えやすい短い文字列ですが、
+        AESやHMACには<strong>十分な長さとランダム性を持つ鍵</strong>が必要です。
+        鍵導出関数（KDF）は、パスワードから暗号学的に安全な鍵を「引き伸ばす」技術です。
+      </p>
+
+      <div className="step-lesson__callout">
+        <strong>用語: KDF（Key Derivation Function）</strong><br />
+        短い入力（パスワード等）から、暗号鍵として使える長い擬似ランダムバイト列を導出する関数。
+        パスワードベースKDF（PBKDF2, bcrypt, Argon2）は意図的に計算を遅くして総当たり攻撃を防ぐ。
+      </div>
+
+      <div className="step-lesson__comparison">
+        <div className="step-lesson__comparison-item">
+          <h3>SHA-256でハッシュ化</h3>
+          <ul>
+            <li>超高速（攻撃者にも有利）</li>
+            <li>GPUで毎秒数十億回計算可能</li>
+            <li>ソルトなし→レインボーテーブル攻撃</li>
+            <li>パスワード保管には不適切</li>
+          </ul>
+        </div>
+        <div className="step-lesson__comparison-item">
+          <h3>PBKDF2 / Argon2</h3>
+          <ul>
+            <li>意図的に低速（反復回数で調整）</li>
+            <li>ソルトで同じパスワードでも異なる出力</li>
+            <li>Argon2はメモリも大量消費→GPU耐性</li>
+            <li>パスワード保管の標準手法</li>
+          </ul>
+        </div>
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 12: PBKDF2デモ
+   ========================================= */
+function PBKDF2Demo() {
+  const [password, setPassword] = useState('MyPassword123')
+  const [salt, setSalt] = useState('random-salt-value')
+  const [iterations, setIterations] = useState(100000)
+  const [derivedKey, setDerivedKey] = useState('')
+  const [elapsed, setElapsed] = useState(0)
+  const [status, setStatus] = useState<'idle' | 'deriving' | 'done'>('idle')
+
+  const derive = async () => {
+    setStatus('deriving')
+    const t0 = performance.now()
+    const enc = new TextEncoder()
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']
+    )
+    const bits = await crypto.subtle.deriveBits(
+      {
+        name: 'PBKDF2',
+        salt: enc.encode(salt),
+        iterations,
+        hash: 'SHA-256',
+      },
+      keyMaterial,
+      256,
+    )
+    const hex = [...new Uint8Array(bits)]
+      .map(b => b.toString(16).padStart(2, '0')).join('')
+    setDerivedKey(hex)
+    setElapsed(Math.round(performance.now() - t0))
+    setStatus('done')
+  }
+
+  const presets = [
+    { label: '1,000回（危険）', value: 1000 },
+    { label: '100,000回（最低限）', value: 100000 },
+    { label: '600,000回（OWASP推奨）', value: 600000 },
+  ]
+
+  return (
+    <>
+      <p>
+        PBKDF2（Password-Based Key Derivation Function 2）は、
+        パスワードに<strong>ソルト</strong>と<strong>反復回数</strong>を加えて鍵を導出します。
+        反復回数を変えて処理時間の変化を体感してみましょう。
+      </p>
+
+      <div className="step-lesson__demo-box">
+        <label className="step-lesson__label">パスワード</label>
+        <input
+          type="text"
+          className="step-lesson__input"
+          value={password}
+          onChange={e => { setPassword(e.target.value); setStatus('idle') }}
+        />
+
+        <label className="step-lesson__label">ソルト（ユーザーごとに異なるランダム値）</label>
+        <input
+          type="text"
+          className="step-lesson__input"
+          value={salt}
+          onChange={e => { setSalt(e.target.value); setStatus('idle') }}
+        />
+
+        <label className="step-lesson__label">反復回数</label>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          {presets.map(p => (
+            <button
+              key={p.value}
+              className={`step-lesson__btn${iterations === p.value ? '' : ' step-lesson__btn--outline'}`}
+              onClick={() => { setIterations(p.value); setStatus('idle') }}
+              style={{ flex: 1, minWidth: '120px' }}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className="step-lesson__btn"
+          onClick={derive}
+          disabled={!password || status === 'deriving'}
+        >
+          {status === 'deriving' ? '導出中…' : '鍵を導出する'}
+        </button>
+
+        {status === 'done' && (
+          <div style={{ marginTop: '1rem' }}>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <strong>導出された鍵（256ビット）:</strong>
+              <div className="step-lesson__mono" style={{ wordBreak: 'break-all', fontSize: '0.8rem' }}>
+                {derivedKey}
+              </div>
+            </div>
+            <div style={{
+              padding: '0.75rem 1rem',
+              borderRadius: '8px',
+              background: 'var(--sl-color-surface)',
+              border: '1px solid var(--sl-color-border)',
+            }}>
+              <strong>処理時間: {elapsed} ms</strong>
+              <span style={{ fontSize: '0.85rem', color: 'var(--sl-color-muted)', marginLeft: '0.5rem' }}>
+                （反復 {iterations.toLocaleString()} 回）
+              </span>
+            </div>
+            <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--sl-color-muted)' }}>
+              {iterations <= 1000
+                ? '1,000回ではほぼ一瞬です。攻撃者がGPUで毎秒数百万のパスワードを試せてしまいます。'
+                : iterations <= 100000
+                ? '100,000回でも体感できる遅延が出ます。攻撃者の総当たりコストが大幅に上がります。'
+                : 'OWASP推奨の600,000回では明確な遅延があります。1パスワードの検証にこれだけかかるなら、数百万パターンの総当たりは現実的ではありません。'}
+            </p>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 13: KDFの比較と選び方
+   ========================================= */
+function KDFComparison() {
+  return (
+    <>
+      <p>
+        PBKDF2以外にも、より現代的なKDFがあります。
+        用途に応じて使い分けましょう。
+      </p>
+
+      <div className="step-lesson__table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>KDF</th>
+              <th>仕組み</th>
+              <th>GPU耐性</th>
+              <th>用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>PBKDF2</strong></td>
+              <td>HMAC-SHA256をN回反復</td>
+              <td>低い（計算のみ）</td>
+              <td>レガシー互換、WebCrypto対応</td>
+            </tr>
+            <tr>
+              <td><strong>bcrypt</strong></td>
+              <td>Blowfish暗号の鍵スケジュールを利用</td>
+              <td>中程度</td>
+              <td>多くのWebフレームワークのデフォルト</td>
+            </tr>
+            <tr>
+              <td><strong>scrypt</strong></td>
+              <td>大量メモリを要求</td>
+              <td>高い</td>
+              <td>ディスク暗号化等</td>
+            </tr>
+            <tr>
+              <td><strong>Argon2id</strong></td>
+              <td>メモリ＋計算コストを調整可能</td>
+              <td>非常に高い</td>
+              <td>OWASP推奨の第一選択</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>HKDF — もう一つのKDF:</strong><br />
+        HKDF（HMAC-based Key Derivation Function）は、
+        すでに十分なランダム性を持つ鍵素材（例: DH共有秘密）から
+        複数の鍵を導出するために使います。
+        パスワードのような低エントロピー入力には向きません。
+        TLSのハンドシェイクで広く使用されています。
+      </div>
+
+      <p>
+        <strong>選び方の指針:</strong>{' '}
+        パスワード保管には<strong>Argon2id</strong>が第一選択です。
+        WebCrypto APIで完結させたい場合は<strong>PBKDF2</strong>（反復600,000回以上）を使いましょう。
+        鍵素材からの鍵導出には<strong>HKDF</strong>を使います。
+      </p>
+    </>
+  )
+}
+
+/* =========================================
    メインコンポーネント
    ========================================= */
 export default function Hash() {
@@ -786,6 +1018,38 @@ export default function Hash() {
           { label: 'SHA-256は可逆だから' },
         ],
         explanation: '正解！SHA-256は高速に設計されているため、攻撃者も高速にハッシュを計算してパスワードを総当たりできます。bcryptやArgon2は意図的に計算を遅く（かつメモリも消費するように）設計されており、総当たり攻撃のコストを大幅に引き上げます。',
+      },
+    },
+    {
+      title: '鍵導出関数 — パスワードから鍵を作る',
+      content: <KDFExplain />,
+      quiz: {
+        question: 'パスワードからの鍵導出にSHA-256単体ではなくPBKDF2を使う最大の理由は？',
+        options: [
+          { label: 'SHA-256の出力長が足りないから' },
+          { label: 'SHA-256は不可逆ではないから' },
+          { label: '反復処理で意図的に遅くし、総当たり攻撃のコストを上げるため', correct: true },
+          { label: 'PBKDF2のほうがハッシュ値が長いから' },
+        ],
+        explanation: 'PBKDF2はHMAC-SHA256をN回反復することで、1回のパスワード検証にかかる時間を引き上げます。正規ユーザーには数百ミリ秒の遅延ですが、攻撃者が数百万パターンを試すには莫大な時間がかかります。',
+      },
+    },
+    {
+      title: 'PBKDF2デモ — 反復回数と処理時間',
+      content: <PBKDF2Demo />,
+    },
+    {
+      title: 'KDFの比較と選び方',
+      content: <KDFComparison />,
+      quiz: {
+        question: 'Argon2idがPBKDF2より総当たり攻撃に強い理由は？',
+        options: [
+          { label: 'ハッシュ関数が異なるから' },
+          { label: '計算コストだけでなく大量のメモリも要求するため、GPU並列攻撃が困難になるから', correct: true },
+          { label: '出力する鍵が長いから' },
+          { label: 'ソルトを使えるから' },
+        ],
+        explanation: 'PBKDF2は計算のみを反復するため、GPUの大量コアで並列処理できます。Argon2idはメモリも大量に消費するため、GPUのメモリ帯域がボトルネックになり、並列攻撃の効率が大幅に低下します。',
       },
     },
   ]
