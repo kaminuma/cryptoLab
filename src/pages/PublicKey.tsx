@@ -106,7 +106,12 @@ function EllipticCurveIntuition() {
   return (
     <>
       <p>
-        現代の公開鍵暗号の多くは<strong>楕円曲線</strong>を使います。
+        前のステップで、古典的DHは<strong>2048ビット以上の巨大な素数</strong>が必要だと学びました。
+        鍵も通信データも大きくなり、モバイルやIoTには不向きです。
+        これを解決するのが<strong>楕円曲線</strong>です。
+        256ビットの楕円曲線鍵で、3072ビットのRSA鍵に匹敵する安全性を実現します。
+      </p>
+      <p>
         「楕円曲線」と聞くと難しそうですが、幾何学的には非常に美しい構造を持っています。
       </p>
 
@@ -177,18 +182,175 @@ function EllipticCurveIntuition() {
 }
 
 /* =========================================
-   Step 3: DH → ECDH の橋渡し
+   Step 3: 古典的DH鍵交換デモ（小さい数で体験）
+   ========================================= */
+function ClassicDHDemo() {
+  const [p] = useState(23)
+  const [g] = useState(5)
+  const [aliceSecret, setAliceSecret] = useState(6)
+  const [bobSecret, setBobSecret] = useState(15)
+
+  const modPow = (base: number, exp: number, mod: number): number => {
+    let result = 1
+    base = base % mod
+    while (exp > 0) {
+      if (exp % 2 === 1) result = (result * base) % mod
+      exp = Math.floor(exp / 2)
+      base = (base * base) % mod
+    }
+    return result
+  }
+
+  const alicePub = modPow(g, aliceSecret, p)
+  const bobPub = modPow(g, bobSecret, p)
+  const sharedAlice = modPow(bobPub, aliceSecret, p)
+  const sharedBob = modPow(alicePub, bobSecret, p)
+
+  return (
+    <>
+      <h3>問題: 盗聴者がいる通信路で、どうやって秘密を共有する？</h3>
+      <p>
+        AliceとBobがAES暗号で通信したいとします。しかしAESには共通鍵が必要です。
+        鍵をそのまま送れば盗聴者に読まれます。
+        かといって、二人は直接会ったことがなく、事前に鍵を共有する手段がありません。
+      </p>
+      <p>
+        1976年にDiffieとHellmanが発見した解法は、<strong>「絵の具の混合」</strong>に似ています。
+        二人が公開の場で色を交換しても、混ぜた結果から元の色を分離するのは困難です。
+        数学的には<strong>べき乗の剰余演算</strong>がこの「混合」の役割を果たします。
+      </p>
+
+      <div className="step-lesson__callout">
+        <strong>注目ポイント:</strong> 下のデモでは、テーブルの各行が実際の通信ステップに対応しています。
+        <strong>行3「公開値を交換」</strong>で送られる A, B は盗聴者にも見えますが、
+        それだけでは<strong>行4の共有秘密を計算できない</strong>ことが、DHの核心です。
+      </div>
+
+      <div className="step-lesson__demo-box">
+        <div style={{ marginBottom: '1rem' }}>
+          <strong>公開パラメータ（誰でも知っている）:</strong>
+          <div className="step-lesson__mono" style={{ fontSize: '0.9rem' }}>
+            素数 p = {p}, 生成元 g = {g}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+          <div>
+            <label className="step-lesson__label">Alice の秘密鍵 a</label>
+            <input
+              type="range"
+              min={2}
+              max={p - 2}
+              value={aliceSecret}
+              onChange={e => setAliceSecret(Number(e.target.value))}
+              style={{ width: '100%' }}
+            />
+            <div className="step-lesson__mono" style={{ textAlign: 'center' }}>{aliceSecret}</div>
+          </div>
+          <div>
+            <label className="step-lesson__label">Bob の秘密鍵 b</label>
+            <input
+              type="range"
+              min={2}
+              max={p - 2}
+              value={bobSecret}
+              onChange={e => setBobSecret(Number(e.target.value))}
+              style={{ width: '100%' }}
+            />
+            <div className="step-lesson__mono" style={{ textAlign: 'center' }}>{bobSecret}</div>
+          </div>
+        </div>
+
+        <div className="step-lesson__table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Alice</th>
+                <th>Bob</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. 秘密鍵を選ぶ</strong></td>
+                <td>a = {aliceSecret}</td>
+                <td>b = {bobSecret}</td>
+              </tr>
+              <tr>
+                <td><strong>2. 公開値を計算</strong></td>
+                <td>A = {g}^{aliceSecret} mod {p} = <strong>{alicePub}</strong></td>
+                <td>B = {g}^{bobSecret} mod {p} = <strong>{bobPub}</strong></td>
+              </tr>
+              <tr>
+                <td><strong>3. 公開値を交換</strong></td>
+                <td>Bobから B = {bobPub} を受信</td>
+                <td>Aliceから A = {alicePub} を受信</td>
+              </tr>
+              <tr>
+                <td><strong>4. 共有秘密を計算</strong></td>
+                <td>{bobPub}^{aliceSecret} mod {p} = <strong>{sharedAlice}</strong></td>
+                <td>{alicePub}^{bobSecret} mod {p} = <strong>{sharedBob}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{
+          padding: '0.75rem 1rem',
+          borderRadius: '8px',
+          background: sharedAlice === sharedBob
+            ? 'var(--sl-color-success-bg, #c6f6d5)'
+            : 'var(--sl-color-danger-bg, #fed7d7)',
+          color: sharedAlice === sharedBob
+            ? 'var(--sl-color-success, #22543d)'
+            : 'var(--sl-color-danger, #822727)',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginTop: '0.75rem',
+        }}>
+          共有秘密: {sharedAlice}（両者が同じ値を得た！）
+        </div>
+
+        <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--sl-color-muted)' }}>
+          スライダーを動かして、秘密鍵を変えると共有秘密がどう変わるか観察してみましょう。
+        </p>
+      </div>
+
+      <h3>なぜ盗聴者は秘密を計算できないのか？</h3>
+      <p>
+        盗聴者は p={p}, g={g}, A={alicePub}, B={bobPub} の4つを知っています。
+        しかし共有秘密を得るには、A={alicePub} から a={aliceSecret} を逆算する必要があります。
+        つまり「{g}の何乗が {alicePub} になるか？」という問題（<strong>離散対数問題</strong>）を解かなければなりません。
+      </p>
+      <p>
+        p=23なら全探索で解けますが、実用では<strong>2048ビット以上の素数</strong>を使います。
+        この規模では離散対数問題に効率的な解法がなく、事実上計算不可能です。
+      </p>
+
+      <div className="step-lesson__callout">
+        <strong>DHの限界 — 中間者攻撃:</strong> DHは盗聴に対しては安全ですが、
+        通信相手が本物かどうかは検証しません。攻撃者が間に入って
+        AliceともBobとも別々にDHを行う<strong>中間者攻撃（MITM）</strong>が可能です。
+        これを防ぐためにデジタル署名やPKI（公開鍵基盤）と組み合わせて使います。
+      </div>
+    </>
+  )
+}
+
+/* =========================================
+   Step 4: DH → ECDH の橋渡し
    古典DH → 楕円曲線への写像 → ECDHプロトコル
    ========================================= */
 function DHToECDH() {
   return (
     <>
       <p>
-        Diffie-Hellman鍵交換は、<strong>盗聴されている通信路でも安全に共通の秘密を作れる</strong>プロトコルです。
-        まず古典的なDHを理解し、次にそれが楕円曲線上でどう変わるかを見ていきましょう。
+        Step 2で古典的DHを体験し、Step 3で楕円曲線の数学を学びました。
+        ここではその2つを組み合わせます。
+        古典DHの各操作が、楕円曲線上の操作に<strong>1対1で対応</strong>していることを確認しましょう。
       </p>
 
-      <h3>古典的 Diffie-Hellman（整数上）</h3>
+      <h3>おさらい: 古典的 Diffie-Hellman（整数上）</h3>
       <div className="step-lesson__visual">
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', lineHeight: '2.2', textAlign: 'left', display: 'inline-block' }}>
           <div>公開パラメータ: 素数 p, 生成元 g</div>
@@ -930,6 +1092,20 @@ export default function PublicKeyPage() {
           { label: 'ブロック暗号のブロックサイズの問題' },
         ],
         explanation: '正解！公開鍵暗号は「鍵配送問題」を解決しました。事前に秘密を共有しなくても、公開鍵を使って安全に通信を開始できます。',
+      },
+    },
+    {
+      title: '古典的DH鍵交換 — 小さい数で体験',
+      content: <ClassicDHDemo />,
+      quiz: {
+        question: 'DH鍵交換で盗聴者が共有秘密を計算できない理由は？',
+        options: [
+          { label: '通信が暗号化されているから' },
+          { label: '公開値A, Bから秘密鍵a, bを逆算する（離散対数問題）が計算上困難だから', correct: true },
+          { label: '素数pが秘密だから' },
+          { label: '公開値が毎回変わるから' },
+        ],
+        explanation: '盗聴者はp, g, A=g^a mod p, B=g^b mod p を知っていますが、AからaやBからbを求めるには離散対数問題を解く必要があり、pが十分大きければ計算上不可能です。',
       },
     },
     {
