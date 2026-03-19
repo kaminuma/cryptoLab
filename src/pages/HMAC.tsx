@@ -251,65 +251,125 @@ function HMACDemo() {
    ========================================= */
 function TamperDetectionDemo() {
   const [key] = useState('shared-secret')
-  const [original, setOriginal] = useState('振込先: 口座A, 金額: 10000')
-  const [tampered, setTampered] = useState('振込先: 口座B, 金額: 99999')
-  const [originalMAC, setOriginalMAC] = useState('')
-  const [tamperedMAC, setTamperedMAC] = useState('')
+  const [phase, setPhase] = useState<'send' | 'tamper' | 'verify'>('send')
+  const [message, setMessage] = useState('振込先: 口座A, 金額: 10000')
+  const [sentMAC, setSentMAC] = useState('')
+  const [receivedMessage, setReceivedMessage] = useState('')
+  const [recalcMAC, setRecalcMAC] = useState('')
   const [verified, setVerified] = useState<boolean | null>(null)
 
-  const handleDemo = async () => {
-    const mac1 = await computeHMAC(key, original)
-    const mac2 = await computeHMAC(key, tampered)
-    setOriginalMAC(mac1)
-    setTamperedMAC(mac2)
-    setVerified(mac1 === mac2)
+  const handleSend = async () => {
+    const mac = await computeHMAC(key, message)
+    setSentMAC(mac)
+    setReceivedMessage(message)
+    setRecalcMAC('')
+    setVerified(null)
+    setPhase('tamper')
+  }
+
+  const handleVerify = async () => {
+    const mac = await computeHMAC(key, receivedMessage)
+    setRecalcMAC(mac)
+    setVerified(sentMAC === mac)
+    setPhase('verify')
+  }
+
+  const handleReset = () => {
+    setPhase('send')
+    setMessage('振込先: 口座A, 金額: 10000')
+    setSentMAC('')
+    setReceivedMessage('')
+    setRecalcMAC('')
+    setVerified(null)
   }
 
   return (
     <>
       <p>
-        銀行の振込指示を例に、改ざん検出の仕組みを体験しましょう。
-        送信者はメッセージとHMACをセットで送り、
-        受信者は同じ鍵でHMACを再計算して<strong>一致するかを検証</strong>します。
+        3つのステップで改ざん検出を体験します。
+        送信者がメッセージを送り、途中で攻撃者が書き換え、受信者が検証する流れです。
       </p>
 
       <div className="step-lesson__demo">
-        <div className="step-lesson__demo-row">
-          <label>正規メッセージ:</label>
-          <input
-            type="text"
-            value={original}
-            onChange={e => setOriginal(e.target.value)}
-          />
+        {/* Phase 1: 送信者 */}
+        <div style={{ marginBottom: 'var(--spacing-md)', padding: 'var(--spacing-sm)', border: '1px solid var(--color-border, #ddd)', borderRadius: '8px' }}>
+          <h4 style={{ margin: '0 0 var(--spacing-sm) 0' }}>Step 1: 送信者 — メッセージを送る</h4>
+          <div className="step-lesson__demo-row">
+            <label>メッセージ:</label>
+            <input
+              type="text"
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              disabled={phase !== 'send'}
+            />
+          </div>
+          <button
+            className="step-lesson__demo-btn"
+            onClick={handleSend}
+            disabled={phase !== 'send'}
+          >
+            HMACを付けて送信
+          </button>
+          {sentMAC && (
+            <div style={{ marginTop: 'var(--spacing-sm)' }}>
+              <strong>送信時のHMAC:</strong>
+              <div className="step-lesson__mono-box">{sentMAC}</div>
+            </div>
+          )}
         </div>
-        <div className="step-lesson__demo-row">
-          <label>改ざんメッセージ:</label>
-          <input
-            type="text"
-            value={tampered}
-            onChange={e => setTampered(e.target.value)}
-          />
-        </div>
-        <button className="step-lesson__demo-btn" onClick={handleDemo}>検証する</button>
 
-        {originalMAC && (
-          <div style={{ marginTop: 'var(--spacing-md)' }}>
+        {/* Phase 2: 攻撃者 */}
+        {phase !== 'send' && (
+          <div style={{ marginBottom: 'var(--spacing-md)', padding: 'var(--spacing-sm)', border: '1px solid var(--color-error, #e74c3c)', borderRadius: '8px' }}>
+            <h4 style={{ margin: '0 0 var(--spacing-sm) 0', color: 'var(--color-error, #e74c3c)' }}>
+              Step 2: 攻撃者 — メッセージを書き換える
+            </h4>
+            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-subtle)' }}>
+              通信経路上で攻撃者がメッセージを傍受しました。自由に書き換えてみてください。
+            </p>
+            <div className="step-lesson__demo-row">
+              <label>受信メッセージ:</label>
+              <input
+                type="text"
+                value={receivedMessage}
+                onChange={e => { setReceivedMessage(e.target.value); setVerified(null); setRecalcMAC(''); setPhase('tamper') }}
+                disabled={phase === 'verify'}
+              />
+            </div>
+            {phase === 'tamper' && (
+              <button className="step-lesson__demo-btn" onClick={handleVerify}>
+                受信者として検証する
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Phase 3: 受信者 */}
+        {phase === 'verify' && (
+          <div style={{ marginBottom: 'var(--spacing-md)', padding: 'var(--spacing-sm)', border: `1px solid ${verified ? 'var(--color-success, #27ae60)' : 'var(--color-error, #e74c3c)'}`, borderRadius: '8px' }}>
+            <h4 style={{ margin: '0 0 var(--spacing-sm) 0' }}>Step 3: 受信者 — HMACを再計算して検証</h4>
             <div style={{ marginBottom: 'var(--spacing-sm)' }}>
-              <strong>正規メッセージのMAC:</strong>
-              <div className="step-lesson__mono-box">{originalMAC}</div>
+              <strong>送信時のHMAC（受信済み）:</strong>
+              <div className="step-lesson__mono-box">{sentMAC}</div>
             </div>
             <div style={{ marginBottom: 'var(--spacing-sm)' }}>
-              <strong>改ざんメッセージのMAC:</strong>
-              <div className="step-lesson__mono-box">{tamperedMAC}</div>
+              <strong>受信メッセージから再計算したHMAC:</strong>
+              <div className="step-lesson__mono-box">{recalcMAC}</div>
             </div>
             <div className="step-lesson__callout" style={{
               borderColor: verified ? 'var(--color-success, #27ae60)' : 'var(--color-error, #e74c3c)',
             }}>
               {verified
                 ? '✓ MAC一致 — メッセージは改ざんされていません'
-                : '✗ MAC不一致 — メッセージが改ざんされています！'}
+                : '✗ MAC不一致 — メッセージが改ざんされています！攻撃者は秘密鍵を知らないため、正しいHMACを再生成できません。'}
             </div>
           </div>
+        )}
+
+        {phase === 'verify' && (
+          <button className="step-lesson__demo-btn step-lesson__demo-btn--secondary" onClick={handleReset}>
+            最初からやり直す
+          </button>
         )}
       </div>
     </>
