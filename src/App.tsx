@@ -17,6 +17,7 @@ const ToolsConvert = lazy(() => import('./pages/ToolsConvert'))
 const ToolsHashCracker = lazy(() => import('./pages/ToolsHashCracker'))
 const ToolsXorConverter = lazy(() => import('./pages/ToolsXorConverter'))
 const EnigmaPage = lazy(() => import('./pages/EnigmaPage'))
+const HMACPage = lazy(() => import('./pages/HMAC'))
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="/tools/hash-cracker" element={<ToolsHashCracker />} />
               <Route path="/tools/xor" element={<ToolsXorConverter />} />
               <Route path="/enigma" element={<EnigmaPage />} />
+              <Route path="/hmac" element={<HMACPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </PageTransition>

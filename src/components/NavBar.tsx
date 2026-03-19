@@ -10,6 +10,7 @@ const links = [
   { to: '/aes', label: 'AES' },
   { to: '/rsa', label: 'RSA' },
   { to: '/pqc', label: 'PQC' },
+  { to: '/hmac', label: 'HMAC' },
 ]
 
 const toolsLinks = [
