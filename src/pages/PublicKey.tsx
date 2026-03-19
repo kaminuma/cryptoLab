@@ -203,10 +203,23 @@ function ClassicDHDemo() {
 
   return (
     <>
+      <h3>問題: 盗聴者がいる通信路で、どうやって秘密を共有する？</h3>
       <p>
-        Diffie-Hellman鍵交換を<strong>小さい数</strong>で実際に計算してみましょう。
-        AliceとBobが、盗聴されている通信路上で共通の秘密を作る過程を追います。
+        AliceとBobがAES暗号で通信したいとします。しかしAESには共通鍵が必要です。
+        鍵をそのまま送れば盗聴者に読まれます。
+        かといって、二人は直接会ったことがなく、事前に鍵を共有する手段がありません。
       </p>
+      <p>
+        1976年にDiffieとHellmanが発見した解法は、<strong>「絵の具の混合」</strong>に似ています。
+        二人が公開の場で色を交換しても、混ぜた結果から元の色を分離するのは困難です。
+        数学的には<strong>べき乗の剰余演算</strong>がこの「混合」の役割を果たします。
+      </p>
+
+      <div className="step-lesson__callout">
+        <strong>注目ポイント:</strong> 下のデモでは、テーブルの各行が実際の通信ステップに対応しています。
+        <strong>行3「公開値を交換」</strong>で送られる A, B は盗聴者にも見えますが、
+        それだけでは<strong>行4の共有秘密を計算できない</strong>ことが、DHの核心です。
+      </div>
 
       <div className="step-lesson__demo-box">
         <div style={{ marginBottom: '1rem' }}>
@@ -294,16 +307,26 @@ function ClassicDHDemo() {
         </div>
 
         <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--sl-color-muted)' }}>
-          盗聴者は p={p}, g={g}, A={alicePub}, B={bobPub} を知っていますが、
-          a={aliceSecret} や b={bobSecret} を知らないため共有秘密 {sharedAlice} を計算できません。
           スライダーを動かして、秘密鍵を変えると共有秘密がどう変わるか観察してみましょう。
         </p>
       </div>
 
+      <h3>なぜ盗聴者は秘密を計算できないのか？</h3>
+      <p>
+        盗聴者は p={p}, g={g}, A={alicePub}, B={bobPub} の4つを知っています。
+        しかし共有秘密を得るには、A={alicePub} から a={aliceSecret} を逆算する必要があります。
+        つまり「{g}の何乗が {alicePub} になるか？」という問題（<strong>離散対数問題</strong>）を解かなければなりません。
+      </p>
+      <p>
+        p=23なら全探索で解けますが、実用では<strong>2048ビット以上の素数</strong>を使います。
+        この規模では離散対数問題に効率的な解法がなく、事実上計算不可能です。
+      </p>
+
       <div className="step-lesson__callout">
-        <strong>実際の鍵サイズ:</strong> この例では p=23（5ビット）ですが、
-        実用では2048ビット以上の素数を使います。
-        離散対数問題（g^a mod p から a を逆算する）の困難性が安全性の根拠です。
+        <strong>DHの限界 — 中間者攻撃:</strong> DHは盗聴に対しては安全ですが、
+        通信相手が本物かどうかは検証しません。攻撃者が間に入って
+        AliceともBobとも別々にDHを行う<strong>中間者攻撃（MITM）</strong>が可能です。
+        これを防ぐためにデジタル署名やPKI（公開鍵基盤）と組み合わせて使います。
       </div>
     </>
   )
