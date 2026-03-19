@@ -7,6 +7,7 @@
   <url><loc>https://cryptolab-8xw.pages.dev/hash</loc><priority>0.8</priority></url>
   <url><loc>https://cryptolab-8xw.pages.dev/rsa</loc><priority>0.8</priority></url>
   <url><loc>https://cryptolab-8xw.pages.dev/pqc</loc><priority>0.8</priority></url>
+  <url><loc>https://cryptolab-8xw.pages.dev/hmac</loc><priority>0.8</priority></url>
   <url><loc>https://cryptolab-8xw.pages.dev/tools/convert</loc><priority>0.6</priority></url>
   <url><loc>https://cryptolab-8xw.pages.dev/tools/hash-cracker</loc><priority>0.6</priority></url>
   <url><loc>https://cryptolab-8xw.pages.dev/tools/xor</loc><priority>0.6</priority></url>
