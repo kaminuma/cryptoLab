@@ -11,6 +11,7 @@ const links = [
   { to: '/rsa', label: 'RSA' },
   { to: '/pqc', label: 'PQC' },
   { to: '/hmac', label: 'HMAC' },
+  { to: '/signature', label: 'Signature' },
 ]
 
 const toolsLinks = [
