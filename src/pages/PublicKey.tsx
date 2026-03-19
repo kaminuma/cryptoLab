@@ -106,7 +106,12 @@ function EllipticCurveIntuition() {
   return (
     <>
       <p>
-        現代の公開鍵暗号の多くは<strong>楕円曲線</strong>を使います。
+        前のステップで、古典的DHは<strong>2048ビット以上の巨大な素数</strong>が必要だと学びました。
+        鍵も通信データも大きくなり、モバイルやIoTには不向きです。
+        これを解決するのが<strong>楕円曲線</strong>です。
+        256ビットの楕円曲線鍵で、3072ビットのRSA鍵に匹敵する安全性を実現します。
+      </p>
+      <p>
         「楕円曲線」と聞くと難しそうですが、幾何学的には非常に美しい構造を持っています。
       </p>
 
@@ -340,11 +345,12 @@ function DHToECDH() {
   return (
     <>
       <p>
-        Diffie-Hellman鍵交換は、<strong>盗聴されている通信路でも安全に共通の秘密を作れる</strong>プロトコルです。
-        まず古典的なDHを理解し、次にそれが楕円曲線上でどう変わるかを見ていきましょう。
+        Step 2で古典的DHを体験し、Step 3で楕円曲線の数学を学びました。
+        ここではその2つを組み合わせます。
+        古典DHの各操作が、楕円曲線上の操作に<strong>1対1で対応</strong>していることを確認しましょう。
       </p>
 
-      <h3>古典的 Diffie-Hellman（整数上）</h3>
+      <h3>おさらい: 古典的 Diffie-Hellman（整数上）</h3>
       <div className="step-lesson__visual">
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', lineHeight: '2.2', textAlign: 'left', display: 'inline-block' }}>
           <div>公開パラメータ: 素数 p, 生成元 g</div>
@@ -1089,20 +1095,6 @@ export default function PublicKeyPage() {
       },
     },
     {
-      title: '楕円曲線の直感的理解',
-      content: <EllipticCurveIntuition />,
-      quiz: {
-        question: '楕円曲線暗号の安全性の根拠は何ですか？',
-        options: [
-          { label: '素因数分解の困難さ' },
-          { label: '楕円曲線上の離散対数問題（ECDLP）の困難さ', correct: true },
-          { label: '楕円曲線の方程式が複雑であること' },
-          { label: '点の加算が不可能であること' },
-        ],
-        explanation: '正解！点GとスカラーnからQ = n・Gを計算するのは簡単ですが、GとQからnを逆算すること（ECDLP）は計算上不可能です。この非対称性が安全性の基盤です。',
-      },
-    },
-    {
       title: '古典的DH鍵交換 — 小さい数で体験',
       content: <ClassicDHDemo />,
       quiz: {
@@ -1114,6 +1106,20 @@ export default function PublicKeyPage() {
           { label: '公開値が毎回変わるから' },
         ],
         explanation: '盗聴者はp, g, A=g^a mod p, B=g^b mod p を知っていますが、AからaやBからbを求めるには離散対数問題を解く必要があり、pが十分大きければ計算上不可能です。',
+      },
+    },
+    {
+      title: '楕円曲線の直感的理解',
+      content: <EllipticCurveIntuition />,
+      quiz: {
+        question: '楕円曲線暗号の安全性の根拠は何ですか？',
+        options: [
+          { label: '素因数分解の困難さ' },
+          { label: '楕円曲線上の離散対数問題（ECDLP）の困難さ', correct: true },
+          { label: '楕円曲線の方程式が複雑であること' },
+          { label: '点の加算が不可能であること' },
+        ],
+        explanation: '正解！点GとスカラーnからQ = n・Gを計算するのは簡単ですが、GとQからnを逆算すること（ECDLP）は計算上不可能です。この非対称性が安全性の基盤です。',
       },
     },
     {
