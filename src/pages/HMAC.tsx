@@ -479,7 +479,13 @@ function TimingAttack() {
   return (
     <>
       <p>
-        HMAC検証時、文字列比較の実装にも注意が必要です。
+        暗号の安全性は「アルゴリズムが正しいか」だけでは決まりません。
+        <strong>実装の仕方</strong>から秘密情報が漏れることがあり、
+        これを<strong>サイドチャネル攻撃</strong>と呼びます。
+        処理時間、消費電力、電磁波など、暗号の「外側」から情報を盗む手法の総称です。
+      </p>
+      <p>
+        タイミング攻撃はサイドチャネル攻撃の代表例で、HMAC検証でも注意が必要です。
         通常の <code>===</code> 比較は<strong>先頭から1文字ずつ比較して不一致で即終了</strong>するため、
         処理時間の差から正しいMACの先頭部分が推測されてしまいます。
       </p>
@@ -536,6 +542,13 @@ function TimingAttack() {
         <strong>実務での対策:</strong> Node.jsでは <code>crypto.timingSafeEqual()</code>、
         Pythonでは <code>hmac.compare_digest()</code> を使います。
         自前で比較関数を書かず、言語が提供する定数時間比較を利用しましょう。
+      </div>
+
+      <div className="step-lesson__callout">
+        <strong>サイドチャネル攻撃の他の例:</strong> 電力解析攻撃（消費電力の変動から鍵を推測）、
+        キャッシュタイミング攻撃（CPUキャッシュのヒット/ミスから情報を推測）など。
+        タイミング攻撃はソフトウェアで対策しやすい部類ですが、
+        サイドチャネル攻撃全体は暗号実装における重要なテーマです。
       </div>
     </>
   )
